@@ -14,14 +14,14 @@ $conn = new mysqli(CONF_LOCATION, CONF_ADMINID, CONF_ADMINPASS);
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
-echo "Connected successfully";
+echo "Connected successfully\n";
 
 // Create database
 $sql = "CREATE DATABASE Git-Challenge";
 if ($conn->query($sql) === TRUE) {
-    echo "Database created successfully";
+    echo "Database created successfully\n";
 } else {
-    echo "Error creating database: " . $conn->error;
+    echo "Error creating database: " . $conn->error . "\n";
 }
 
 $conn = new mysqli(CONF_LOCATION, CONF_ADMINID, CONF_ADMINPASS, CONF_DATABASE);
@@ -30,9 +30,18 @@ $conn = new mysqli(CONF_LOCATION, CONF_ADMINID, CONF_ADMINPASS, CONF_DATABASE);
 $sql = "CREATE TABLE Tracked (sha VARCHAR(256) NOT NULL)";
 
 if ($conn->query($sql) === TRUE) {
-    echo "Table Tracked created successfully";
+    echo "Table Tracked created successfully\n";
 } else {
-    echo "Error creating table: " . $conn->error;
+    echo "Error creating table: " . $conn->error . "\n";
+}
+
+// sql to create table
+$sql = "CREATE TABLE Users (name VARCHAR(256) NOT NULL, email VARCHAR(128) NOT NULL, score INT(25))";
+
+if ($conn->query($sql) === TRUE) {
+    echo "Table Users created successfully\n";
+} else {
+    echo "Error creating table: " . $conn->error . "\n";
 }
 
 /*
@@ -77,30 +86,36 @@ foreach ($obj as &$repo) {
     $repo_json = file_get_contents($repo_url, false, stream_context_create($opts));
     $repo_obj = json_decode($repo_json);
 
+
     /*
     //Loop through all Commits in each Repo
     foreach ($repo_obj as &$commit) {
         //TODO: Check if Sha is in Database
         //TODO: If Sha is in Database, skip
-        $commit_url = $commit->url;
-        $opts = [
-            'http' => [
-                'method' => 'GET',
-                'header' => [
-                    'User-Agent: PHP'
-                ]
-            ]
-        ];
-        $sql = "INSERT INTO Tracked (sha) VALUES ('" . $commit->sha . "')";
-        $conn->query($sql)
-        $commit_json = file_get_contents($commit_url, false, stream_context_create($opts));
-        $commit_obj = json_decode($commit_json);
 
-        //Count stats for each Commit to their corresponding person
-        foreach ($commit_obj as &$single_commit) {
-            //echo $single_commit->stats->total;
-            //$key = array_search($test_user, $user_array);
-            //$user_array[$key]->score += $single_commit->stats->total;
+        $query = "SELECT sha from Tracked where sha=" . $commit->sha;
+
+        if ($conn->query($query) === 0) {
+            $commit_url = $commit->url;
+            $opts = [
+                'http' => [
+                    'method' => 'GET',
+                    'header' => [
+                        'User-Agent: PHP'
+                    ]
+                ]
+            ];
+            $sql = "INSERT INTO Tracked (sha) VALUES (" . $commit->sha . ")";
+            $conn->query($sql);
+            $commit_json = file_get_contents($commit_url, false, stream_context_create($opts));
+            $commit_obj = json_decode($commit_json);
+
+            //Count stats for each Commit to their corresponding person
+            foreach ($commit_obj as &$single_commit) {
+                echo $single_commit->stats->total;
+                $key = array_search($test_user, $user_array);
+                $user_array[$key]->score += $single_commit->stats->total;
+            }
         }
     }
     */
