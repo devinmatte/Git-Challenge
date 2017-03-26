@@ -5,10 +5,6 @@ include("user.php");
 //start the session
 session_start();
 
-$fullArray = [["Devin Matte", 98765]];
-array_push($fullArray, ["Luke Gaynor", 21212]);
-array_push($fullArray, ["James Sonne", 0]);
-
 $test_user = new user("Devin Matte", "devinmatte@gmail.com", "devinmatte", 0);
 $test_user2 = new user("James Sonne", "test@gmail.com", "test", 0);
 
@@ -121,7 +117,6 @@ foreach ($obj as &$repo) {
             <ul>
                 <li><a href="#intro" class="active">Introduction</a></li>
                 <li><a href="#second">Second Section</a></li>
-                <li><a href="#cta">Get Started</a></li>
             </ul>
         </nav>
 
