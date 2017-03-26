@@ -1,14 +1,43 @@
 <?php
 
 include("user.php");
+include("include/configuration.php");
 
 //start the session
 session_start();
+
+//TODO: SQL Database
+// Create connection
+$conn = new mysqli(CONF_LOCATION, CONF_ADMINID, CONF_ADMINPASS);
+
+// Check connection
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+echo "Connected successfully";
+
+// Create database
+$sql = "CREATE DATABASE Git-Challenge";
+if ($conn->query($sql) === TRUE) {
+    echo "Database created successfully";
+} else {
+    echo "Error creating database: " . $conn->error;
+}
+
+// sql to create table
+$sql = "CREATE TABLE Tracked (id INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY, sha VARCHAR(256) NOT NULL)";
+
+if ($conn->query($sql) === TRUE) {
+    echo "Table Tracked created successfully";
+} else {
+    echo "Error creating table: " . $conn->error;
+}
 
 $test_user = new user("Devin Matte", "devinmatte@gmail.com", "devinmatte", 0);
 $test_user2 = new user("James Sonne", "test@gmail.com", "test", 0);
 
 $user_array = array($test_user, $test_user2);
+
 
 $url = "https://api.github.com/users/NHSTechTeam/repos";
 $opts = [
@@ -22,7 +51,6 @@ $opts = [
 
 $json = file_get_contents($url, false, stream_context_create($opts));
 $obj = json_decode($json);
-
 
 //Loop through all Repos in Org
 foreach ($obj as &$repo) {
@@ -41,6 +69,8 @@ foreach ($obj as &$repo) {
     /*
     //Loop through all Commits in each Repo
     foreach ($repo_obj as &$commit) {
+        //TODO: Check if Sha is in Database
+        //TODO: If Sha is in Database, skip
         $commit_url = $commit->url;
         $opts = [
             'http' => [
@@ -210,5 +240,5 @@ foreach ($obj as &$repo) {
     </html>
 
 <?php
-
+mysqli_close($conn);
 ?>
