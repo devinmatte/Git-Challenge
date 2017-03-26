@@ -87,7 +87,6 @@ foreach ($obj as &$repo) {
     $repo_obj = json_decode($repo_json);
 
 
-    /*
     //Loop through all Commits in each Repo
     foreach ($repo_obj as &$commit) {
 
@@ -108,20 +107,25 @@ foreach ($obj as &$repo) {
             $commit_obj = json_decode($commit_json);
             $query = "SELECT score from Users where email=" . $commit->commit->email;
             if ($conn->query($query) > 0) {
+            $user = $conn->query($query);
             //Count stats for each Commit to their corresponding person
                 foreach ($commit_obj as &$single_commit) {
-                    //TODO: Save score to Database Entry
+                    $score = $user['score'] + $single_commit->stats->total;
+                    $sql = "UPDATE Users SET score=" . $score . " WHERE email=" . $single_commit->commit->author->email;
 
+                    if ($conn->query($sql) === TRUE) {
+                        echo "Record updated successfully";
+                    } else {
+                    echo "Error updating record: " . $conn->error;
+                    }
                     echo $single_commit->stats->total;
-                    $key = array_search($test_user, $user_array);
-                    $user_array[$key]->score += $single_commit->stats->total;
                     $sql = "INSERT INTO Tracked (sha) VALUES (" . $commit->sha . ")";
                     $conn->query($sql);
                 }
             }
         }
     }
-    */
+
 }
 
 ?>
