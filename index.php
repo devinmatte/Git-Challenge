@@ -15,7 +15,7 @@ $test_user2 = new user("James Sonne", "test@gmail.com", "test", 0);
 $user_array = array($test_user, $test_user2);
 
 
-$url = "https://api.github.com/repos/NHSTechTeam/Calendar-Maker/commits/dcad3fb6cce3e22fa940cd4a13369820e6f789ec";
+$url = "https://api.github.com/users/NHSTechTeam/repos";
 $opts = [
     'http' => [
         'method' => 'GET',
@@ -28,7 +28,11 @@ $opts = [
 $json = file_get_contents($url, false, stream_context_create($opts));
 $obj = json_decode($json);
 
+
 //Loop through all Repos in Org
+foreach ($obj as &$repo) {
+    echo $repo->name;
+}
 //Loop through all Commits in each Repo
 //Count stats for each Commit to their corresponding person
 
@@ -62,25 +66,32 @@ $obj = json_decode($json);
         <!-- Header -->
         <header id="header" class="alt">
             <h1 class="fa fa-git-square">Challenge</h1>
-            <p><?php echo($obj->stats->total); ?></p>
-                <table class="alt">
-                    <thead>
+            <p>
+            <?php
+                foreach ($obj as &$repo) {
+                    echo $repo->name;
+                    echo " - ";
+                }
+                ?>
+            </p>
+            <table class="alt">
+                <thead>
+                <tr>
+                    <th>Rank</th>
+                    <th>Name</th>
+                    <th>Score</th>
+                </tr>
+                </thead>
+                <tbody>
+                <?php for ($row = 0; $row < 5; $row++): ?>
                     <tr>
-                        <th>Rank</th>
-                        <th>Name</th>
-                        <th>Score</th>
+                        <td><?php echo $row + 1 ?></td>
+                        <td><?php echo $user_array[$row]->name; ?></td>
+                        <td><?php echo $user_array[$row]->score; ?></td>
                     </tr>
-                    </thead>
-                    <tbody>
-                    <?php for ($row = 0; $row < 5; $row++): ?>
-                        <tr>
-                            <td><?php echo $row + 1 ?></td>
-                                <td><?php echo $user_array[$row]->name; ?></td>
-                                <td><?php echo $user_array[$row]->score; ?></td>
-                        </tr>
-                    <?php endfor; ?>
-                    </tbody>
-                </table>
+                <?php endfor; ?>
+                </tbody>
+            </table>
         </header>
 
         <!-- Nav -->
