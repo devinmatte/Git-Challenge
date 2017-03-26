@@ -59,7 +59,7 @@ $test_user2 = new user("James Sonne", "test@gmail.com", "test", 0);
 
 $user_array = array($test_user, $test_user2);
 
-$url = "https://api.github.com/users/" . GIT_ORG . "/repos";
+$url = "https://api.github.com/users/" . GIT_ORG . "/repos" . "?client_id=" . GIT_CLIENT . "&client_secret=" . GIT_SECRET;
 $opts = [
     'http' => [
         'method' => 'GET',
@@ -74,7 +74,7 @@ $obj = json_decode($json);
 
 //Loop through all Repos in Org
 foreach ($obj as &$repo) {
-    $repo_url = substr($repo->commits_url, 0, -6);
+    $repo_url = substr($repo->commits_url, 0, -6) . "?client_id=" . GIT_CLIENT . "&client_secret=" . GIT_SECRET;
     $opts = [
         'http' => [
             'method' => 'GET',
@@ -94,7 +94,7 @@ foreach ($obj as &$repo) {
         $query = "SELECT sha from Tracked where sha=" . $commit->sha;
 
         if ($conn->query($query) === 0) {
-            $commit_url = $commit->url;
+            $commit_url = $commit->url . "?client_id=" . GIT_CLIENT . "&client_secret=" . GIT_SECRET;
             $opts = [
                 'http' => [
                     'method' => 'GET',
