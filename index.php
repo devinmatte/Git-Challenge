@@ -1,5 +1,7 @@
 <?php
 
+include("user.php");
+
 //start the session
 session_start();
 
@@ -7,11 +9,24 @@ $fullArray = [["Devin Matte", 98765]];
 array_push($fullArray, ["Luke Gaynor", 21212]);
 array_push($fullArray, ["James Sonne", 0]);
 
-ini_set("allow_url_fopen", 1);
+$test_user = new user("Devin Matte", "devinmatte@gmail.com", "devinmatte", 0);
+$test_user2 = new user("James Sonne", "test@gmail.com", "test", 0);
 
-$json = file_get_contents("https://api.github.com/users/devinmatte/repos");
+$user_array = array($test_user, $test_user2);
+
+
+$url = "https://api.github.com/repos/NHSTechTeam/Calendar-Maker/commits/dcad3fb6cce3e22fa940cd4a13369820e6f789ec";
+$opts = [
+    'http' => [
+        'method' => 'GET',
+        'header' => [
+            'User-Agent: PHP'
+        ]
+    ]
+];
+
+$json = file_get_contents($url, false, stream_context_create($opts));
 $obj = json_decode($json);
-var_dump($obj);
 
 //Loop through all Repos in Org
 //Loop through all Commits in each Repo
@@ -47,7 +62,7 @@ var_dump($obj);
         <!-- Header -->
         <header id="header" class="alt">
             <h1 class="fa fa-git-square">Challenge</h1>
-            <p><?php var_dump($obj); ?></p>
+            <p><?php echo($obj->stats->total); ?></p>
                 <table class="alt">
                     <thead>
                     <tr>
@@ -57,12 +72,11 @@ var_dump($obj);
                     </tr>
                     </thead>
                     <tbody>
-                    <?php for ($row = 0; $row < 10; $row++): ?>
+                    <?php for ($row = 0; $row < 5; $row++): ?>
                         <tr>
                             <td><?php echo $row + 1 ?></td>
-                            <?php for ($col = 0; $col < 2; $col++): ?>
-                                <td><?php echo $fullArray[$row][$col] ?></td>
-                            <?php endfor; ?>
+                                <td><?php echo $user_array[$row]->name; ?></td>
+                                <td><?php echo $user_array[$row]->score; ?></td>
                         </tr>
                     <?php endfor; ?>
                     </tbody>
@@ -73,7 +87,6 @@ var_dump($obj);
         <nav id="nav">
             <ul>
                 <li><a href="#intro" class="active">Introduction</a></li>
-                <li><a href="#first">First Section</a></li>
                 <li><a href="#second">Second Section</a></li>
                 <li><a href="#cta">Get Started</a></li>
             </ul>
@@ -98,40 +111,6 @@ var_dump($obj);
                     </div>
                     <span class="image"><img src="images/pic01.jpg" alt=""/></span>
                 </div>
-            </section>
-
-            <!-- First Section -->
-            <section id="first" class="main special">
-                <header class="major">
-                    <h2>Alternate</h2>
-                </header>
-
-                <div class="table-wrapper">
-                    <table class="alt">
-                        <thead>
-                        <tr>
-                            <th>Rank</th>
-                            <th>Name</th>
-                            <th>Score</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <?php for ($row = 0; $row < 10; $row++): ?>
-                            <tr>
-                                <td><?php echo $row + 1 ?></td>
-                                <?php for ($col = 0; $col < 2; $col++): ?>
-                                    <td><?php echo $fullArray[$row][$col] ?></td>
-                                <?php endfor; ?>
-                            </tr>
-                        <?php endfor; ?>
-                        </tbody>
-                    </table>
-                </div>
-                <footer class="major">
-                    <ul class="actions">
-                        <li><a href="generic.html" class="button">See All</a></li>
-                    </ul>
-                </footer>
             </section>
 
             <!-- Second Section -->
