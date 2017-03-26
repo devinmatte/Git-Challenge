@@ -9,10 +9,9 @@ array_push($fullArray, ["James Sonne", 0]);
 
 ini_set("allow_url_fopen", 1);
 
-$url = "https://api.github.com/users/devinmatte/repos";
-$json = file_get_contents($url);
+$json = file_get_contents("https://api.github.com/users/devinmatte/repos");
 $obj = json_decode($json);
-echo $obj;
+var_dump($obj);
 
 //Loop through all Repos in Org
 //Loop through all Commits in each Repo
