@@ -7,6 +7,13 @@ $fullArray = [["Devin Matte", 98765]];
 array_push($fullArray, ["Luke Gaynor", 21212]);
 array_push($fullArray, ["James Sonne", 0]);
 
+ini_set("allow_url_fopen", 1);
+
+$url = urlencode("https://api.github.com/users/devinmatte/repos");
+$json = file_get_contents($url);
+$obj = json_decode($json);
+echo $obj;
+
 //Loop through all Repos in Org
 //Loop through all Commits in each Repo
 //Count stats for each Commit to their corresponding person

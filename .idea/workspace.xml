@@ -2,65 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="838d92c2-c031-470d-835e-9554ad57b090" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/assets/css/images/overlay.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/assets/fonts/FontAwesome.otf" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/assets/fonts/fontawesome-webfont.eot" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/assets/fonts/fontawesome-webfont.ttf" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/assets/fonts/fontawesome-webfont.woff" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/assets/fonts/fontawesome-webfont.woff2" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/images/pic01.jpg" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/images/pic02.jpg" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/images/pic03.jpg" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/images/pic04.jpg" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/images/pic05.jpg" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/images/pic06.jpg" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/Git-Challenge.iml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/modules.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/vcs.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/assets/css/font-awesome.min.css" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/assets/css/ie8.css" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/assets/css/ie9.css" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/assets/css/main.css" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/assets/fonts/fontawesome-webfont.svg" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/assets/js/ie/PIE.htc" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/assets/js/ie/html5shiv.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/assets/js/ie/respond.min.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/assets/js/jquery.min.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/assets/js/jquery.scrollex.min.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/assets/js/jquery.scrolly.min.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/assets/js/main.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/assets/js/skel.min.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/assets/js/util.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/assets/sass/base/_page.scss" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/assets/sass/base/_typography.scss" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/assets/sass/components/_box.scss" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/assets/sass/components/_button.scss" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/assets/sass/components/_features.scss" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/assets/sass/components/_form.scss" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/assets/sass/components/_icon.scss" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/assets/sass/components/_image.scss" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/assets/sass/components/_list.scss" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/assets/sass/components/_section.scss" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/assets/sass/components/_spotlight.scss" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/assets/sass/components/_statistics.scss" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/assets/sass/components/_table.scss" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/assets/sass/ie8.scss" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/assets/sass/ie9.scss" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/assets/sass/layout/_footer.scss" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/assets/sass/layout/_header.scss" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/assets/sass/layout/_main.scss" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/assets/sass/layout/_nav.scss" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/assets/sass/layout/_wrapper.scss" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/assets/sass/libs/_functions.scss" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/assets/sass/libs/_mixins.scss" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/assets/sass/libs/_skel.scss" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/assets/sass/libs/_vars.scss" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/assets/sass/main.scss" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/elements.html" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/generic.html" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/images/logo.svg" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/index.html" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/index.php" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/LICENSE" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/index.php" afterPath="$PROJECT_DIR$/index.php" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -75,9 +19,65 @@
       <file leaf-file-name="index.php" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/index.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="180">
-              <caret line="5" column="37" lean-forward="false" selection-start-line="5" selection-start-column="37" selection-end-line="5" selection-end-column="37" />
-              <folding />
+            <state relative-caret-position="396">
+              <caret line="11" column="0" lean-forward="false" selection-start-line="11" selection-start-column="0" selection-end-line="14" selection-end-column="10" />
+              <folding>
+                <marker date="1490486768145" expanded="true" signature="514:669" ph="..." />
+                <marker date="1490486768145" expanded="true" signature="682:8602" ph="..." />
+                <marker date="1490486768145" expanded="true" signature="693:759" ph="..." />
+                <marker date="1490486768145" expanded="true" signature="693:1211" ph="..." />
+                <marker date="1490486768145" expanded="true" signature="860:941" ph="..." />
+                <marker date="1490486768145" expanded="true" signature="1017:1099" ph="..." />
+                <marker date="1490486768145" expanded="true" signature="1115:1197" ph="..." />
+                <marker date="1490486768145" expanded="true" signature="1222:1257" ph="..." />
+                <marker date="1490486768145" expanded="true" signature="1222:8590" ph="..." />
+                <marker date="1490486768145" expanded="true" signature="1267:8149" ph="..." />
+                <marker date="1490486768145" expanded="true" signature="1333:2162" ph="..." />
+                <marker date="1490486768145" expanded="true" signature="1425:2144" ph="..." />
+                <marker date="1490486768145" expanded="true" signature="1453:1648" ph="..." />
+                <marker date="1490486768145" expanded="true" signature="1478:1619" ph="..." />
+                <marker date="1490486768145" expanded="true" signature="1676:2119" ph="..." />
+                <marker date="1490486768145" expanded="true" signature="1769:2053" ph="..." />
+                <marker date="1490486768145" expanded="true" signature="2207:2509" ph="..." />
+                <marker date="1490486768145" expanded="true" signature="2224:2253" ph="..." />
+                <marker date="1490486768145" expanded="true" signature="2224:2494" ph="..." />
+                <marker date="1490486768145" expanded="true" signature="2556:7959" ph="..." />
+                <marker date="1490486768145" expanded="true" signature="2637:3472" ph="..." />
+                <marker date="1490486768145" expanded="true" signature="2677:3449" ph="..." />
+                <marker date="1490486768145" expanded="true" signature="2719:3342" ph="..." />
+                <marker date="1490486768145" expanded="true" signature="2766:2858" ph="..." />
+                <marker date="1490486768145" expanded="true" signature="2886:3150" ph="..." />
+                <marker date="1490486768145" expanded="true" signature="3195:3315" ph="..." />
+                <marker date="1490486768145" expanded="true" signature="3562:4803" ph="..." />
+                <marker date="1490486768145" expanded="true" signature="3601:3666" ph="..." />
+                <marker date="1490486768145" expanded="true" signature="3711:4565" ph="..." />
+                <marker date="1490486768145" expanded="true" signature="3751:4542" ph="..." />
+                <marker date="1490486768145" expanded="true" signature="3783:4002" ph="..." />
+                <marker date="1490486768145" expanded="true" signature="3812:3969" ph="..." />
+                <marker date="1490486768145" expanded="true" signature="4034:4513" ph="..." />
+                <marker date="1490486768145" expanded="true" signature="4135:4439" ph="..." />
+                <marker date="1490486768145" expanded="true" signature="4604:4780" ph="..." />
+                <marker date="1490486768145" expanded="true" signature="4645:4754" ph="..." />
+                <marker date="1490486768145" expanded="true" signature="4895:7234" ph="..." />
+                <marker date="1490486768145" expanded="true" signature="4934:5181" ph="..." />
+                <marker date="1490486768145" expanded="true" signature="5003:5155" ph="..." />
+                <marker date="1490486768145" expanded="true" signature="5221:6158" ph="..." />
+                <marker date="1490486768145" expanded="true" signature="5261:5404" ph="..." />
+                <marker date="1490486768145" expanded="true" signature="5444:5591" ph="..." />
+                <marker date="1490486768145" expanded="true" signature="5631:5772" ph="..." />
+                <marker date="1490486768145" expanded="true" signature="5812:5954" ph="..." />
+                <marker date="1490486768145" expanded="true" signature="5994:6136" ph="..." />
+                <marker date="1490486768145" expanded="true" signature="6194:6993" ph="..." />
+                <marker date="1490486768145" expanded="true" signature="7032:7211" ph="..." />
+                <marker date="1490486768145" expanded="true" signature="7073:7185" ph="..." />
+                <marker date="1490486768145" expanded="true" signature="7320:7943" ph="..." />
+                <marker date="1490486768145" expanded="true" signature="7359:7607" ph="..." />
+                <marker date="1490486768145" expanded="true" signature="7429:7581" ph="..." />
+                <marker date="1490486768145" expanded="true" signature="7646:7920" ph="..." />
+                <marker date="1490486768145" expanded="true" signature="7687:7894" ph="..." />
+                <marker date="1490486768145" expanded="true" signature="8013:8137" ph="..." />
+                <marker date="1490486768145" expanded="true" signature="8450:8529" ph="..." />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -93,6 +93,11 @@
         </entry>
       </file>
     </leaf>
+  </component>
+  <component name="FindInProjectRecents">
+    <replaceStrings>
+      <replace />
+    </replaceStrings>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -256,31 +261,31 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1490478471922</updated>
-      <workItem from="1490478473584" duration="5144000" />
+      <workItem from="1490478473584" duration="8325000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="5144000" />
+    <option name="totallyTimeSpent" value="8325000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="35" width="3840" height="1995" extended-state="6" />
     <layout>
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.24986653" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.24986653" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="true" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32974267" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32974267" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32974267" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="true" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
     </layout>
@@ -314,9 +319,65 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/index.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="180">
-          <caret line="5" column="37" lean-forward="false" selection-start-line="5" selection-start-column="37" selection-end-line="5" selection-end-column="37" />
-          <folding />
+        <state relative-caret-position="396">
+          <caret line="11" column="0" lean-forward="false" selection-start-line="11" selection-start-column="0" selection-end-line="14" selection-end-column="10" />
+          <folding>
+            <marker date="1490486768145" expanded="true" signature="514:669" ph="..." />
+            <marker date="1490486768145" expanded="true" signature="682:8602" ph="..." />
+            <marker date="1490486768145" expanded="true" signature="693:759" ph="..." />
+            <marker date="1490486768145" expanded="true" signature="693:1211" ph="..." />
+            <marker date="1490486768145" expanded="true" signature="860:941" ph="..." />
+            <marker date="1490486768145" expanded="true" signature="1017:1099" ph="..." />
+            <marker date="1490486768145" expanded="true" signature="1115:1197" ph="..." />
+            <marker date="1490486768145" expanded="true" signature="1222:1257" ph="..." />
+            <marker date="1490486768145" expanded="true" signature="1222:8590" ph="..." />
+            <marker date="1490486768145" expanded="true" signature="1267:8149" ph="..." />
+            <marker date="1490486768145" expanded="true" signature="1333:2162" ph="..." />
+            <marker date="1490486768145" expanded="true" signature="1425:2144" ph="..." />
+            <marker date="1490486768145" expanded="true" signature="1453:1648" ph="..." />
+            <marker date="1490486768145" expanded="true" signature="1478:1619" ph="..." />
+            <marker date="1490486768145" expanded="true" signature="1676:2119" ph="..." />
+            <marker date="1490486768145" expanded="true" signature="1769:2053" ph="..." />
+            <marker date="1490486768145" expanded="true" signature="2207:2509" ph="..." />
+            <marker date="1490486768145" expanded="true" signature="2224:2253" ph="..." />
+            <marker date="1490486768145" expanded="true" signature="2224:2494" ph="..." />
+            <marker date="1490486768145" expanded="true" signature="2556:7959" ph="..." />
+            <marker date="1490486768145" expanded="true" signature="2637:3472" ph="..." />
+            <marker date="1490486768145" expanded="true" signature="2677:3449" ph="..." />
+            <marker date="1490486768145" expanded="true" signature="2719:3342" ph="..." />
+            <marker date="1490486768145" expanded="true" signature="2766:2858" ph="..." />
+            <marker date="1490486768145" expanded="true" signature="2886:3150" ph="..." />
+            <marker date="1490486768145" expanded="true" signature="3195:3315" ph="..." />
+            <marker date="1490486768145" expanded="true" signature="3562:4803" ph="..." />
+            <marker date="1490486768145" expanded="true" signature="3601:3666" ph="..." />
+            <marker date="1490486768145" expanded="true" signature="3711:4565" ph="..." />
+            <marker date="1490486768145" expanded="true" signature="3751:4542" ph="..." />
+            <marker date="1490486768145" expanded="true" signature="3783:4002" ph="..." />
+            <marker date="1490486768145" expanded="true" signature="3812:3969" ph="..." />
+            <marker date="1490486768145" expanded="true" signature="4034:4513" ph="..." />
+            <marker date="1490486768145" expanded="true" signature="4135:4439" ph="..." />
+            <marker date="1490486768145" expanded="true" signature="4604:4780" ph="..." />
+            <marker date="1490486768145" expanded="true" signature="4645:4754" ph="..." />
+            <marker date="1490486768145" expanded="true" signature="4895:7234" ph="..." />
+            <marker date="1490486768145" expanded="true" signature="4934:5181" ph="..." />
+            <marker date="1490486768145" expanded="true" signature="5003:5155" ph="..." />
+            <marker date="1490486768145" expanded="true" signature="5221:6158" ph="..." />
+            <marker date="1490486768145" expanded="true" signature="5261:5404" ph="..." />
+            <marker date="1490486768145" expanded="true" signature="5444:5591" ph="..." />
+            <marker date="1490486768145" expanded="true" signature="5631:5772" ph="..." />
+            <marker date="1490486768145" expanded="true" signature="5812:5954" ph="..." />
+            <marker date="1490486768145" expanded="true" signature="5994:6136" ph="..." />
+            <marker date="1490486768145" expanded="true" signature="6194:6993" ph="..." />
+            <marker date="1490486768145" expanded="true" signature="7032:7211" ph="..." />
+            <marker date="1490486768145" expanded="true" signature="7073:7185" ph="..." />
+            <marker date="1490486768145" expanded="true" signature="7320:7943" ph="..." />
+            <marker date="1490486768145" expanded="true" signature="7359:7607" ph="..." />
+            <marker date="1490486768145" expanded="true" signature="7429:7581" ph="..." />
+            <marker date="1490486768145" expanded="true" signature="7646:7920" ph="..." />
+            <marker date="1490486768145" expanded="true" signature="7687:7894" ph="..." />
+            <marker date="1490486768145" expanded="true" signature="8013:8137" ph="..." />
+            <marker date="1490486768145" expanded="true" signature="8450:8529" ph="..." />
+          </folding>
         </state>
       </provider>
     </entry>
