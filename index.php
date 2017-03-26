@@ -42,6 +42,7 @@ foreach ($obj as &$repo) {
     $repo_json = file_get_contents($repo_url, false, stream_context_create($opts));
     $repo_obj = json_decode($repo_json);
 
+    /*
     //Loop through all Commits in each Repo
     foreach ($repo_obj as &$commit) {
         $commit_url = $commit->url;
@@ -56,16 +57,15 @@ foreach ($obj as &$repo) {
         $commit_json = file_get_contents($commit_url, false, stream_context_create($opts));
         $commit_obj = json_decode($commit_json);
 
+        //Count stats for each Commit to their corresponding person
         foreach ($commit_obj as &$single_commit) {
             //echo $single_commit->stats->total;
             //$key = array_search($test_user, $user_array);
             //$user_array[$key]->score += $single_commit->stats->total;
         }
     }
+    */
 }
-
-//Count stats for each Commit to their corresponding person
-
 
 ?>
 
