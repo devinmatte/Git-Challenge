@@ -47,7 +47,7 @@ var_dump($obj);
         <!-- Header -->
         <header id="header" class="alt">
             <h1 class="fa fa-git-square">Challenge</h1>
-            <p><?php echo $obj; ?></p>
+            <p><?php var_dump($obj); ?></p>
                 <table class="alt">
                     <thead>
                     <tr>
