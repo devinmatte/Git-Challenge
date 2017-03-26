@@ -106,7 +106,7 @@ foreach ($obj as &$repo) {
 
             $commit_json = file_get_contents($commit_url, false, stream_context_create($opts));
             $commit_obj = json_decode($commit_json);
-            $query = "SELECT sha from Users where email=" . $commit->commit->email;
+            $query = "SELECT score from Users where email=" . $commit->commit->email;
             if ($conn->query($query) > 0) {
             //Count stats for each Commit to their corresponding person
                 foreach ($commit_obj as &$single_commit) {
