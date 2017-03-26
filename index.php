@@ -50,8 +50,7 @@ $test_user2 = new user("James Sonne", "test@gmail.com", "test", 0);
 
 $user_array = array($test_user, $test_user2);
 
-
-$url = "https://api.github.com/users/NHSTechTeam/repos";
+$url = "https://api.github.com/users/" . GIT_ORG . "/repos";
 $opts = [
     'http' => [
         'method' => 'GET',
@@ -92,6 +91,8 @@ foreach ($obj as &$repo) {
                 ]
             ]
         ];
+        $sql = "INSERT INTO Tracked (sha) VALUES ('" . $commit->sha . "')";
+        $conn->query($sql)
         $commit_json = file_get_contents($commit_url, false, stream_context_create($opts));
         $commit_obj = json_decode($commit_json);
 
