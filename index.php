@@ -14,7 +14,6 @@ $test_user2 = new user("James Sonne", "test@gmail.com", "test", 0);
 
 $user_array = array($test_user, $test_user2);
 
-
 $url = "https://api.github.com/users/NHSTechTeam/repos";
 $opts = [
     'http' => [
@@ -31,9 +30,40 @@ $obj = json_decode($json);
 
 //Loop through all Repos in Org
 foreach ($obj as &$repo) {
-    echo $repo->name;
+    $repo_url = substr($repo->commits_url, 0, -6);
+    $opts = [
+        'http' => [
+            'method' => 'GET',
+            'header' => [
+                'User-Agent: PHP'
+            ]
+        ]
+    ];
+    $repo_json = file_get_contents($repo_url, false, stream_context_create($opts));
+    $repo_obj = json_decode($repo_json);
+
+    //Loop through all Commits in each Repo
+    foreach ($repo_obj as &$commit) {
+        $commit_url = $commit->url;
+        $opts = [
+            'http' => [
+                'method' => 'GET',
+                'header' => [
+                    'User-Agent: PHP'
+                ]
+            ]
+        ];
+        $commit_json = file_get_contents($commit_url, false, stream_context_create($opts));
+        $commit_obj = json_decode($commit_json);
+
+        foreach ($commit_obj as &$single_commit) {
+            //echo $single_commit->stats->total;
+            //$key = array_search($test_user, $user_array);
+            //$user_array[$key]->score += $single_commit->stats->total;
+        }
+    }
 }
-//Loop through all Commits in each Repo
+
 //Count stats for each Commit to their corresponding person
 
 
@@ -66,14 +96,6 @@ foreach ($obj as &$repo) {
         <!-- Header -->
         <header id="header" class="alt">
             <h1 class="fa fa-git-square">Challenge</h1>
-            <p>
-            <?php
-                foreach ($obj as &$repo) {
-                    echo $repo->name;
-                    echo " - ";
-                }
-                ?>
-            </p>
             <table class="alt">
                 <thead>
                 <tr>
