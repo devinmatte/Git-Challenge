@@ -134,7 +134,7 @@ foreach ($obj as &$repo) {
     -->
     <html>
     <head>
-        <title>Stellar by HTML5 UP</title>
+        <title class="fa fa-git-square">Git Challenge</title>
         <meta charset="utf-8"/>
         <meta name="viewport" content="width=device-width, initial-scale=1"/>
         <!--[if lte IE 8]>
