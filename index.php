@@ -24,6 +24,8 @@ if ($conn->query($sql) === TRUE) {
     echo "Error creating database: " . $conn->error;
 }
 
+$conn = new mysqli(CONF_LOCATION, CONF_ADMINID, CONF_ADMINPASS, CONF_DATABASE);
+
 // sql to create table
 $sql = "CREATE TABLE Tracked (id INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY, sha VARCHAR(256) NOT NULL)";
 
