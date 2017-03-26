@@ -90,8 +90,6 @@ foreach ($obj as &$repo) {
     /*
     //Loop through all Commits in each Repo
     foreach ($repo_obj as &$commit) {
-        //TODO: Check if Sha is in Database
-        //TODO: If Sha is in Database, skip
 
         $query = "SELECT sha from Tracked where sha=" . $commit->sha;
 
@@ -105,16 +103,21 @@ foreach ($obj as &$repo) {
                     ]
                 ]
             ];
-            $sql = "INSERT INTO Tracked (sha) VALUES (" . $commit->sha . ")";
-            $conn->query($sql);
+
             $commit_json = file_get_contents($commit_url, false, stream_context_create($opts));
             $commit_obj = json_decode($commit_json);
-
+            $query = "SELECT sha from Users where email=" . $commit->commit->email;
+            if ($conn->query($query) > 0) {
             //Count stats for each Commit to their corresponding person
-            foreach ($commit_obj as &$single_commit) {
-                echo $single_commit->stats->total;
-                $key = array_search($test_user, $user_array);
-                $user_array[$key]->score += $single_commit->stats->total;
+                foreach ($commit_obj as &$single_commit) {
+                    //TODO: Save score to Database Entry
+
+                    echo $single_commit->stats->total;
+                    $key = array_search($test_user, $user_array);
+                    $user_array[$key]->score += $single_commit->stats->total;
+                    $sql = "INSERT INTO Tracked (sha) VALUES (" . $commit->sha . ")";
+                    $conn->query($sql);
+                }
             }
         }
     }
