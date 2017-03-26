@@ -9,7 +9,7 @@ array_push($fullArray, ["James Sonne", 0]);
 
 ini_set("allow_url_fopen", 1);
 
-$url = urlencode("https://api.github.com/users/devinmatte/repos");
+$url = "https://api.github.com/users/devinmatte/repos";
 $json = file_get_contents($url);
 $obj = json_decode($json);
 echo $obj;
