@@ -48,6 +48,7 @@ echo $obj;
         <!-- Header -->
         <header id="header" class="alt">
             <h1 class="fa fa-git-square">Challenge</h1>
+            <p><?php echo $obj; ?></p>
                 <table class="alt">
                     <thead>
                     <tr>
