@@ -89,10 +89,9 @@ foreach ($obj as &$repo) {
 
     //Loop through all Commits in each Repo
     foreach ($repo_obj as &$commit) {
-
         $query = "SELECT sha from Tracked where sha=" . $commit->sha;
 
-        if ($conn->query($query) === 0) {
+        if ($conn->query($query) <= 0) {
             $commit_url = $commit->url . "?client_id=" . GIT_CLIENT . "&client_secret=" . GIT_SECRET;
             $opts = [
                 'http' => [
@@ -105,10 +104,20 @@ foreach ($obj as &$repo) {
 
             $commit_json = file_get_contents($commit_url, false, stream_context_create($opts));
             $commit_obj = json_decode($commit_json);
-            $query = "SELECT score from Users where email=" . $commit->commit->email;
+            $query = "SELECT score from Users where email=" . $commit->commit->author->email;
+            $result = $conn->query($query);
+            if ($result->num_rows > 0) {
+                // output data of each row
+                while($row = $result->fetch_assoc()) {
+                    echo "Score: " . $row["score"] . "<br>";
+                }
+            } else {
+                echo "0 results of score where email = " . $commit->commit->author->email . "<br>";
+            }
             if ($conn->query($query) > 0) {
             $user = $conn->query($query);
-            //Count stats for each Commit to their corresponding person
+
+                //Count stats for each Commit to their corresponding person
                 foreach ($commit_obj as &$single_commit) {
                     $score = $user['score'] + $single_commit->stats->total;
                     $sql = "UPDATE Users SET score=" . $score . " WHERE email=" . $single_commit->commit->author->email;
@@ -118,9 +127,12 @@ foreach ($obj as &$repo) {
                     } else {
                     echo "Error updating record: " . $conn->error;
                     }
-                    echo $single_commit->stats->total;
                     $sql = "INSERT INTO Tracked (sha) VALUES (" . $commit->sha . ")";
-                    $conn->query($sql);
+                    if ($conn->query($sql) === TRUE) {
+                        echo "New record created successfully in Tracked";
+                    } else {
+                        echo "Error: " . $sql . "<br>" . $conn->error;
+                    }
                 }
             }
         }
@@ -169,8 +181,8 @@ foreach ($obj as &$repo) {
                 <?php for ($row = 0; $row < 5; $row++): ?>
                     <tr>
                         <td><?php echo $row + 1 ?></td>
-                        <td><?php echo $user_array[$row]->name; ?></td>
-                        <td><?php echo $user_array[$row]->score; ?></td>
+                        <td><?php echo "Test Name"; ?></td>
+                        <td><?php echo "Test Score"; ?></td>
                     </tr>
                 <?php endfor; ?>
                 </tbody>
