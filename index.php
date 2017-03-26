@@ -159,26 +159,11 @@ $obj = json_decode($json);
                 </footer>
             </section>
 
-            <!-- Get Started -->
-            <section id="cta" class="main special">
-                <header class="major">
-                    <h2>Congue imperdiet</h2>
-                    <p>Donec imperdiet consequat consequat. Suspendisse feugiat congue<br/>
-                        posuere. Nulla massa urna, fermentum eget quam aliquet.</p>
-                </header>
-                <footer class="major">
-                    <ul class="actions">
-                        <li><a href="generic.html" class="button special">Get Started</a></li>
-                        <li><a href="generic.html" class="button">Learn More</a></li>
-                    </ul>
-                </footer>
-            </section>
-
         </div>
 
         <!-- Footer -->
         <footer id="footer">
-            <p class="copyright">&copy; Untitled. Design: <a href="https://html5up.net">HTML5 UP</a>.</p>
+            <p class="copyright">&copy; Devin Matte. Design: <a href="https://html5up.net">HTML5 UP</a>.</p>
         </footer>
 
     </div>
