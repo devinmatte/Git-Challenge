@@ -27,13 +27,23 @@ if ($conn->query($sql) === TRUE) {
 $conn = new mysqli(CONF_LOCATION, CONF_ADMINID, CONF_ADMINPASS, CONF_DATABASE);
 
 // sql to create table
-$sql = "CREATE TABLE Tracked (id INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY, sha VARCHAR(256) NOT NULL)";
+$sql = "CREATE TABLE Tracked (sha VARCHAR(256) NOT NULL)";
 
 if ($conn->query($sql) === TRUE) {
     echo "Table Tracked created successfully";
 } else {
     echo "Error creating table: " . $conn->error;
 }
+
+/*
+$sql = "INSERT INTO Tracked (sha) VALUES ('')";
+
+if ($conn->query($sql) === TRUE) {
+    echo "New record created successfully";
+} else {
+    echo "Error: " . $sql . "<br>" . $conn->error;
+}
+*/
 
 $test_user = new user("Devin Matte", "devinmatte@gmail.com", "devinmatte", 0);
 $test_user2 = new user("James Sonne", "test@gmail.com", "test", 0);
