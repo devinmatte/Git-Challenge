@@ -75,14 +75,6 @@ $obj = json_decode($json);
 //Loop through all Repos in Org
 foreach ($obj as &$repo) {
     $repo_url = substr($repo->commits_url, 0, -6) . "?client_id=" . GIT_CLIENT . "&client_secret=" . GIT_SECRET;
-    $opts = [
-        'http' => [
-            'method' => 'GET',
-            'header' => [
-                'User-Agent: PHP'
-            ]
-        ]
-    ];
     $repo_json = file_get_contents($repo_url, false, stream_context_create($opts));
     $repo_obj = json_decode($repo_json);
 
@@ -93,14 +85,6 @@ foreach ($obj as &$repo) {
 
         if ($conn->query($query) <= 0) {
             $commit_url = $commit->url . "?client_id=" . GIT_CLIENT . "&client_secret=" . GIT_SECRET;
-            $opts = [
-                'http' => [
-                    'method' => 'GET',
-                    'header' => [
-                        'User-Agent: PHP'
-                    ]
-                ]
-            ];
 
             $commit_json = file_get_contents($commit_url, false, stream_context_create($opts));
             $commit_obj = json_decode($commit_json);
