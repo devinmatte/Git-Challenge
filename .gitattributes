@@ -17,7 +17,7 @@
 *.RTF	 diff=astextplain
 
 # Vendor Folders
-assets/css/* linguist-vendored = false
+assets/css/* linguist-vendored=false
 assets/sass/* linguist-vendored
 assets/fonts/* linguist-vendored
 assets/js/* linguist-vendored

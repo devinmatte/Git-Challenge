@@ -6,22 +6,21 @@ include("include/configuration.php");
 //start the session
 session_start();
 
-//TODO: SQL Database
 // Create connection
 $conn = new mysqli(CONF_LOCATION, CONF_ADMINID, CONF_ADMINPASS);
 
 // Check connection
 if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
+    die("Connection failed: " . $conn->connect_error . "<br>");
 }
-echo "Connected successfully\n";
+echo "Connected successfully" . "<br>";
 
 // Create database
 $sql = "CREATE DATABASE Git-Challenge";
 if ($conn->query($sql) === TRUE) {
-    echo "Database created successfully\n";
+    echo "Database created successfully" . "<br>";
 } else {
-    echo "Error creating database: " . $conn->error . "\n";
+    echo "Error creating database: " . $conn->error . "<br>";
 }
 
 $conn = new mysqli(CONF_LOCATION, CONF_ADMINID, CONF_ADMINPASS, CONF_DATABASE);
@@ -30,18 +29,18 @@ $conn = new mysqli(CONF_LOCATION, CONF_ADMINID, CONF_ADMINPASS, CONF_DATABASE);
 $sql = "CREATE TABLE Tracked (sha VARCHAR(256) NOT NULL)";
 
 if ($conn->query($sql) === TRUE) {
-    echo "Table Tracked created successfully\n";
+    echo "Table Tracked created successfully" . "<br>";
 } else {
-    echo "Error creating table: " . $conn->error . "\n";
+    echo "Error creating table: " . $conn->error . "<br>";
 }
 
 // sql to create table
 $sql = "CREATE TABLE Users (name VARCHAR(256) NOT NULL, email VARCHAR(128) NOT NULL, score INT(25))";
 
 if ($conn->query($sql) === TRUE) {
-    echo "Table Users created successfully\n";
+    echo "Table Users created successfully" . "<br>";
 } else {
-    echo "Error creating table: " . $conn->error . "\n";
+    echo "Error creating table: " . $conn->error . "<br>";
 }
 
 /*
@@ -92,14 +91,14 @@ foreach ($obj as &$repo) {
             $result = $conn->query($query);
             if ($result->num_rows > 0) {
                 // output data of each row
-                while($row = $result->fetch_assoc()) {
+                while ($row = $result->fetch_assoc()) {
                     echo "Score: " . $row["score"] . "<br>";
                 }
             } else {
                 echo "0 results of score where email = " . $commit->commit->author->email . "<br>";
             }
             if ($conn->query($query) > 0) {
-            $user = $conn->query($query);
+                $user = $conn->query($query);
 
                 //Count stats for each Commit to their corresponding person
                 foreach ($commit_obj as &$single_commit) {
@@ -107,15 +106,15 @@ foreach ($obj as &$repo) {
                     $sql = "UPDATE Users SET score=" . $score . " WHERE email=" . $single_commit->commit->author->email;
 
                     if ($conn->query($sql) === TRUE) {
-                        echo "Record updated successfully";
+                        echo "Record updated successfully" . "<br>";
                     } else {
-                    echo "Error updating record: " . $conn->error;
+                        echo "Error updating record: " . $conn->error . "<br>";
                     }
-                    $sql = "INSERT INTO Tracked (sha) VALUES (" . $commit->sha . ")";
+                    $sql = "INSERT INTO Tracked (sha) VALUES (" . $single_commit->sha . ")";
                     if ($conn->query($sql) === TRUE) {
-                        echo "New record created successfully in Tracked";
+                        echo "New record created successfully in Tracked" . "<br>";
                     } else {
-                        echo "Error: " . $sql . "<br>" . $conn->error;
+                        echo "Error: " . $sql . "<br>" . $conn->error . "<br>";
                     }
                 }
             }
