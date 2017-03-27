@@ -83,12 +83,15 @@ foreach ($obj as &$repo) {
         $query = "SELECT sha from Tracked where sha=" . $commit->sha;
 
         if ($conn->query($query) <= 0) {
+            //Getting Proper Results
             $commit_url = $commit->url . "?client_id=" . GIT_CLIENT . "&client_secret=" . GIT_SECRET;
 
             $commit_json = file_get_contents($commit_url, false, stream_context_create($opts));
             $commit_obj = json_decode($commit_json);
-            $query = "SELECT score from Users where email=" . $commit->commit->author->email;
+            $query = "SELECT score from Users where email='" . $commit->commit->author->email . "'";
+
             $result = $conn->query($query);
+
             if ($result->num_rows > 0) {
                 // output data of each row
                 while ($row = $result->fetch_assoc()) {
@@ -97,13 +100,16 @@ foreach ($obj as &$repo) {
             } else {
                 echo "0 results of score where email = " . $commit->commit->author->email . "<br>";
             }
-            if ($conn->query($query) > 0) {
+
+            $result = $conn->query($query);
+
+            if ($result->num_rows > 0) {
                 $user = $conn->query($query);
 
                 //Count stats for each Commit to their corresponding person
                 foreach ($commit_obj as &$single_commit) {
                     $score = $user['score'] + $single_commit->stats->total;
-                    $sql = "UPDATE Users SET score=" . $score . " WHERE email=" . $single_commit->commit->author->email;
+                    $sql = "UPDATE Users SET score=" . $score . " WHERE email='" . $single_commit->commit->author->email . "'";
 
                     if ($conn->query($sql) === TRUE) {
                         echo "Record updated successfully" . "<br>";
