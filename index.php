@@ -80,7 +80,7 @@ foreach ($obj as &$repo) {
 
     //Loop through all Commits in each Repo
     foreach ($repo_obj as &$commit) {
-        $query = "SELECT sha FROM Tracked where sha='" . $commit->sha . "'";
+        $query = "SELECT sha FROM Tracked WHERE sha='" . $commit->sha . "'";
 
         if ($conn->query($query) <= 0) {
             //Getting Proper Results
@@ -88,7 +88,7 @@ foreach ($obj as &$repo) {
 
             $commit_json = file_get_contents($commit_url, false, stream_context_create($opts));
             $commit_obj = json_decode($commit_json);
-            $query = "SELECT score from Users where email='" . $commit->commit->author->email . "'";
+            $query = "SELECT score FROM Users WHERE email='" . $commit->commit->author->email . "'";
 
             $result = $conn->query($query);
 
