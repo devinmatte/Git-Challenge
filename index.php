@@ -108,7 +108,7 @@ foreach ($obj as &$repo) {
 
                 //Count stats for each Commit to their corresponding person
                 foreach ($commit_obj as &$single_commit) {
-                    $score = $user['score'] + $single_commit->stats->total;
+                    $score = $user->score + $single_commit->stats->total;
                     $sql = "UPDATE Users SET score=" . $score . " WHERE email='" . $single_commit->commit->author->email . "'";
 
                     if ($conn->query($sql) === TRUE) {
@@ -116,11 +116,11 @@ foreach ($obj as &$repo) {
                     } else {
                         echo "Error updating record: " . $conn->error . "<br>";
                     }
-                    $sql = "INSERT INTO Tracked (sha) VALUES (" . $single_commit->sha . ")";
+                    $sql = "INSERT INTO Tracked VALUES ('" . $single_commit->sha . "')";
                     if ($conn->query($sql) === TRUE) {
                         echo "New record created successfully in Tracked" . "<br>";
                     } else {
-                        echo "Error: " . $sql . "<br>" . $conn->error . "<br>";
+                        echo "Error: " . $sql . "<br>" . $conn->error . "<br>" . ;
                     }
                 }
             }
