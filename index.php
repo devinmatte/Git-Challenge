@@ -80,7 +80,7 @@ foreach ($obj as &$repo) {
 
     //Loop through all Commits in each Repo
     foreach ($repo_obj as &$commit) {
-        $query = "SELECT sha from Tracked where sha=" . $commit->sha;
+        $query = "SELECT sha FROM Tracked where sha='" . $commit->sha . "'";
 
         if ($conn->query($query) <= 0) {
             //Getting Proper Results
