@@ -213,12 +213,12 @@ foreach ($obj as &$repo) {
                     echo "<td>" . $user["name"] . "</td>";
                     echo "<td>" . $user["score"] . "<div class=\"progress\">
   <div class=\"progress-bar progress-bar-success active\" role=\"progressbar\" style=\"width:40%\">
-  Added
+  +
   </div>
   <div class=\"progress-bar progress-bar-danger active\" role=\"progressbar\" style=\"width:25%\">
-  Removed
+  -
   </div>
-  <div class=\"progress-bar progress-bar-warning active\" role=\"progressbar\" style=\"width:35%\">
+  <div class=\"progress-bar progress-bar-warning active fa fa-trophy\" role=\"progressbar\" style=\"width:35%\">
   Challenges
   </div>
 </div>" . "</td>";
