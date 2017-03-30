@@ -69,6 +69,11 @@ foreach ($obj as &$repo) {
 
         $result = $conn->query($query);
         if ($result->num_rows <= 0) {
+            
+            $query = "SELECT score FROM Users WHERE email='" . $commit->commit->author->email . "'";
+            $result = $conn->query($query);
+            
+            if ($result->num_rows > 0) {
             //Getting Proper Results
             $commit_url = $commit->url . "?client_id=" . GIT_CLIENT . "&client_secret=" . GIT_SECRET;
 
@@ -98,6 +103,7 @@ foreach ($obj as &$repo) {
                 }
 
             }
+        }
         }
     }
 
