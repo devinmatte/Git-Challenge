@@ -19,3 +19,6 @@ define("GIT_ORG", "NHSTechTeam");
 define("GIT_CLIENT", "Git Client");
 /** Git Secret */
 define("GIT_SECRET", "Git Secret");
+
+/** App Options */
+define("Signup", "TRUE")
