@@ -1,6 +1,5 @@
 <?php
 
-include("user.php");
 include("include/configuration.php");
 
 // Create connection
@@ -10,7 +9,6 @@ $conn = new mysqli(CONF_LOCATION, CONF_ADMINID, CONF_ADMINPASS);
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error . "<br>");
 }
-echo "Connected successfully" . "<br>";
 
 // Create database
 $sql = "CREATE DATABASE Git-Challenge";
@@ -77,17 +75,6 @@ foreach ($obj as &$repo) {
             $commit_json = file_get_contents($commit_url, false, stream_context_create($opts));
             $commit_obj = json_decode($commit_json);
             $query = "SELECT score FROM Users WHERE email='" . $commit->commit->author->email . "'";
-
-            $result = $conn->query($query);
-
-            if ($result->num_rows > 0) {
-                // output data of each row
-                while ($row = $result->fetch_assoc()) {
-                    echo "Score: " . $row["score"] . "<br>";
-                }
-            } else {
-                echo "0 results of score where email = " . $commit->commit->author->email . "<br>";
-            }
 
             $result = $conn->query($query);
 
