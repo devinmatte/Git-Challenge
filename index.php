@@ -120,7 +120,7 @@ foreach ($obj as &$repo) {
                     if ($conn->query($sql) === TRUE) {
                         echo "New record created successfully in Tracked" . "<br>";
                     } else {
-                        echo "Error: " . $sql . "<br>" . $conn->error . "<br>" . ;
+                        echo "Error: " . $sql . "<br>" . $conn->error . "<br>";
                     }
                 }
             }
