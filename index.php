@@ -65,45 +65,45 @@ foreach ($obj as &$repo) {
 
     //Loop through all Commits in each Repo
     foreach ($repo_obj as &$commit) {
-        $query = "SELECT sha FROM Tracked WHERE sha='" . $commit->sha . "'";
-
+        $query = "SELECT score FROM Users WHERE email='" . $commit->commit->author->email . "'";
         $result = $conn->query($query);
-        if ($result->num_rows <= 0) {
             
-            $query = "SELECT score FROM Users WHERE email='" . $commit->commit->author->email . "'";
-            $result = $conn->query($query);
-            
-            if ($result->num_rows > 0) {
-            //Getting Proper Results
-            $commit_url = $commit->url . "?client_id=" . GIT_CLIENT . "&client_secret=" . GIT_SECRET;
-
-            $commit_json = file_get_contents($commit_url, false, stream_context_create($opts));
-            $commit_obj = json_decode($commit_json);
-            $query = "SELECT score FROM Users WHERE email='" . $commit->commit->author->email . "'";
+        if ($result->num_rows > 0) {
+        
+            $query = "SELECT sha FROM Tracked WHERE sha='" . $commit->sha . "'";
 
             $result = $conn->query($query);
+            if ($result->num_rows <= 0) {
+                //Getting Proper Results
+                $commit_url = $commit->url . "?client_id=" . GIT_CLIENT . "&client_secret=" . GIT_SECRET;
 
-            if ($result->num_rows > 0) {
-                $user = $result->fetch_assoc();
+                $commit_json = file_get_contents($commit_url, false, stream_context_create($opts));
+                $commit_obj = json_decode($commit_json);
+                $query = "SELECT score FROM Users WHERE email='" . $commit->commit->author->email . "'";
 
-                //Count stats for each Commit to their corresponding person
-                $score = $user["score"] + $commit_obj->stats->total;
-                $sql = "UPDATE Users SET score=" . $score . " WHERE email='" . $commit->commit->author->email . "'";
+                $result = $conn->query($query);
 
-                if ($conn->query($sql) === TRUE) {
-                    echo "Record updated successfully" . "<br>";
-                } else {
-                    echo "Error updating record: " . $conn->error . "<br>";
+                if ($result->num_rows > 0) {
+                    $user = $result->fetch_assoc();
+
+                    //Count stats for each Commit to their corresponding person
+                    $score = $user["score"] + $commit_obj->stats->total;
+                    $sql = "UPDATE Users SET score=" . $score . " WHERE email='" . $commit->commit->author->email . "'";
+
+                    if ($conn->query($sql) === TRUE) {
+                        echo "Record updated successfully" . "<br>";
+                    } else {
+                        echo "Error updating record: " . $conn->error . "<br>";
+                    }
+                    $sql = "INSERT INTO Tracked VALUES ('" . $commit_obj->sha . "')";
+                    if ($conn->query($sql) === TRUE) {
+                        echo "New record created successfully in Tracked" . $commit_obj->sha . "<br>";
+                    } else {
+                        echo "Error: " . $sql . "<br>" . $conn->error . "<br>";
+                    }
+
                 }
-                $sql = "INSERT INTO Tracked VALUES ('" . $commit_obj->sha . "')";
-                if ($conn->query($sql) === TRUE) {
-                    echo "New record created successfully in Tracked" . $commit_obj->sha . "<br>";
-                } else {
-                    echo "Error: " . $sql . "<br>" . $conn->error . "<br>";
-                }
-
             }
-        }
         }
     }
 
