@@ -177,9 +177,7 @@ foreach ($obj as &$repo) {
                     <header class="major">
                         <h2>Ipsum sed adipiscing</h2>
                     </header>
-                    <p>Sed lorem ipsum dolor sit amet nullam consequat feugiat consequat magna
-                        adipiscing magna etiam amet veroeros. Lorem ipsum dolor tempus sit cursus.
-                        Tempus nisl et nullam lorem ipsum dolor sit amet aliquam.</p>
+                    <p>Git Challenge was a project I had an idea for when I looked over a GitHub Organisation I was a part of. It is for my old High School Technology Team, the organisation that taught me most of what I knew about programming before I came here. The projects in the GitHub hadn't been touched by anyone except myself and a few other Team Alumni. So I thought I should come up with a way to encourage contributing to these projects, and to teach people git. So I came up with Git-Challenge. A app made to gamify contributing to projects, for any Organisation. Not just this Tech Team. It could be used for CSH, or really any other git organisation with multiple contributors.</p>
                     <ul class="actions">
                         <li><a href="generic.html" class="button">Learn More</a></li>
                     </ul>
