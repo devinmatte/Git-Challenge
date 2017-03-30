@@ -162,6 +162,7 @@ foreach ($obj as &$repo) {
     <nav id="nav">
         <ul>
             <li><a href="#intro" class="active">Introduction</a></li>
+            <li><a href="#breakdown">Point Breakdown</a></li>
             <li><a href="#second">Second Section</a></li>
         </ul>
     </nav>
@@ -185,6 +186,52 @@ foreach ($obj as &$repo) {
                 </div>
                 <span class="image"><img src="images/pic01.jpg" alt=""/></span>
             </div>
+        </section>
+
+        <!-- Breakdown Section -->
+        <section id="breakdown" class="main special">
+            <header class="major">
+                <h2>Point Breakdown</h2>
+            </header>
+            <table class="alt">
+                <thead>
+                <tr>
+                    <th>Rank</th>
+                    <th>Name</th>
+                    <th>Score</th>
+                </tr>
+                </thead>
+                <tbody>
+                <?php
+                $query = "SELECT * FROM Users ORDER BY score DESC";
+                $result = $conn->query($query);
+
+                for ($row = 0; $row < 5; $row++) {
+                    $user = $result->fetch_assoc();
+                    echo "<tr>";
+                    echo "<td>" . ($row + 1) . "</td>";
+                    echo "<td>" . $user["name"] . "</td>";
+                    echo "<td>" . $user["score"] . "<div class=\"progress\">
+  <div class=\"progress-bar progress-bar-success active\" role=\"progressbar\" style=\"width:40%\">
+  Added
+  </div>
+  <div class=\"progress-bar progress-bar-danger active\" role=\"progressbar\" style=\"width:25%\">
+  Removed
+  </div>
+  <div class=\"progress-bar progress-bar-warning active\" role=\"progressbar\" style=\"width:35%\">
+  Challenges
+  </div>
+</div>" . "</td>";
+                    echo "</tr>";
+                }
+                ?>
+                </tbody>
+            </table>
+            <footer class="major">
+                <ul class="actions">
+                    <li><a href="generic.html" class="button">Learn More</a></li>
+                </ul>
+            </footer>
         </section>
 
         <!-- Second Section -->
