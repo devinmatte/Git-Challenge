@@ -26,7 +26,7 @@ if ($conn->query($sql) === TRUE) {
 }
 
 // sql to create table
-$sql = "CREATE TABLE Users (name VARCHAR(256) NOT NULL, email VARCHAR(128) NOT NULL, score INT(25))";
+$sql = "CREATE TABLE Users (name VARCHAR(256) NOT NULL, email VARCHAR(128) NOT NULL, score INT(25) DEFAULT 0, added INT(25) DEFAULT 0, removed INT(25) DEFAULT 0, challenge INT(25) DEFAULT 0)";
 
 if ($conn->query($sql) === TRUE) {
     echo "Table Users created successfully" . "<br>";
