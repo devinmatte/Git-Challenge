@@ -65,11 +65,21 @@ foreach ($obj as &$repo) {
 
     //Loop through all Commits in each Repo
     foreach ($repo_obj as &$commit) {
-        $query = "SELECT score FROM Users WHERE email='" . $commit->commit->author->email . "'";
+        $query = "SELECT * FROM Users WHERE email='" . $commit->commit->author->email . "'";
         $result = $conn->query($query);
-            
+
+        if (SIGN_UP == "FALSE" && $result->num_rows <= 0) {
+            $sql = "INSERT INTO Users (name, email) VALUES ('" . $commit->commit->author->name . "', '" . $commit->commit->author->email . "')";
+            if ($conn->query($sql) === TRUE) {
+                echo "New record created successfully in User: " . $commit->commit->author->name . "<br>";
+            } else {
+                echo "Error: " . $sql . "<br>" . $conn->error . "<br>";
+            }
+        }
+
+
         if ($result->num_rows > 0) {
-        
+
             $query = "SELECT sha FROM Tracked WHERE sha='" . $commit->sha . "'";
 
             $result = $conn->query($query);
@@ -79,17 +89,34 @@ foreach ($obj as &$repo) {
 
                 $commit_json = file_get_contents($commit_url, false, stream_context_create($opts));
                 $commit_obj = json_decode($commit_json);
-                $query = "SELECT score FROM Users WHERE email='" . $commit->commit->author->email . "'";
+                $query = "SELECT * FROM Users WHERE email='" . $commit->commit->author->email . "'";
 
                 $result = $conn->query($query);
 
                 if ($result->num_rows > 0) {
                     $user = $result->fetch_assoc();
 
-                    //Count stats for each Commit to their corresponding person
+                    //Count total stats for each Commit to their corresponding person
                     $score = $user["score"] + $commit_obj->stats->total;
                     $sql = "UPDATE Users SET score=" . $score . " WHERE email='" . $commit->commit->author->email . "'";
+                    if ($conn->query($sql) === TRUE) {
+                        echo "Record updated successfully" . "<br>";
+                    } else {
+                        echo "Error updating record: " . $conn->error . "<br>";
+                    }
 
+                    //Count added stats for each Commit to their corresponding person
+                    $added = $user["added"] + $commit_obj->stats->additions;
+                    $sql = "UPDATE Users SET added=" . $added . " WHERE email='" . $commit->commit->author->email . "'";
+                    if ($conn->query($sql) === TRUE) {
+                        echo "Record updated successfully" . "<br>";
+                    } else {
+                        echo "Error updating record: " . $conn->error . "<br>";
+                    }
+
+                    //Count removed stats for each Commit to their corresponding person
+                    $removed = $user["removed"] + $commit_obj->stats->deletions;
+                    $sql = "UPDATE Users SET removed=" . $removed . " WHERE email='" . $commit->commit->author->email . "'";
                     if ($conn->query($sql) === TRUE) {
                         echo "Record updated successfully" . "<br>";
                     } else {
@@ -183,12 +210,21 @@ foreach ($obj as &$repo) {
                     <header class="major">
                         <h2>Idea</h2>
                     </header>
-                    <p>Git Challenge was a project I had an idea for when I looked over a GitHub Organisation I was a part of. It is for my old High School Technology Team, the organisation that taught me most of what I knew about programming before I came here. The projects in the GitHub hadn't been touched by anyone except myself and a few other Team Alumni. So I thought I should come up with a way to encourage contributing to these projects, and to teach people git. So I came up with Git-Challenge. A app made to gamify contributing to projects, for any Organisation. Not just this Tech Team. It could be used for CSH, or really any other git organisation with multiple contributors.</p>
+                    <p>Git Challenge was a project I had an idea for when I looked over a GitHub Organisation I was a
+                        part of. It is for my old High School Technology Team, the organisation that taught me most of
+                        what I knew about programming before I came here. The projects in the GitHub hadn't been touched
+                        by anyone except myself and a few other Team Alumni. So I thought I should come up with a way to
+                        encourage contributing to these projects, and to teach people git. So I came up with
+                        Git-Challenge. A app made to gamify contributing to projects, for any Organisation. Not just
+                        this Tech Team. It could be used for CSH, or really any other git organisation with multiple
+                        contributors.</p>
                     <ul class="actions">
                         <li><a href="generic.html" class="button">Learn More</a></li>
                     </ul>
                 </div>
-                <span class="image"><img src="https://static1.squarespace.com/static/5783a7e19de4bb11478ae2d8/5821d2b909e1c46748736b4a/583d6f01e58c627c3a6b7e47/1486468532983/Github_Blog.gif?w=1000w" alt=""/></span>
+                <span class="image"><img
+                            src="https://static1.squarespace.com/static/5783a7e19de4bb11478ae2d8/5821d2b909e1c46748736b4a/583d6f01e58c627c3a6b7e47/1486468532983/Github_Blog.gif?w=1000w"
+                            alt=""/></span>
             </div>
         </section>
 
@@ -216,11 +252,11 @@ foreach ($obj as &$repo) {
                     echo "<td>" . ($row + 1) . "</td>";
                     echo "<td>" . $user["name"] . "</td>";
                     echo "<td>" . $user["score"] . "<div class=\"progress\">
-  <div class=\"progress-bar progress-bar-success active fa fa-plus-circle\" role=\"progressbar\" style=\"width:40%\">
+  <div class=\"progress-bar progress-bar-success active fa fa-plus-circle\" role=\"progressbar\" style=\"width:" . ($user["added"] / $user["score"]) * 100 . "%\">
   </div>
-  <div class=\"progress-bar progress-bar-danger active fa fa-minus-circle\" role=\"progressbar\" style=\"width:25%\">
+  <div class=\"progress-bar progress-bar-danger active fa fa-minus-circle\" role=\"progressbar\" style=\"width:" . ($user["removed"] / $user["score"]) * 100 . "%\">
   </div>
-  <div class=\"progress-bar progress-bar-warning active fa fa-trophy\" role=\"progressbar\" style=\"width:35%\">
+  <div class=\"progress-bar progress-bar-warning active fa fa-trophy\" role=\"progressbar\" style=\"width:" . ($user["challenge"] / $user["score"]) * 100 . "%\">
   </div>
 </div>" . "</td>";
                     echo "</tr>";

@@ -21,4 +21,4 @@ define("GIT_CLIENT", "Git Client");
 define("GIT_SECRET", "Git Secret");
 
 /** App Options */
-define("Signup", "TRUE")
+define("SIGN_UP", "TRUE");
