@@ -265,6 +265,7 @@ if(DEBUG == "OFF"){
                 <thead>
                 <tr>
                     <th>Rank</th>
+                    <th></th>
                     <th>Name</th>
                     <th>Score</th>
                 </tr>
@@ -277,9 +278,10 @@ if(DEBUG == "OFF"){
                 for ($row = 0; $row < $result->num_rows; $row++) {
                     $user = $result->fetch_assoc();
                     echo "<tr>";
-                    echo "<td>" . ($row + 1) . "</td>";
-                    echo "<td>" . $user["name"] . "</td>";
-                    echo "<td>" . $user["score"] . "<div class=\"progress\">
+                    echo "<td align=\"center\" width=\"10%\">" . ($row + 1) . "</td>";
+                    echo "<td align=\"center\" width=\"10%\">" . "<img src=\"https://avatars1.githubusercontent.com/u/" . $user["id"] . "\" width=\"75%\" alt=\"\" />" . "</td>";
+                    echo "<td align=\"center\" width=\"35%\">" . $user["name"] . "</td>";
+                    echo "<td align=\"center\">" . $user["score"] . "<div class=\"progress\">
   <div class=\"progress-bar progress-bar-success active fa fa-plus-circle\" role=\"progressbar\" style=\"width:" . ($user["added"] / $user["score"]) * 100 . "%\">
   </div>
   <div class=\"progress-bar progress-bar-danger active fa fa-minus-circle\" role=\"progressbar\" style=\"width:" . ($user["removed"] / $user["score"]) * 100 . "%\">
