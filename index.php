@@ -97,7 +97,8 @@ foreach ($obj as &$repo) {
                     $user = $result->fetch_assoc();
 
                     //Count total stats for each Commit to their corresponding person
-                    $score = $user["score"] + $commit_obj->stats->total;
+                    $score = $user["score"] + ($commit_obj->stats->deletions);
+                    $score = $user["score"] + ($commit_obj->stats->additions);
                     $sql = "UPDATE Users SET score=" . $score . " WHERE email='" . $commit->commit->author->email . "'";
                     if ($conn->query($sql) === TRUE) {
                         echo "Record updated successfully" . "<br>";
