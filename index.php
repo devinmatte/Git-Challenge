@@ -1,3 +1,41 @@
+<!DOCTYPE HTML>
+<!--
+    Template:
+    Stellar by HTML5 UP
+    html5up.net | @ajlkn
+    Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+<head>
+    <title>Git Challenge</title>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <!--[if lte IE 8]>
+    <script src="assets/js/ie/html5shiv.js"></script><![endif]-->
+    <!-- Scripts -->
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/js/jquery.scrollex.min.js"></script>
+    <script src="assets/js/jquery.scrolly.min.js"></script>
+    <script src="assets/js/skel.min.js"></script>
+    <script src="assets/js/util.js"></script>
+    <!--[if lte IE 8]>
+    <script src="assets/js/ie/respond.min.js"></script><![endif]-->
+    <script src="assets/js/main.js"></script>
+    <!-- Latest compiled and minified CSS
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    -->
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+            integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+            crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="assets/css/main.css"/>
+    <!--[if lte IE 9]>
+    <link rel="stylesheet" href="assets/css/ie9.css"/><![endif]-->
+    <!--[if lte IE 8]>
+    <link rel="stylesheet" href="assets/css/ie8.css"/><![endif]-->
+</head>
+
 <?php
 
 include("include/configuration.php");
@@ -5,15 +43,19 @@ include("include/configuration.php");
 // Create connection
 $conn = new mysqli(CONF_LOCATION, CONF_ADMINID, CONF_ADMINPASS);
 
+if(DEBUG == "OFF"){
+    echo "<!--";
+}
+
 // Check connection
 if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error . "<br>");
+    die("<div class=\"alert alert-danger alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a><b>Connection failed:</b> " . $conn->connect_error . "</div>");
 }
 
 // Create database
 $sql = "CREATE DATABASE Git-Challenge";
 if ($conn->query($sql) === TRUE) {
-    echo "Database created successfully" . "<br>";
+    echo "<div class=\"alert alert-success alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Database created successfully</div>";
 }
 
 $conn = new mysqli(CONF_LOCATION, CONF_ADMINID, CONF_ADMINPASS, CONF_DATABASE);
@@ -22,14 +64,14 @@ $conn = new mysqli(CONF_LOCATION, CONF_ADMINID, CONF_ADMINPASS, CONF_DATABASE);
 $sql = "CREATE TABLE Tracked (sha VARCHAR(256) NOT NULL)";
 
 if ($conn->query($sql) === TRUE) {
-    echo "Table Tracked created successfully" . "<br>";
+    echo "<div class=\"alert alert-success alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Table <i>Tracked</i> created successfully</div>";
 }
 
 // sql to create table
 $sql = "CREATE TABLE Users (name VARCHAR(256) NOT NULL, email VARCHAR(128) NOT NULL, score INT(25) DEFAULT 0, added INT(25) DEFAULT 0, removed INT(25) DEFAULT 0, challenge INT(25) DEFAULT 0)";
 
 if ($conn->query($sql) === TRUE) {
-    echo "Table Users created successfully" . "<br>";
+    echo "<div class=\"alert alert-success alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Table <i>Users</i> created successfully</div>";
 }
 
 /*
@@ -71,9 +113,9 @@ foreach ($obj as &$repo) {
         if (SIGN_UP == "FALSE" && $result->num_rows <= 0) {
             $sql = "INSERT INTO Users (name, email) VALUES ('" . $commit->commit->author->name . "', '" . $commit->commit->author->email . "')";
             if ($conn->query($sql) === TRUE) {
-                echo "New record created successfully in User: " . $commit->commit->author->name . "<br>";
+                echo "<div class=\"alert alert-info alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>New record created successfully in User: " . $commit->commit->author->name . "</div>";
             } else {
-                echo "Error: " . $sql . "<br>" . $conn->error . "<br>";
+                echo "<div class=\"alert alert-warning alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Error: " . $sql . "<br>" . $conn->error . "</div>>";
             }
         }
 
@@ -97,68 +139,51 @@ foreach ($obj as &$repo) {
                     $user = $result->fetch_assoc();
 
                     //Count total stats for each Commit to their corresponding person
-                    $score = $user["score"] + ($commit_obj->stats->deletions);
-                    $score = $user["score"] + ($commit_obj->stats->additions);
+                    $score = $user["score"] + ($commit_obj->stats->additions + $commit_obj->stats->deletions);
                     $sql = "UPDATE Users SET score=" . $score . " WHERE email='" . $commit->commit->author->email . "'";
                     if ($conn->query($sql) === TRUE) {
-                        echo "Record updated successfully" . "<br>";
+                        echo "<div class=\"alert alert-info alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Record updated successfully" . "</div>";
                     } else {
-                        echo "Error updating record: " . $conn->error . "<br>";
+                        echo "<div class=\"alert alert-warning alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Error updating record: " . $conn->error . "</div>>";
                     }
 
                     //Count added stats for each Commit to their corresponding person
                     $added = $user["added"] + $commit_obj->stats->additions;
                     $sql = "UPDATE Users SET added=" . $added . " WHERE email='" . $commit->commit->author->email . "'";
                     if ($conn->query($sql) === TRUE) {
-                        echo "Record updated successfully" . "<br>";
+                        echo "<div class=\"alert alert-info alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Record updated successfully" . "</div>";
                     } else {
-                        echo "Error updating record: " . $conn->error . "<br>";
+                        echo "<div class=\"alert alert-warning alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Error updating record: " . $conn->error . "</div>>";
                     }
 
                     //Count removed stats for each Commit to their corresponding person
                     $removed = $user["removed"] + $commit_obj->stats->deletions;
                     $sql = "UPDATE Users SET removed=" . $removed . " WHERE email='" . $commit->commit->author->email . "'";
                     if ($conn->query($sql) === TRUE) {
-                        echo "Record updated successfully" . "<br>";
+                        echo "<div class=\"alert alert-info alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Record updated successfully" . "</div>";
                     } else {
-                        echo "Error updating record: " . $conn->error . "<br>";
+                        echo "<div class=\"alert alert-warning alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Error updating record: " . $conn->error . "</div>>";
                     }
                     $sql = "INSERT INTO Tracked VALUES ('" . $commit_obj->sha . "')";
                     if ($conn->query($sql) === TRUE) {
-                        echo "New record created successfully in Tracked" . $commit_obj->sha . "<br>";
+                        echo "<div class=\"alert alert-info alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>New record created successfully in Tracked: " . $commit_obj->sha . "</div>";
                     } else {
-                        echo "Error: " . $sql . "<br>" . $conn->error . "<br>";
+                        echo "<div class=\"alert alert-warning alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Error: " . $sql . "<br>" . $conn->error . "</div>>";
                     }
 
                 }
             }
         }
     }
+}
 
+if(DEBUG == "OFF"){
+    echo "-->";
 }
 
 ?>
-
-<!DOCTYPE HTML>
-<!--
-    Stellar by HTML5 UP
-    html5up.net | @ajlkn
-    Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
--->
-<html>
-<head>
-    <title>Git Challenge</title>
-    <meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1"/>
-    <!--[if lte IE 8]>
-    <script src="assets/js/ie/html5shiv.js"></script><![endif]-->
-    <link rel="stylesheet" href="assets/css/main.css"/>
-    <!--[if lte IE 9]>
-    <link rel="stylesheet" href="assets/css/ie9.css"/><![endif]-->
-    <!--[if lte IE 8]>
-    <link rel="stylesheet" href="assets/css/ie8.css"/><![endif]-->
-</head>
 <body>
+
 
 <!-- Wrapper -->
 <div id="wrapper">
@@ -257,6 +282,8 @@ foreach ($obj as &$repo) {
   </div>
   <div class=\"progress-bar progress-bar-danger active fa fa-minus-circle\" role=\"progressbar\" style=\"width:" . ($user["removed"] / $user["score"]) * 100 . "%\">
   </div>
+  <div class=\"progress-bar progress-bar-info active fa fa-upload\" role=\"progressbar\" style=\"width:" . (0 / $user["score"]) * 100 . "%\">
+  </div>
   <div class=\"progress-bar progress-bar-warning active fa fa-trophy\" role=\"progressbar\" style=\"width:" . ($user["challenge"] / $user["score"]) * 100 . "%\">
   </div>
 </div>" . "</td>";
@@ -314,16 +341,6 @@ foreach ($obj as &$repo) {
     </footer>
 
 </div>
-
-<!-- Scripts -->
-<script src="assets/js/jquery.min.js"></script>
-<script src="assets/js/jquery.scrollex.min.js"></script>
-<script src="assets/js/jquery.scrolly.min.js"></script>
-<script src="assets/js/skel.min.js"></script>
-<script src="assets/js/util.js"></script>
-<!--[if lte IE 8]>
-<script src="assets/js/ie/respond.min.js"></script><![endif]-->
-<script src="assets/js/main.js"></script>
 
 </body>
 </html>

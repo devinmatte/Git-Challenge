@@ -22,6 +22,7 @@ define("GIT_SECRET", "Git Secret");
 
 /** App Options */
 define("SIGN_UP", "TRUE");
+define("DEBUG", "OFF");
 
 // Point Scaling
 define("ADDITIONS", "1");
