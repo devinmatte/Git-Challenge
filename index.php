@@ -68,7 +68,7 @@ if ($conn->query($sql) === TRUE) {
 }
 
 // sql to create table
-$sql = "CREATE TABLE Users (name VARCHAR(256) NOT NULL, username VARCHAR(128) NOT NULL, id INT(35) NOT NULL, score INT(25) DEFAULT 0, added INT(25) DEFAULT 0, removed INT(25) DEFAULT 0, challenge INT(25) DEFAULT 0)";
+$sql = "CREATE TABLE Users (name VARCHAR(256) NOT NULL, username VARCHAR(128) NOT NULL, id INT(35) NOT NULL, score INT(25) DEFAULT 0, added INT(25) DEFAULT 0, removed INT(25) DEFAULT 0, challenge INT(25) DEFAULT 0, commits INT(25) DEFAULT 0)";
 
 if ($conn->query($sql) === TRUE) {
     echo "<div class=\"alert alert-success alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Table <i>Users</i> created successfully</div>";
@@ -113,9 +113,9 @@ foreach ($obj as &$repo) {
         if (SIGN_UP == "FALSE" && $result->num_rows <= 0) {
             $sql = "INSERT INTO Users (name, username, id) VALUES ('" . $commit->commit->author->name . "', '" . $commit->author->login . "', '" . $commit->author->id . "')";
             if ($conn->query($sql) === TRUE) {
-                echo "<div class=\"alert alert-info alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>New record created successfully in User: " . $commit->commit->author->name . "</div>";
+                echo "<div class=\"alert alert-info alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Added new User to Database: " . $commit->commit->author->name . "</div>";
             } else {
-                echo "<div class=\"alert alert-warning alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Error: " . $sql . "<br>" . $conn->error . "</div>>";
+                echo "<div class=\"alert alert-warning alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Error: " . $sql . "<br>" . $conn->error . "</div>";
             }
         }
 
@@ -139,7 +139,7 @@ foreach ($obj as &$repo) {
                     $user = $result->fetch_assoc();
 
                     //Count total stats for each Commit to their corresponding person
-                    $score = $user["score"] + ($commit_obj->stats->additions + $commit_obj->stats->deletions);
+                    $score = $user["score"] + (($commit_obj->stats->additions * (int)ADDITIONS) + ($commit_obj->stats->deletions * (int)DELETIONS) + ((int)COMMITS));
                     $sql = "UPDATE Users SET score=" . $score . " WHERE id='" . $commit->author->id . "'";
                     if ($conn->query($sql) === FALSE) {
                         echo "<div class=\"alert alert-warning alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Error updating record: " . $conn->error . "</div>";
@@ -158,6 +158,14 @@ foreach ($obj as &$repo) {
                     if ($conn->query($sql) === FALSE) {
                         echo "<div class=\"alert alert-warning alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Error updating record: " . $conn->error . "</div>";
                     }
+
+                    //Count added stats for each Commit to their corresponding person
+                    $commits = $user["commits"] + 1;
+                    $sql = "UPDATE Users SET commits=" . $commits . " WHERE id='" . $commit->author->id . "'";
+                    if ($conn->query($sql) === FALSE) {
+                        echo "<div class=\"alert alert-warning alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Error updating record: " . $conn->error . "</div>";
+                    }
+
                     $sql = "INSERT INTO Tracked VALUES ('" . $commit_obj->sha . "')";
                     if ($conn->query($sql) === TRUE) {
                         echo "<div class=\"alert alert-info alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>New record created successfully in Tracked: " . $commit_obj->sha . "</div>";
@@ -276,7 +284,7 @@ if(DEBUG == "OFF"){
   </div>
   <div class=\"progress-bar progress-bar-danger active fa fa-minus-circle\" role=\"progressbar\" style=\"width:" . ($user["removed"] / $user["score"]) * 100 . "%\">
   </div>
-  <div class=\"progress-bar progress-bar-info active fa fa-upload\" role=\"progressbar\" style=\"width:" . (0 / $user["score"]) * 100 . "%\">
+  <div class=\"progress-bar progress-bar-info active fa fa-upload\" role=\"progressbar\" style=\"width:" . ($user["commits"] / $user["score"]) * 1000 . "%\">
   </div>
   <div class=\"progress-bar progress-bar-warning active fa fa-trophy\" role=\"progressbar\" style=\"width:" . ($user["challenge"] / $user["score"]) * 100 . "%\">
   </div>
