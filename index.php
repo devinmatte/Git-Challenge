@@ -178,7 +178,7 @@ foreach ($obj as &$repo) {
             $query = "SELECT * FROM Users ORDER BY score DESC";
             $result = $conn->query($query);
 
-            for ($row = 0; $row < 5; $row++) {
+            for ($row = 0; $row < $result->num_rows; $row++) {
                 $user = $result->fetch_assoc();
                 echo "<tr>";
                 echo "<td>" . ($row + 1) . "</td>";
