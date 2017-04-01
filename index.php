@@ -43,7 +43,7 @@ include("include/configuration.php");
 // Create connection
 $conn = new mysqli(CONF_LOCATION, CONF_ADMINID, CONF_ADMINPASS);
 
-if(DEBUG == "OFF"){
+if (DEBUG == "OFF") {
     echo "<!--";
 }
 
@@ -179,7 +179,7 @@ foreach ($obj as &$repo) {
     }
 }
 
-if(DEBUG == "OFF"){
+if (DEBUG == "OFF") {
     echo "-->";
 }
 
@@ -280,15 +280,15 @@ if(DEBUG == "OFF"){
                     echo "<tr>";
                     echo "<td align=\"center\" width=\"10%\">" . ($row + 1) . "</td>";
                     echo "<td align=\"center\" width=\"10%\">" . "<img src=\"https://avatars1.githubusercontent.com/u/" . $user["id"] . "\" width=\"75%\" alt=\"\" />" . "</td>";
-                    echo "<td align=\"center\" width=\"35%\">" . $user["name"] . "</td>";
+                    echo "<td align=\"center\" width=\"30%\">" . $user["name"] . "</td>";
                     echo "<td align=\"center\">" . $user["score"] . "<div class=\"progress\">
-  <div class=\"progress-bar progress-bar-success active fa fa-plus-circle\" role=\"progressbar\" style=\"width:" . ($user["added"] / $user["score"]) * 100 . "%\">
+  <div class=\"progress-bar progress-bar-success active fa fa-plus-circle\" title=\"Additions: " . $user["added"] . "\" role=\"progressbar\" style=\"width:" . ($user["added"] / $user["score"]) * 100 . "%\">
   </div>
-  <div class=\"progress-bar progress-bar-danger active fa fa-minus-circle\" role=\"progressbar\" style=\"width:" . ($user["removed"] / $user["score"]) * 100 . "%\">
+  <div class=\"progress-bar progress-bar-danger active fa fa-minus-circle\" title=\"Deletions: " . $user["removed"] . "\" role=\"progressbar\" style=\"width:" . ($user["removed"] / $user["score"]) * 100 . "%\">
   </div>
-  <div class=\"progress-bar progress-bar-info active fa fa-upload\" role=\"progressbar\" style=\"width:" . ($user["commits"] / $user["score"]) * 1000 . "%\">
+  <div class=\"progress-bar progress-bar-info active fa fa-upload\" title=\"Commits: " . $user["commits"] . "\" role=\"progressbar\" style=\"width:" . ($user["commits"] / $user["score"]) * 1000 . "%\">
   </div>
-  <div class=\"progress-bar progress-bar-warning active fa fa-trophy\" role=\"progressbar\" style=\"width:" . ($user["challenge"] / $user["score"]) * 100 . "%\">
+  <div class=\"progress-bar progress-bar-warning active fa fa-trophy\" title=\"Challenge Points: " . $user["challenge"] . "\" role=\"progressbar\" style=\"width:" . ($user["challenge"] / $user["score"]) * 100 . "%\">
   </div>
 </div>" . "</td>";
                     echo "</tr>";
