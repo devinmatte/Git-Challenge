@@ -121,15 +121,14 @@ foreach ($obj as &$repo) {
                 }
             }
         }
-
+        $user = $result->fetch_assoc();
         if ($result->num_rows > 0) {
-            $query = "SELECT sha FROM Tracked WHERE sha='" . $issue->id . "'";
+            $query = "SELECT sha FROM Tracked WHERE sha='" . $issue->url . "'";
 
             $result = $conn->query($query);
             if ($result->num_rows <= 0) {
-                $user = $result->fetch_assoc();
                 //Count added stats for each Commit to their corresponding person
-                $issues = $user["issues"] + 1;
+                $issues = ($user["issues"] + 1);
                 $sql = "UPDATE Users SET issues=" . $issues . " WHERE id='" . $issue->user->id . "'";
                 if ($conn->query($sql) === FALSE) {
                     echo "<div class=\"alert alert-warning alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Error updating record: " . $conn->error . "</div>";
@@ -141,14 +140,12 @@ foreach ($obj as &$repo) {
                     echo "<div class=\"alert alert-warning alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Error updating record: " . $conn->error . "</div>";
                 }
 
-                $sql = "INSERT INTO Tracked VALUES ('" . $issue->id . "')";
+                $sql = "INSERT INTO Tracked VALUES ('" . $issue->url . "')";
                 if ($conn->query($sql) === TRUE) {
                     echo "<div class=\"alert alert-info alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>New record created successfully in Tracked: " . $issue->id . "</div>";
                 } else {
                     echo "<div class=\"alert alert-warning alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Error: " . $sql . "<br>" . $conn->error . "</div>";
                 }
-
-
             }
         }
 
@@ -347,10 +344,11 @@ if (DEBUG == "OFF") {
   </div>
   <div class=\"progress-bar progress-bar-info active fa fa-upload\" title=\"Commits: " . $user["commits"] . "\" role=\"progressbar\" style=\"width:" . ((float)(((float)$user["commits"] / (float)$user["score"])) * (100.0 * (float)COMMITS)) . "%\">
   </div>
+  <div class=\"progress-bar progress-bar-issue active fa fa-exclamation-circle\" title=\"Issues: " . $user["issues"] . "\" role=\"progressbar\" style=\"width:" . ((float)(((float)$user["issues"] / (float)$user["score"])) * (100.0 * (float)ISSUES)) . "%\">
+  </div>
   <div class=\"progress-bar progress-bar-warning active fa fa-trophy\" title=\"Challenge Points: " . $user["challenge"] . "\" role=\"progressbar\" style=\"width:" . ((float)((float)$user["challenge"] / (float)$user["score"])) * 100.0 . "%\">
   </div>
-    <div class=\"progress-bar progress-bar-issue active fa fa-exclamation-circle\" title=\"Issues: " . $user["issues"] . "\" role=\"progressbar\" style=\"width:" . ((float)(((float)$user["issues"] / (float)$user["score"])) * (100.0 * (float)ISSUES)) . "%\">
-  </div>
+
 </div>" . "</td>";
                     echo "</tr>";
                 }
