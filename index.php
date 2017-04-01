@@ -68,7 +68,7 @@ if ($conn->query($sql) === TRUE) {
 }
 
 // sql to create table
-$sql = "CREATE TABLE Users (name VARCHAR(256) NOT NULL, username VARCHAR(128) NOT NULL, id INT(35) NOT NULL, score INT(25) DEFAULT 0, added INT(25) DEFAULT 0, removed INT(25) DEFAULT 0, challenge INT(25) DEFAULT 0, commits INT(25) DEFAULT 0)";
+$sql = "CREATE TABLE Users (name VARCHAR(256) NOT NULL, username VARCHAR(128) NOT NULL, id INT(35) NOT NULL, score INT(25) DEFAULT 0, added INT(25) DEFAULT 0, removed INT(25) DEFAULT 0, challenge INT(25) DEFAULT 0, commits INT(25) DEFAULT 0, issues INT(25) DEFAULT 0)";
 
 if ($conn->query($sql) === TRUE) {
     echo "<div class=\"alert alert-success alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Table <i>Users</i> created successfully</div>";
@@ -100,10 +100,42 @@ $obj = json_decode($json);
 
 //Loop through all Repos in Org
 foreach ($obj as &$repo) {
+    $issue_url = substr($repo->issues_url, 0, -9) . "?client_id=" . GIT_CLIENT . "&client_secret=" . GIT_SECRET;
+    $issue_json = file_get_contents($issue_url, false, stream_context_create($opts));
+    $issue_obj = json_decode($issue_json);
+
+    foreach ($issue_obj as &$issue) {
+        $query = "SELECT * FROM Users WHERE id='" . $issue->user->id . "'";
+        $result = $conn->query($query);
+
+        if (SIGN_UP == "FALSE" && $result->num_rows <= 0) {
+            $user_url = $issue->author->url . "?client_id=" . GIT_CLIENT . "&client_secret=" . GIT_SECRET;
+            $user_json = file_get_contents($user_url, false, stream_context_create($opts));
+            $user_obj = json_decode($user_json);
+
+            $sql = "INSERT INTO Users (name, username, id) VALUES ('" . $user_obj->name . "', '" . $user_obj->login . "', '" . $user_obj->id . "')";
+            if ($conn->query($sql) === TRUE) {
+                echo "<div class=\"alert alert-info alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Added new User to Database: " . $user_obj->name . "</div>";
+            } else {
+                echo "<div class=\"alert alert-warning alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Error: " . $sql . "<br>" . $conn->error . "</div>";
+            }
+        }
+
+        if ($result->num_rows > 0) {
+            $user = $result->fetch_assoc();
+            //Count added stats for each Commit to their corresponding person
+            $issues = $user["issues"] + 1;
+            $sql = "UPDATE Users SET issues=" . $issues . " WHERE id='" . $issue->user->id . "'";
+            if ($conn->query($sql) === FALSE) {
+                echo "<div class=\"alert alert-warning alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Error updating record: " . $conn->error . "</div>";
+            }
+        }
+
+    }
+
     $repo_url = substr($repo->commits_url, 0, -6) . "?client_id=" . GIT_CLIENT . "&client_secret=" . GIT_SECRET;
     $repo_json = file_get_contents($repo_url, false, stream_context_create($opts));
     $repo_obj = json_decode($repo_json);
-
 
     //Loop through all Commits in each Repo
     foreach ($repo_obj as &$commit) {
@@ -111,9 +143,13 @@ foreach ($obj as &$repo) {
         $result = $conn->query($query);
 
         if (SIGN_UP == "FALSE" && $result->num_rows <= 0) {
-            $sql = "INSERT INTO Users (name, username, id) VALUES ('" . $commit->commit->author->name . "', '" . $commit->author->login . "', '" . $commit->author->id . "')";
+            $user_url = $commit->author->url . "?client_id=" . GIT_CLIENT . "&client_secret=" . GIT_SECRET;
+            $user_json = file_get_contents($user_url, false, stream_context_create($opts));
+            $user_obj = json_decode($user_json);
+
+            $sql = "INSERT INTO Users (name, username, id) VALUES ('" . $user_obj->name . "', '" . $user_obj->login . "', '" . $user_obj->id . "')";
             if ($conn->query($sql) === TRUE) {
-                echo "<div class=\"alert alert-info alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Added new User to Database: " . $commit->commit->author->name . "</div>";
+                echo "<div class=\"alert alert-info alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Added new User to Database: " . $user_obj->name . "</div>";
             } else {
                 echo "<div class=\"alert alert-warning alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Error: " . $sql . "<br>" . $conn->error . "</div>";
             }
@@ -224,7 +260,7 @@ if (DEBUG == "OFF") {
         <ul>
             <li><a href="#intro" class="active">Introduction</a></li>
             <li><a href="#breakdown">Point Breakdown</a></li>
-            <li><a href="#second">Second Section</a></li>
+            <li><a href="#second">Statistics</a></li>
         </ul>
     </nav>
 
@@ -247,7 +283,7 @@ if (DEBUG == "OFF") {
                         this Tech Team. It could be used for CSH, or really any other git organisation with multiple
                         contributors.</p>
                     <ul class="actions">
-                        <li><a href="generic.html" class="button">Learn More</a></li>
+                        <li><a href="#" class="button">Learn More</a></li>
                     </ul>
                 </div>
                 <span class="image"><img
@@ -288,6 +324,8 @@ if (DEBUG == "OFF") {
   </div>
   <div class=\"progress-bar progress-bar-info active fa fa-upload\" title=\"Commits: " . $user["commits"] . "\" role=\"progressbar\" style=\"width:" . ($user["commits"] / $user["score"]) * 1000 . "%\">
   </div>
+  <div class=\"progress-bar progress-bar-issue active fa fa-exclamation-circle\" title=\"Issues: " . $user["issues"] . "\" role=\"progressbar\" style=\"width:" . ($user["issues"] / $user["score"]) * 2500 . "%\">
+  </div>
   <div class=\"progress-bar progress-bar-warning active fa fa-trophy\" title=\"Challenge Points: " . $user["challenge"] . "\" role=\"progressbar\" style=\"width:" . ($user["challenge"] / $user["score"]) * 100 . "%\">
   </div>
 </div>" . "</td>";
@@ -297,43 +335,33 @@ if (DEBUG == "OFF") {
                 </tbody>
             </table>
             <footer class="major">
-                <ul class="actions">
-                    <li><a href="generic.html" class="button">Learn More</a></li>
-                </ul>
             </footer>
         </section>
 
         <!-- Second Section -->
         <section id="second" class="main special">
             <header class="major">
-                <h2>Ipsum consequat</h2>
+                <h2>Statistics</h2>
             </header>
             <ul class="statistics">
                 <li class="style1">
                     <span class="icon fa-code-fork"></span>
-                    <strong>5,120</strong> Etiam
+                    <strong>5,120</strong> Total Forks
                 </li>
                 <li class="style2">
                     <span class="icon fa-folder-open-o"></span>
-                    <strong>8,192</strong> Magna
+                    <strong>8,192</strong> Total Repositories
                 </li>
                 <li class="style3">
                     <span class="icon fa-signal"></span>
-                    <strong>2,048</strong> Tempus
+                    <strong>2,048</strong> Total Commits
                 </li>
                 <li class="style4">
                     <span class="icon fa-laptop"></span>
-                    <strong>4,096</strong> Aliquam
-                </li>
-                <li class="style5">
-                    <span class="icon fa-diamond"></span>
-                    <strong>1,024</strong> Nullam
+                    <strong>4,096</strong> Total Contributors
                 </li>
             </ul>
             <footer class="major">
-                <ul class="actions">
-                    <li><a href="generic.html" class="button">Learn More</a></li>
-                </ul>
             </footer>
         </section>
 
@@ -341,6 +369,9 @@ if (DEBUG == "OFF") {
 
     <!-- Footer -->
     <footer id="footer">
+        <ul class="icons">
+            <li><a href="#" class="icon alt fa-github"><span class="label">GitHub</span></a></li>
+        </ul>
         <p class="copyright">&copy; Devin Matte. Design: <a href="https://html5up.net">HTML5 UP</a>.</p>
     </footer>
 
