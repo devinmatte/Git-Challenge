@@ -325,6 +325,7 @@ if (DEBUG == "OFF") {
                     <th></th>
                     <th>Name</th>
                     <th>Score</th>
+                    <th>Breakdown</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -335,10 +336,11 @@ if (DEBUG == "OFF") {
                 for ($row = 0; $row < $result->num_rows; $row++) {
                     $user = $result->fetch_assoc();
                     echo "<tr>";
-                    echo "<td align=\"center\" width=\"10%\">" . ($row + 1) . "</td>";
+                    echo "<td align=\"center\" width=\"5%\">" . ($row + 1) . "</td>";
                     echo "<td align=\"center\" width=\"10%\">" . "<a href=\"https://github.com/" . $user["username"] . "\"><img src=\"https://avatars1.githubusercontent.com/u/" . $user["id"] . "\" width=\"75%\" alt=\"\" /></a>" . "</td>";
-                    echo "<td align=\"center\" width=\"30%\">" . $user["name"] . "</td>";
-                    echo "<td align=\"center\">" . $user["score"] . "<div class=\"progress\">
+                    echo "<td align=\"center\" width=\"25%\">" . $user["name"] . "</td>";
+                    echo "<td align=\"center\" width=\"8%\">" . $user["score"] . "</td>";
+                    echo "<td align=\"center\"><div class=\"progress\">
   <div class=\"progress-bar progress-bar-success active fa fa-plus-circle\" title=\"Additions: " . $user["added"] . "\" role=\"progressbar\" style=\"width:" . ((float)((float)$user["added"] / (float)$user["score"])) * 100.0 . "%\">
   </div>
   <div class=\"progress-bar progress-bar-danger active fa fa-minus-circle\" title=\"Deletions: " . $user["removed"] . "\" role=\"progressbar\" style=\"width:" . ((float)((float)$user["removed"] / (float)$user["score"])) * 100.0 . "%\">
@@ -349,7 +351,6 @@ if (DEBUG == "OFF") {
   </div>
   <div class=\"progress-bar progress-bar-warning active fa fa-trophy\" title=\"Challenge Points: " . $user["challenge"] . "\" role=\"progressbar\" style=\"width:" . ((float)((float)$user["challenge"] / (float)$user["score"])) * 100.0 . "%\">
   </div>
-
 </div>" . "</td>";
                     echo "</tr>";
                 }
