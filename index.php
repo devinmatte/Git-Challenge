@@ -112,7 +112,7 @@ foreach ($obj as &$repo) {
             $user_url = $issue->author->url . "?client_id=" . GIT_CLIENT . "&client_secret=" . GIT_SECRET;
             $user_json = file_get_contents($user_url, false, stream_context_create($opts));
             $user_obj = json_decode($user_json);
-            if($user_obj->name != "") {
+            if ($user_obj->name != "") {
                 $sql = "INSERT INTO Users (name, username, id) VALUES ('" . $user_obj->name . "', '" . $user_obj->login . "', '" . $user_obj->id . "')";
                 if ($conn->query($sql) === TRUE) {
                     echo "<div class=\"alert alert-info alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Added new User to Database: " . $user_obj->name . "</div>";
@@ -121,13 +121,14 @@ foreach ($obj as &$repo) {
                 }
             }
         }
-        $user = $result->fetch_assoc();
+
         if ($result->num_rows > 0) {
+            $user = $result->fetch_assoc();
             $query = "SELECT sha FROM Tracked WHERE sha='" . $issue->url . "'";
 
             $result = $conn->query($query);
             if ($result->num_rows <= 0) {
-                //Count added stats for each Commit to their corresponding person
+                //Count added stats for each Issue to their corresponding person
                 $issues = ($user["issues"] + 1);
                 $sql = "UPDATE Users SET issues=" . $issues . " WHERE id='" . $issue->user->id . "'";
                 if ($conn->query($sql) === FALSE) {
@@ -135,7 +136,7 @@ foreach ($obj as &$repo) {
                 }
 
                 $score = ($user["score"] + (int)ISSUES);
-                $sql = "UPDATE Users SET score=" . $score . " WHERE id='" . $issue->author->id . "'";
+                $sql = "UPDATE Users SET score=" . $score . " WHERE id='" . $issue->user->id . "'";
                 if ($conn->query($sql) === FALSE) {
                     echo "<div class=\"alert alert-warning alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Error updating record: " . $conn->error . "</div>";
                 }
@@ -165,7 +166,7 @@ foreach ($obj as &$repo) {
             $user_json = file_get_contents($user_url, false, stream_context_create($opts));
             $user_obj = json_decode($user_json);
 
-            if($user_obj->name != "") {
+            if ($user_obj->name != "") {
                 $sql = "INSERT INTO Users (name, username, id) VALUES ('" . $user_obj->name . "', '" . $user_obj->login . "', '" . $user_obj->id . "')";
                 if ($conn->query($sql) === TRUE) {
                     echo "<div class=\"alert alert-info alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Added new User to Database: " . $user_obj->name . "</div>";
