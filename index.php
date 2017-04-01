@@ -351,9 +351,9 @@ echo "Error: " . $sql . "<br>" . $conn->error;
                                 $merged = $pr_obj->merged_at;
                             }
 
-                            echo "<div class=\"alert alert-warning alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>" . $user["name"] . "merged_at=" . $merged . " at " . $issue->id . "</div>";
+                            if($merged != "null" && $merged != null && $merged != ""){
+                                echo "<div class=\"alert alert-warning alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>" . $user["name"] . " merged_at= " . $merged . " | at " . $issue->id . "</div>";
 
-                            if($merged != "null" && $merged != null){
                                 //Count added stats for each Issue to their corresponding person
                                 $issues = ($user["pullRequests"] + 1);
                                 $sql = "UPDATE Users SET pullRequests=" . $issues . " WHERE id='" . $issue->user->id . "'";
