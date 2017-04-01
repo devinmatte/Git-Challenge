@@ -57,7 +57,7 @@ if ($conn->query($sql) === TRUE) {
 $conn = new mysqli(CONF_LOCATION, CONF_ADMINID, CONF_ADMINPASS, CONF_DATABASE);
 
 // sql to create table
-$sql = "CREATE TABLE Tracked (sha VARCHAR(256), issueID VARCHAR(256))";
+$sql = "CREATE TABLE Tracked (repo VARCHAR(128), sha VARCHAR(256), issueID VARCHAR(256))";
 
 if ($conn->query($sql) === TRUE) {
     echo "<div class=\"alert alert-success alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Table <i>Tracked</i> created successfully</div>";
@@ -176,7 +176,7 @@ echo "Error: " . $sql . "<br>" . $conn->error;
                     $user = $result->fetch_assoc();
                     echo "<tr>";
                     echo "<td align=\"center\" width=\"10%\">" . ($row + 1) . "</td>";
-                    echo "<td align=\"center\" width=\"10%\">" . "<a href=\"https://github.com/" . $user["username"] . "\"><img src=\"https://avatars1.githubusercontent.com/u/" . $user["id"] . "\" width=\"75%\" alt=\"\" /></a>" . "</td>";
+                    echo "<td align=\"center\" width=\"10%\">" . "<a href=\"https://github.com/" . $user["username"] . "\"><img src=\"https://avatars1.githubusercontent.com/u/" . $user["id"] . "\" width=\"100%\" alt=\"\" /></a>" . "</td>";
                     echo "<td align=\"center\" width=\"45%\">" . $user["name"] . "</td>";
                     echo "<td align=\"center\" width=\"45%\">" . $user["score"] . "</td>";
                     echo "</tr><tr>";
@@ -258,6 +258,13 @@ echo "Error: " . $sql . "<br>" . $conn->error;
 
             //Loop through all Reps Issues in Org
             foreach ($obj as &$repo) {
+                $sql = "INSERT INTO Tracked (repo) VALUES ('" . $repo->name . "')";
+                if ($conn->query($sql) === TRUE) {
+                    echo "<div class=\"alert alert-info alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Tracking Repository: " . $repo->name . "</div>";
+                } else {
+                    echo "<div class=\"alert alert-warning alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Error: " . $sql . "<br>" . $conn->error . "</div>";
+                }
+
                 $issue_url = substr($repo->issues_url, 0, -9) . "?state=open&client_id=" . GIT_CLIENT . "&client_secret=" . GIT_SECRET;
                 $issue_json = file_get_contents($issue_url, false, stream_context_create($opts));
                 $issue_obj = json_decode($issue_json);
@@ -303,7 +310,7 @@ echo "Error: " . $sql . "<br>" . $conn->error;
 
                             $sql = "INSERT INTO Tracked (issueID) VALUES ('" . $issue->id . "')";
                             if ($conn->query($sql) === TRUE) {
-                                echo "<div class=\"alert alert-info alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>New record created successfully in Tracked: " . $issue->id . "</div>";
+                                echo "<br class=\"alert alert-info alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Added a new <i>Open</i>> Issue Record to Database: </br>Id: " . $issue->id . "</div>";
                             } else {
                                 echo "<div class=\"alert alert-warning alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Error: " . $sql . "<br>" . $conn->error . "</div>";
                             }
@@ -465,7 +472,7 @@ echo "Error: " . $sql . "<br>" . $conn->error;
 
                                 $sql = "INSERT INTO Tracked (sha) VALUES ('" . $commit_obj->sha . "')";
                                 if ($conn->query($sql) === TRUE) {
-                                    echo "<div class=\"alert alert-info alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>New record created successfully in Tracked: " . $commit_obj->sha . "</div>";
+                                    echo "<div class=\"alert alert-info alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Added a new Commit Record to Database: </br>Sha: " . $commit_obj->sha . " | Date: " . $commit_obj->commit->committer->date . "</div>";
                                 } else {
                                     echo "<div class=\"alert alert-warning alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Error: " . $sql . "<br>" . $conn->error . "</div>";
                                 }
