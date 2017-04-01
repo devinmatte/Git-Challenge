@@ -342,7 +342,16 @@ echo "Error: " . $sql . "<br>" . $conn->error;
                         $result = $conn->query($query);
                         if ($result->num_rows <= 0) {
 
+                            $merged = null;
+
                             if (array_key_exists("pull_request", $issue)) {
+                                $pr_url = $issue->pull_request->url . "?client_id=" . GIT_CLIENT . "&client_secret=" . GIT_SECRET;
+                                $pr_json = file_get_contents($pr_url, false, stream_context_create($opts));
+                                $pr_obj = json_decode($pr_json);
+                                $merged = $pr_obj->merged_at;
+                            }
+
+                            if($merged != "null" && $merged != null){
                                 //Count added stats for each Issue to their corresponding person
                                 $issues = ($user["pullRequests"] + 1);
                                 $sql = "UPDATE Users SET pullRequests=" . $issues . " WHERE id='" . $issue->user->id . "'";
