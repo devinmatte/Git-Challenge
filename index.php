@@ -61,7 +61,7 @@ if ($conn->query($sql) === TRUE) {
 $conn = new mysqli(CONF_LOCATION, CONF_ADMINID, CONF_ADMINPASS, CONF_DATABASE);
 
 // sql to create table
-$sql = "CREATE TABLE Tracked (sha VARCHAR(256) NOT NULL)";
+$sql = "CREATE TABLE Tracked (sha VARCHAR(256), issueID VARCHAR(256))";
 
 if ($conn->query($sql) === TRUE) {
     echo "<div class=\"alert alert-success alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Table <i>Tracked</i> created successfully</div>";
@@ -98,12 +98,13 @@ $opts = [
 $json = file_get_contents($url, false, stream_context_create($opts));
 $obj = json_decode($json);
 
-//Loop through all Repos in Org
+//Loop through all Reps Issues in Org
 foreach ($obj as &$repo) {
-    $issue_url = substr($repo->issues_url, 0, -9) . "?client_id=" . GIT_CLIENT . "&client_secret=" . GIT_SECRET;
+    $issue_url = substr($repo->issues_url, 0, -9) . "?state=open&client_id=" . GIT_CLIENT . "&client_secret=" . GIT_SECRET;
     $issue_json = file_get_contents($issue_url, false, stream_context_create($opts));
     $issue_obj = json_decode($issue_json);
 
+    //Loop through all open issues
     foreach ($issue_obj as &$issue) {
         $query = "SELECT * FROM Users WHERE id='" . $issue->user->id . "'";
         $result = $conn->query($query);
@@ -124,7 +125,7 @@ foreach ($obj as &$repo) {
 
         if ($result->num_rows > 0) {
             $user = $result->fetch_assoc();
-            $query = "SELECT sha FROM Tracked WHERE sha='" . $issue->url . "'";
+            $query = "SELECT issueID FROM Tracked WHERE issueID='" . $issue->id . "'";
 
             $result = $conn->query($query);
             if ($result->num_rows <= 0) {
@@ -141,7 +142,60 @@ foreach ($obj as &$repo) {
                     echo "<div class=\"alert alert-warning alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Error updating record: " . $conn->error . "</div>";
                 }
 
-                $sql = "INSERT INTO Tracked VALUES ('" . $issue->url . "')";
+                $sql = "INSERT INTO Tracked (issueID) VALUES ('" . $issue->id . "')";
+                if ($conn->query($sql) === TRUE) {
+                    echo "<div class=\"alert alert-info alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>New record created successfully in Tracked: " . $issue->id . "</div>";
+                } else {
+                    echo "<div class=\"alert alert-warning alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Error: " . $sql . "<br>" . $conn->error . "</div>";
+                }
+            }
+        }
+
+    }
+
+    $issue_url = substr($repo->issues_url, 0, -9) . "?state=closed&client_id=" . GIT_CLIENT . "&client_secret=" . GIT_SECRET;
+    $issue_json = file_get_contents($issue_url, false, stream_context_create($opts));
+    $issue_obj = json_decode($issue_json);
+
+    //Loop through all open issues
+    foreach ($issue_obj as &$issue) {
+        $query = "SELECT * FROM Users WHERE id='" . $issue->user->id . "'";
+        $result = $conn->query($query);
+
+        if (SIGN_UP == "FALSE" && $result->num_rows <= 0) {
+            $user_url = $issue->author->url . "?client_id=" . GIT_CLIENT . "&client_secret=" . GIT_SECRET;
+            $user_json = file_get_contents($user_url, false, stream_context_create($opts));
+            $user_obj = json_decode($user_json);
+            if ($user_obj->name != "") {
+                $sql = "INSERT INTO Users (name, username, id) VALUES ('" . $user_obj->name . "', '" . $user_obj->login . "', '" . $user_obj->id . "')";
+                if ($conn->query($sql) === TRUE) {
+                    echo "<div class=\"alert alert-info alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Added new User to Database: " . $user_obj->name . "</div>";
+                } else {
+                    echo "<div class=\"alert alert-warning alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Error: " . $sql . "<br>" . $conn->error . "</div>";
+                }
+            }
+        }
+
+        if ($result->num_rows > 0) {
+            $user = $result->fetch_assoc();
+            $query = "SELECT issueID FROM Tracked WHERE issueID='" . $issue->id . "'";
+
+            $result = $conn->query($query);
+            if ($result->num_rows <= 0) {
+                //Count added stats for each Issue to their corresponding person
+                $issues = ($user["issues"] + 1);
+                $sql = "UPDATE Users SET issues=" . $issues . " WHERE id='" . $issue->user->id . "'";
+                if ($conn->query($sql) === FALSE) {
+                    echo "<div class=\"alert alert-warning alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Error updating record: " . $conn->error . "</div>";
+                }
+
+                $score = ($user["score"] + (int)ISSUES);
+                $sql = "UPDATE Users SET score=" . $score . " WHERE id='" . $issue->user->id . "'";
+                if ($conn->query($sql) === FALSE) {
+                    echo "<div class=\"alert alert-warning alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Error updating record: " . $conn->error . "</div>";
+                }
+
+                $sql = "INSERT INTO Tracked (issueID) VALUES ('" . $issue->id . "')";
                 if ($conn->query($sql) === TRUE) {
                     echo "<div class=\"alert alert-info alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>New record created successfully in Tracked: " . $issue->id . "</div>";
                 } else {
@@ -223,7 +277,7 @@ foreach ($obj as &$repo) {
                         echo "<div class=\"alert alert-warning alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Error updating record: " . $conn->error . "</div>";
                     }
 
-                    $sql = "INSERT INTO Tracked VALUES ('" . $commit_obj->sha . "')";
+                    $sql = "INSERT INTO Tracked (sha) VALUES ('" . $commit_obj->sha . "')";
                     if ($conn->query($sql) === TRUE) {
                         echo "<div class=\"alert alert-info alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>New record created successfully in Tracked: " . $commit_obj->sha . "</div>";
                     } else {
@@ -347,7 +401,7 @@ if (DEBUG == "OFF") {
   </div>
   <div class=\"progress-bar progress-bar-info active fa fa-upload\" title=\"Commits: " . $user["commits"] . "\" role=\"progressbar\" style=\"width:" . ((float)(((float)$user["commits"] / (float)$user["score"])) * (100.0 * (float)COMMITS)) . "%\">
   </div>
-  <div class=\"progress-bar progress-bar-issue active fa fa-exclamation-circle\" title=\"Issues: " . $user["issues"] . "\" role=\"progressbar\" style=\"width:" . ((float)(((float)$user["issues"] / (float)$user["score"])) * (100.0 * (float)ISSUES)) . "%\">
+  <div class=\"progress-bar progress-bar-issue active fa fa-exclamation-circle\" title=\"Issues/Pull Requests: " . $user["issues"] . "\" role=\"progressbar\" style=\"width:" . ((float)(((float)$user["issues"] / (float)$user["score"])) * (100.0 * (float)ISSUES)) . "%\">
   </div>
   <div class=\"progress-bar progress-bar-warning active fa fa-trophy\" title=\"Challenge Points: " . $user["challenge"] . "\" role=\"progressbar\" style=\"width:" . ((float)((float)$user["challenge"] / (float)$user["score"])) * 100.0 . "%\">
   </div>
