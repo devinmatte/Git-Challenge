@@ -135,12 +135,20 @@ foreach ($obj as &$repo) {
                     echo "<div class=\"alert alert-warning alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Error updating record: " . $conn->error . "</div>";
                 }
 
+                $score = $user["score"] + (($user["issues"] * (int)ISSUES));
+                $sql = "UPDATE Users SET score=" . $score . " WHERE id='" . $issue->author->id . "'";
+                if ($conn->query($sql) === FALSE) {
+                    echo "<div class=\"alert alert-warning alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Error updating record: " . $conn->error . "</div>";
+                }
+
                 $sql = "INSERT INTO Tracked VALUES ('" . $issue->id . "')";
                 if ($conn->query($sql) === TRUE) {
                     echo "<div class=\"alert alert-info alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>New record created successfully in Tracked: " . $issue->id . "</div>";
                 } else {
                     echo "<div class=\"alert alert-warning alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Error: " . $sql . "<br>" . $conn->error . "</div>";
                 }
+
+
             }
         }
 
@@ -160,11 +168,13 @@ foreach ($obj as &$repo) {
             $user_json = file_get_contents($user_url, false, stream_context_create($opts));
             $user_obj = json_decode($user_json);
 
-            $sql = "INSERT INTO Users (name, username, id) VALUES ('" . $user_obj->name . "', '" . $user_obj->login . "', '" . $user_obj->id . "')";
-            if ($conn->query($sql) === TRUE) {
-                echo "<div class=\"alert alert-info alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Added new User to Database: " . $user_obj->name . "</div>";
-            } else {
-                echo "<div class=\"alert alert-warning alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Error: " . $sql . "<br>" . $conn->error . "</div>";
+            if($user_obj->name != "") {
+                $sql = "INSERT INTO Users (name, username, id) VALUES ('" . $user_obj->name . "', '" . $user_obj->login . "', '" . $user_obj->id . "')";
+                if ($conn->query($sql) === TRUE) {
+                    echo "<div class=\"alert alert-info alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Added new User to Database: " . $user_obj->name . "</div>";
+                } else {
+                    echo "<div class=\"alert alert-warning alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Error: " . $sql . "<br>" . $conn->error . "</div>";
+                }
             }
         }
 
@@ -188,7 +198,7 @@ foreach ($obj as &$repo) {
                     $user = $result->fetch_assoc();
 
                     //Count total stats for each Commit to their corresponding person
-                    $score = $user["score"] + (($commit_obj->stats->additions * (int)ADDITIONS) + ($commit_obj->stats->deletions * (int)DELETIONS) + ((int)COMMITS) + ($user["issues"] * (int)ISSUES));
+                    $score = $user["score"] + (($commit_obj->stats->additions * (int)ADDITIONS) + ($commit_obj->stats->deletions * (int)DELETIONS) + ((int)COMMITS));
                     $sql = "UPDATE Users SET score=" . $score . " WHERE id='" . $commit->author->id . "'";
                     if ($conn->query($sql) === FALSE) {
                         echo "<div class=\"alert alert-warning alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Error updating record: " . $conn->error . "</div>";
