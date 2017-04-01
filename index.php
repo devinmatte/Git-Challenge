@@ -351,6 +351,8 @@ echo "Error: " . $sql . "<br>" . $conn->error;
                                 $merged = $pr_obj->merged_at;
                             }
 
+                            echo $merged;
+
                             if($merged != "null" && $merged != null){
                                 //Count added stats for each Issue to their corresponding person
                                 $issues = ($user["pullRequests"] + 1);
