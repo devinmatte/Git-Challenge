@@ -165,7 +165,6 @@ echo "Error: " . $sql . "<br>" . $conn->error;
                     <th></th>
                     <th>Name</th>
                     <th>Score</th>
-                    <th>Breakdown</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -176,11 +175,12 @@ echo "Error: " . $sql . "<br>" . $conn->error;
                 for ($row = 0; $row < $result->num_rows; $row++) {
                     $user = $result->fetch_assoc();
                     echo "<tr>";
-                    echo "<td align=\"center\" width=\"5%\">" . ($row + 1) . "</td>";
+                    echo "<td align=\"center\" width=\"10%\">" . ($row + 1) . "</td>";
                     echo "<td align=\"center\" width=\"10%\">" . "<a href=\"https://github.com/" . $user["username"] . "\"><img src=\"https://avatars1.githubusercontent.com/u/" . $user["id"] . "\" width=\"75%\" alt=\"\" /></a>" . "</td>";
-                    echo "<td align=\"center\" width=\"25%\">" . $user["name"] . "</td>";
-                    echo "<td align=\"center\" width=\"8%\">" . $user["score"] . "</td>";
-                    echo "<td align=\"center\"><div class=\"progress\">
+                    echo "<td align=\"center\" width=\"45%\">" . $user["name"] . "</td>";
+                    echo "<td align=\"center\" width=\"45%\">" . $user["score"] . "</td>";
+                    echo "</tr><tr>";
+                    echo "<td colspan=\"4\" nowrap=\"nowrap\" align=\"center\"><div class=\"progress\">
   <div class=\"progress-bar progress-bar-success active fa fa-plus-circle\" title=\"Additions: " . $user["added"] . "\" role=\"progressbar\" style=\"width:" . ((float)((float)$user["added"] / (float)$user["score"])) * 100.0 . "%\">
   </div>
   <div class=\"progress-bar progress-bar-danger active fa fa-minus-circle\" title=\"Deletions: " . $user["removed"] . "\" role=\"progressbar\" style=\"width:" . ((float)((float)$user["removed"] / (float)$user["score"])) * 100.0 . "%\">
@@ -351,7 +351,7 @@ echo "Error: " . $sql . "<br>" . $conn->error;
                                 $merged = $pr_obj->merged_at;
                             }
 
-                            echo $merged;
+                            echo "<div class=\"alert alert-warning alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>" . $user["name"] . "merged_at=" . $merged . " at " . $issue->id . "</div>";
 
                             if($merged != "null" && $merged != null){
                                 //Count added stats for each Issue to their corresponding person
