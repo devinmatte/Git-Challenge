@@ -279,7 +279,7 @@ if (DEBUG == "OFF") {
                     $user = $result->fetch_assoc();
                     echo "<tr>";
                     echo "<td align=\"center\" width=\"10%\">" . ($row + 1) . "</td>";
-                    echo "<td align=\"center\" width=\"10%\">" . "<img src=\"https://avatars1.githubusercontent.com/u/" . $user["id"] . "\" width=\"75%\" alt=\"\" />" . "</td>";
+                    echo "<td align=\"center\" width=\"10%\">" . "<a href=\"https://github.com/" . $user["username"] . "\"><img src=\"https://avatars1.githubusercontent.com/u/" . $user["id"] . "\" width=\"75%\" alt=\"\" /></a>" . "</td>";
                     echo "<td align=\"center\" width=\"30%\">" . $user["name"] . "</td>";
                     echo "<td align=\"center\">" . $user["score"] . "<div class=\"progress\">
   <div class=\"progress-bar progress-bar-success active fa fa-plus-circle\" title=\"Additions: " . $user["added"] . "\" role=\"progressbar\" style=\"width:" . ($user["added"] / $user["score"]) * 100 . "%\">
