@@ -122,12 +122,24 @@ foreach ($obj as &$repo) {
         }
 
         if ($result->num_rows > 0) {
-            $user = $result->fetch_assoc();
-            //Count added stats for each Commit to their corresponding person
-            $issues = $user["issues"] + 1;
-            $sql = "UPDATE Users SET issues=" . $issues . " WHERE id='" . $issue->user->id . "'";
-            if ($conn->query($sql) === FALSE) {
-                echo "<div class=\"alert alert-warning alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Error updating record: " . $conn->error . "</div>";
+            $query = "SELECT sha FROM Tracked WHERE sha='" . $issue->id . "'";
+
+            $result = $conn->query($query);
+            if ($result->num_rows <= 0) {
+                $user = $result->fetch_assoc();
+                //Count added stats for each Commit to their corresponding person
+                $issues = $user["issues"] + 1;
+                $sql = "UPDATE Users SET issues=" . $issues . " WHERE id='" . $issue->user->id . "'";
+                if ($conn->query($sql) === FALSE) {
+                    echo "<div class=\"alert alert-warning alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Error updating record: " . $conn->error . "</div>";
+                }
+
+                $sql = "INSERT INTO Tracked VALUES ('" . $issue->id . "')";
+                if ($conn->query($sql) === TRUE) {
+                    echo "<div class=\"alert alert-info alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>New record created successfully in Tracked: " . $issue->id . "</div>";
+                } else {
+                    echo "<div class=\"alert alert-warning alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Error: " . $sql . "<br>" . $conn->error . "</div>";
+                }
             }
         }
 
@@ -175,7 +187,7 @@ foreach ($obj as &$repo) {
                     $user = $result->fetch_assoc();
 
                     //Count total stats for each Commit to their corresponding person
-                    $score = $user["score"] + (($commit_obj->stats->additions * (int)ADDITIONS) + ($commit_obj->stats->deletions * (int)DELETIONS) + ((int)COMMITS));
+                    $score = $user["score"] + (($commit_obj->stats->additions * (int)ADDITIONS) + ($commit_obj->stats->deletions * (int)DELETIONS) + ((int)COMMITS) + ($user["issues"] * (int)ISSUES));
                     $sql = "UPDATE Users SET score=" . $score . " WHERE id='" . $commit->author->id . "'";
                     if ($conn->query($sql) === FALSE) {
                         echo "<div class=\"alert alert-warning alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Error updating record: " . $conn->error . "</div>";
@@ -318,15 +330,15 @@ if (DEBUG == "OFF") {
                     echo "<td align=\"center\" width=\"10%\">" . "<a href=\"https://github.com/" . $user["username"] . "\"><img src=\"https://avatars1.githubusercontent.com/u/" . $user["id"] . "\" width=\"75%\" alt=\"\" /></a>" . "</td>";
                     echo "<td align=\"center\" width=\"30%\">" . $user["name"] . "</td>";
                     echo "<td align=\"center\">" . $user["score"] . "<div class=\"progress\">
-  <div class=\"progress-bar progress-bar-success active fa fa-plus-circle\" title=\"Additions: " . $user["added"] . "\" role=\"progressbar\" style=\"width:" . ($user["added"] / $user["score"]) * 100 . "%\">
+  <div class=\"progress-bar progress-bar-success active fa fa-plus-circle\" title=\"Additions: " . $user["added"] . "\" role=\"progressbar\" style=\"width:" . ((float)((float)$user["added"] / (float)$user["score"])) * 100.0 . "%\">
   </div>
-  <div class=\"progress-bar progress-bar-danger active fa fa-minus-circle\" title=\"Deletions: " . $user["removed"] . "\" role=\"progressbar\" style=\"width:" . ($user["removed"] / $user["score"]) * 100 . "%\">
+  <div class=\"progress-bar progress-bar-danger active fa fa-minus-circle\" title=\"Deletions: " . $user["removed"] . "\" role=\"progressbar\" style=\"width:" . ((float)((float)$user["removed"] / (float)$user["score"])) * 100.0 . "%\">
   </div>
-  <div class=\"progress-bar progress-bar-info active fa fa-upload\" title=\"Commits: " . $user["commits"] . "\" role=\"progressbar\" style=\"width:" . ($user["commits"] / $user["score"]) * 1000 . "%\">
+  <div class=\"progress-bar progress-bar-info active fa fa-upload\" title=\"Commits: " . $user["commits"] . "\" role=\"progressbar\" style=\"width:" . ((float)(((float)$user["commits"] * (float)COMMITS) / (float)$user["score"])) * 100.0 . "%\">
   </div>
-  <div class=\"progress-bar progress-bar-issue active fa fa-exclamation-circle\" title=\"Issues: " . $user["issues"] . "\" role=\"progressbar\" style=\"width:" . ($user["issues"] / $user["score"]) * 2500 . "%\">
+  <div class=\"progress-bar progress-bar-issue active fa fa-exclamation-circle\" title=\"Issues: " . $user["issues"] . "\" role=\"progressbar\" style=\"width:" . ((float)(((float)$user["issues"] * (float)ISSUES) / (float)$user["score"])) * 100.0 . "%\">
   </div>
-  <div class=\"progress-bar progress-bar-warning active fa fa-trophy\" title=\"Challenge Points: " . $user["challenge"] . "\" role=\"progressbar\" style=\"width:" . ($user["challenge"] / $user["score"]) * 100 . "%\">
+  <div class=\"progress-bar progress-bar-warning active fa fa-trophy\" title=\"Challenge Points: " . $user["challenge"] . "\" role=\"progressbar\" style=\"width:" . ((float)((float)$user["challenge"] / (float)$user["score"])) * 100.0 . "%\">
   </div>
 </div>" . "</td>";
                     echo "</tr>";
