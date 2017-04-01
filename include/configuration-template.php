@@ -30,3 +30,4 @@ define("DELETIONS", "1");
 define("CHALLENGES", "1");
 define("COMMITS", "10");
 define("ISSUES", "25");
+define("PULLREQUESTS", "50");
