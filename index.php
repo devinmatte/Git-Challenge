@@ -401,13 +401,12 @@ echo "Error: " . $sql . "<br>" . $conn->error;
 
                     $repo_empty = false;
                     $repo_page = 0;
-
                     while (!$repo_empty) {
                         $repo_page++;
                         $repo_url = substr($repo->commits_url, 0, -6) . "?page=" . $repo_page . "&client_id=" . GIT_CLIENT . "&client_secret=" . GIT_SECRET;
                         $repo_json = file_get_contents($repo_url, false, stream_context_create($opts));
                         $repo_obj = json_decode($repo_json);
-                        $empty = empty($repo_obj);
+                        $repo_empty = empty($repo_obj);
 
                         //Loop through all Commits in each Repo
                         foreach ($repo_obj as &$commit) {
