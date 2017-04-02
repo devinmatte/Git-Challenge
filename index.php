@@ -70,7 +70,23 @@ if ($conn->query($sql) === TRUE) {
     echo "<div class=\"alert alert-success alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Table <i>Users</i> created successfully</div>";
 }
 
+$call_count = 0;
+
 //TODO: Define Functions for Refactor
+function add_user($conn, $opts, $url){
+    $user_url = $url . "?client_id=" . GIT_CLIENT . "&client_secret=" . GIT_SECRET;
+    $user_json = file_get_contents($user_url, false, stream_context_create($opts));
+    $user_obj = json_decode($user_json);
+    if ($user_obj->name != "") {
+        $sql = "INSERT INTO Users (name, username, id) VALUES ('" . $user_obj->name . "', '" . $user_obj->login . "', '" . $user_obj->id . "')";
+        if ($conn->query($sql) === TRUE) {
+            $GLOBALS['call_count']++;
+            echo "<div class=\"alert alert-info alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Added new User to Database: " . $user_obj->name . "</div>";
+        } else {
+            echo "<div class=\"alert alert-warning alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Error: " . $sql . "<br>" . $conn->error . "</div>";
+        }
+    }
+}
 
 ?>
 <body>
@@ -236,7 +252,7 @@ if ($conn->query($sql) === TRUE) {
 
             <?php
 
-            $call_count = 0;
+
             $empty = false;
             $page = 0;
             while (!$empty) {
@@ -257,6 +273,7 @@ if ($conn->query($sql) === TRUE) {
 
                 //Loop through all Reps Issues in Org
                 foreach ($obj as &$repo) {
+                    echo "<div class=\"alert alert-success alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Current Call Count: " . $call_count . "</div>";
                     if ($call_count < 50) {
                         echo "<div class=\"alert alert-info alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Checking Repository: " . $repo->name . "</div>";
 
@@ -270,6 +287,8 @@ if ($conn->query($sql) === TRUE) {
                             $result = $conn->query($query);
 
                             if (SIGN_UP == "FALSE" && $result->num_rows <= 0) {
+                                add_user($conn, $obj, $issue->user->url);
+                                /*
                                 $user_url = $issue->user->url . "?client_id=" . GIT_CLIENT . "&client_secret=" . GIT_SECRET;
                                 $user_json = file_get_contents($user_url, false, stream_context_create($opts));
                                 $user_obj = json_decode($user_json);
@@ -282,6 +301,7 @@ if ($conn->query($sql) === TRUE) {
                                         echo "<div class=\"alert alert-warning alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Error: " . $sql . "<br>" . $conn->error . "</div>";
                                     }
                                 }
+                                */
                             }
 
                             if ($result->num_rows > 0) {
@@ -326,6 +346,8 @@ if ($conn->query($sql) === TRUE) {
                             $result = $conn->query($query);
 
                             if (SIGN_UP == "FALSE" && $result->num_rows <= 0) {
+                                add_user($conn, $obj, $issue->user->url);
+                                /*
                                 $user_url = $issue->user->url . "?client_id=" . GIT_CLIENT . "&client_secret=" . GIT_SECRET;
                                 $user_json = file_get_contents($user_url, false, stream_context_create($opts));
                                 $user_obj = json_decode($user_json);
@@ -338,6 +360,7 @@ if ($conn->query($sql) === TRUE) {
                                         echo "<div class=\"alert alert-warning alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Error: " . $sql . "<br>" . $conn->error . "</div>";
                                     }
                                 }
+                                */
                             }
 
                             if ($result->num_rows > 0) {
@@ -413,6 +436,8 @@ if ($conn->query($sql) === TRUE) {
                                     $result = $conn->query($query);
 
                                     if (SIGN_UP == "FALSE" && $result->num_rows <= 0) {
+                                        add_user($conn, $obj, $commit->author->url);
+                                        /*
                                         $user_url = $commit->author->url . "?client_id=" . GIT_CLIENT . "&client_secret=" . GIT_SECRET;
                                         $user_json = file_get_contents($user_url, false, stream_context_create($opts));
                                         $user_obj = json_decode($user_json);
@@ -426,6 +451,7 @@ if ($conn->query($sql) === TRUE) {
                                                 echo "<div class=\"alert alert-warning alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Error: " . $sql . "<br>" . $conn->error . "</div>";
                                             }
                                         }
+                                        */
                                     }
                                 }
 
