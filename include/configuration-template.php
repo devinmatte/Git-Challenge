@@ -23,7 +23,7 @@ define("GIT_SECRET", "Git Secret");
 /** App Options */
 define("SIGN_UP", "FALSE");
 define("DEBUG", "OFF");
-define("MAXCALLS", "1000");
+define("MAXCALLS", "500");
 
 // Point Scaling
 define("ADDITIONS", "1");

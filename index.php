@@ -70,6 +70,13 @@ if ($conn->query($sql) === TRUE) {
     echo "<div class=\"alert alert-success alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Table <i>Users</i> created successfully</div>";
 }
 
+// sql to create table
+$sql = "CREATE TABLE Stats (repository VARCHAR(256), commits INT(25) DEFAULT 0)";
+
+if ($conn->query($sql) === TRUE) {
+    echo "<div class=\"alert alert-success alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Table <i>Stats</i> created successfully</div>";
+}
+
 $call_count = 0;
 
 //TODO: Define Functions for Refactor
@@ -154,7 +161,7 @@ function add_user($opts, $url)
                         this Tech Team. It could be used for CSH, or really any other git organisation with multiple
                         contributors.</p>
                     <ul class="actions">
-                        <li><a href="#" class="button">Learn More</a></li>
+                        <li><a href="https://github.com/devinmatte/Git-Challenge" class="button">Learn More</a></li>
                     </ul>
                 </div>
                 <span class="image"><img
@@ -169,7 +176,8 @@ function add_user($opts, $url)
                 <h2>Point Breakdown</h2>
             </header>
 
-            <div class="alert alert-success"><h3>Currently each Refresh makes up to <?php echo MAXCALLS; ?> API Calls. Please be patient with Refreshes</h3></div>
+            <div class="alert alert-success"><h3>Currently each Refresh makes up to <?php echo MAXCALLS; ?> API Calls.
+                    Please be patient with Refreshes</h3></div>
 
             <table class="alt">
                 <thead>
@@ -222,21 +230,34 @@ function add_user($opts, $url)
                 <h2>Statistics</h2>
             </header>
             <ul class="statistics">
-                <li class="style1">
-                    <span class="icon fa-code-fork"></span>
-                    <strong>5,120</strong> Total Forks
-                </li>
                 <li class="style2">
                     <span class="icon fa-folder-open-o"></span>
-                    <strong>8,192</strong> Total Repositories
+                    <?php
+                    $query = "SELECT * FROM Stats ORDER BY commits DESC";
+                    $result = $conn->query($query);
+                    ?>
+                    <strong><?php echo $result->num_rows; ?></strong> Total Repositories
                 </li>
                 <li class="style3">
                     <span class="icon fa-signal"></span>
-                    <strong>2,048</strong> Total Commits
+                    <?php
+                    $query = "SELECT * FROM Stats ORDER BY commits DESC";
+                    $result = $conn->query($query);
+                    $total = 0;
+                    for ($i = 0; $i< $result->num_rows; $i++){
+                        $commit = $result->fetch_assoc();
+                        $total += $commit["commits"];
+                    }
+                    ?>
+                    <strong><?php echo $total; ?></strong> Total Commits
                 </li>
                 <li class="style4">
-                    <span class="icon fa-laptop"></span>
-                    <strong>4,096</strong> Total Contributors
+                    <span class="icon fa-users"></span>
+                    <?php
+                    $query = "SELECT * FROM Users ORDER BY score DESC";
+                    $result = $conn->query($query);
+                    ?>
+                    <strong><?php echo $result->num_rows; ?></strong> Total Contributors
                 </li>
             </ul>
             <footer class="major">
@@ -278,6 +299,20 @@ function add_user($opts, $url)
 
                 //Loop through all Reps Issues in Org
                 foreach ($obj as &$repo) {
+                    $query = "SELECT * FROM Stats WHERE repository='" . $repo->name . "'";
+                    $result = $conn->query($query);
+
+                    if ($result->num_rows <= 0) {
+                        if ($repo->name != "") {
+                            $sql = "INSERT INTO Stats (repository) VALUES ('" . $repo->name . "')";
+                            if ($conn->query($sql) === TRUE) {
+                                echo "<div class=\"alert alert-info alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Added new Repository to Stats Database: " . $repo->name . "</div>";
+                            } else {
+                                echo "<div class=\"alert alert-warning alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Error: " . $sql . "<br>" . $conn->error . "</div>";
+                            }
+                        }
+                    }
+
                     if ($call_count < (int)MAXCALLS) {
                         echo "<div class=\"alert alert-info alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Checking Repository: " . $repo->name . "</div>";
 
@@ -503,6 +538,18 @@ function add_user($opts, $url)
 
                                                     $sql = "INSERT INTO Tracked (sha) VALUES ('" . $commit_obj->sha . "')";
                                                     if ($conn->query($sql) === TRUE) {
+                                                        $query = "SELECT * FROM Stats WHERE repository='" . $repo->name . "'";
+                                                        $result = $conn->query($query);
+                                                        if ($result->num_rows > 0) {
+                                                            $stats = $result->fetch_assoc();
+
+                                                            $commits = $stats["commits"] + 1;
+                                                            $sql = "UPDATE Stats SET commits=" . $commits . " WHERE repository='" . $repo->name . "'";
+                                                            if ($conn->query($sql) === FALSE) {
+                                                                echo "<div class=\"alert alert-warning alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Error updating record: " . $conn->error . "</div>";
+                                                            }
+                                                        }
+
                                                         echo "<div class=\"alert alert-info alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Added a new Commit Record to Database: </br>Sha: " . $commit_obj->sha . " | Date: " . $commit_obj->commit->committer->date . "</div>";
                                                     } else {
                                                         echo "<div class=\"alert alert-warning alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Error: " . $sql . "<br>" . $conn->error . "</div>";
@@ -538,7 +585,7 @@ function add_user($opts, $url)
     <!-- Footer -->
     <footer id="footer">
         <ul class="icons">
-            <li><a href="#" class="icon alt fa-github"><span class="label">GitHub</span></a></li>
+            <li><a href="https://github.com/devinmatte/Git-Challenge" class="icon alt fa-github"><span class="label">GitHub</span></a></li>
         </ul>
         <p class="copyright">&copy; Devin Matte. Design: <a href="https://html5up.net">HTML5 UP</a>.</p>
     </footer>

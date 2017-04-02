@@ -1,5 +1,7 @@
 Git-Challenge
 =============
+[![Build Status](https://travis-ci.org/devinmatte/Git-Challenge.svg?branch=master)](https://travis-ci.org/devinmatte/Git-Challenge)
+
 
 Gamification of Git Contributions for the use of either education or competition.
 
