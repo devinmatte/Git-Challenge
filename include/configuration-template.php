@@ -21,8 +21,9 @@ define("GIT_CLIENT", "Git Client");
 define("GIT_SECRET", "Git Secret");
 
 /** App Options */
-define("SIGN_UP", "TRUE");
+define("SIGN_UP", "FALSE");
 define("DEBUG", "OFF");
+define("MAXCALLS", "1000");
 
 // Point Scaling
 define("ADDITIONS", "1");
