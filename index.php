@@ -70,15 +70,7 @@ if ($conn->query($sql) === TRUE) {
     echo "<div class=\"alert alert-success alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Table <i>Users</i> created successfully</div>";
 }
 
-/*
-$sql = "INSERT INTO Tracked (sha) VALUES ('')";
-
-if ($conn->query($sql) === TRUE) {
-echo "New record created successfully";
-} else {
-echo "Error: " . $sql . "<br>" . $conn->error;
-}
-*/
+//TODO: Define Functions for Refactor
 
 ?>
 <body>
@@ -158,6 +150,7 @@ echo "Error: " . $sql . "<br>" . $conn->error;
             <header class="major">
                 <h2>Point Breakdown</h2>
             </header>
+            <div class="alert alert-success">Currently each Refresh Loads 50 More Commits. Excuse missing data during this Refactor</div>
             <table class="alt">
                 <thead>
                 <tr>
@@ -264,7 +257,7 @@ echo "Error: " . $sql . "<br>" . $conn->error;
 
                 //Loop through all Reps Issues in Org
                 foreach ($obj as &$repo) {
-                    if ($call_count < 100) {
+                    if ($call_count < 50) {
                         echo "<div class=\"alert alert-info alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Checking Repository: " . $repo->name . "</div>";
 
                         $issue_url = substr($repo->issues_url, 0, -9) . "?state=open&client_id=" . GIT_CLIENT . "&client_secret=" . GIT_SECRET;
