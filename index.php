@@ -410,20 +410,22 @@ echo "Error: " . $sql . "<br>" . $conn->error;
 
                         //Loop through all Commits in each Repo
                         foreach ($repo_obj as &$commit) {
-                            $query = "SELECT * FROM Users WHERE id='" . $commit->author->id . "'";
-                            $result = $conn->query($query);
+                            if (array_key_exists("author", $commit) && !empty($commit->author)) {
+                                $query = "SELECT * FROM Users WHERE id='" . $commit->author->id . "'";
+                                $result = $conn->query($query);
 
-                            if (SIGN_UP == "FALSE" && $result->num_rows <= 0) {
-                                $user_url = $commit->author->url . "?client_id=" . GIT_CLIENT . "&client_secret=" . GIT_SECRET;
-                                $user_json = file_get_contents($user_url, false, stream_context_create($opts));
-                                $user_obj = json_decode($user_json);
+                                if (SIGN_UP == "FALSE" && $result->num_rows <= 0) {
+                                    $user_url = $commit->author->url . "?client_id=" . GIT_CLIENT . "&client_secret=" . GIT_SECRET;
+                                    $user_json = file_get_contents($user_url, false, stream_context_create($opts));
+                                    $user_obj = json_decode($user_json);
 
-                                if ($user_obj->name != "") {
-                                    $sql = "INSERT INTO Users (name, username, id) VALUES ('" . $user_obj->name . "', '" . $user_obj->login . "', '" . $user_obj->id . "')";
-                                    if ($conn->query($sql) === TRUE) {
-                                        echo "<div class=\"alert alert-info alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Added new User to Database: " . $user_obj->name . "</div>";
-                                    } else {
-                                        echo "<div class=\"alert alert-warning alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Error: " . $sql . "<br>" . $conn->error . "</div>";
+                                    if ($user_obj->name != "") {
+                                        $sql = "INSERT INTO Users (name, username, id) VALUES ('" . $user_obj->name . "', '" . $user_obj->login . "', '" . $user_obj->id . "')";
+                                        if ($conn->query($sql) === TRUE) {
+                                            echo "<div class=\"alert alert-info alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Added new User to Database: " . $user_obj->name . "</div>";
+                                        } else {
+                                            echo "<div class=\"alert alert-warning alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Error: " . $sql . "<br>" . $conn->error . "</div>";
+                                        }
                                     }
                                 }
                             }
@@ -440,48 +442,50 @@ echo "Error: " . $sql . "<br>" . $conn->error;
 
                                     $commit_json = file_get_contents($commit_url, false, stream_context_create($opts));
                                     $commit_obj = json_decode($commit_json);
-                                    $query = "SELECT * FROM Users WHERE id='" . $commit->author->id . "'";
+                                    if (array_key_exists("author", $commit) && !empty($commit->author)) {
+                                        $query = "SELECT * FROM Users WHERE id='" . $commit->author->id . "'";
 
-                                    $result = $conn->query($query);
+                                        $result = $conn->query($query);
 
-                                    if ($result->num_rows > 0) {
-                                        $user = $result->fetch_assoc();
+                                        if ($result->num_rows > 0) {
+                                            $user = $result->fetch_assoc();
 
-                                        //Count total stats for each Commit to their corresponding person
-                                        $score = $user["score"] + (($commit_obj->stats->additions * (int)ADDITIONS) + ($commit_obj->stats->deletions * (int)DELETIONS) + ((int)COMMITS));
-                                        $sql = "UPDATE Users SET score=" . $score . " WHERE id='" . $commit->author->id . "'";
-                                        if ($conn->query($sql) === FALSE) {
-                                            echo "<div class=\"alert alert-warning alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Error updating record: " . $conn->error . "</div>";
+                                            //Count total stats for each Commit to their corresponding person
+                                            $score = $user["score"] + (($commit_obj->stats->additions * (int)ADDITIONS) + ($commit_obj->stats->deletions * (int)DELETIONS) + ((int)COMMITS));
+                                            $sql = "UPDATE Users SET score=" . $score . " WHERE id='" . $commit->author->id . "'";
+                                            if ($conn->query($sql) === FALSE) {
+                                                echo "<div class=\"alert alert-warning alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Error updating record: " . $conn->error . "</div>";
+                                            }
+
+                                            //Count added stats for each Commit to their corresponding person
+                                            $added = $user["added"] + $commit_obj->stats->additions;
+                                            $sql = "UPDATE Users SET added=" . $added . " WHERE id='" . $commit->author->id . "'";
+                                            if ($conn->query($sql) === FALSE) {
+                                                echo "<div class=\"alert alert-warning alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Error updating record: " . $conn->error . "</div>";
+                                            }
+
+                                            //Count removed stats for each Commit to their corresponding person
+                                            $removed = $user["removed"] + $commit_obj->stats->deletions;
+                                            $sql = "UPDATE Users SET removed=" . $removed . " WHERE id='" . $commit->author->id . "'";
+                                            if ($conn->query($sql) === FALSE) {
+                                                echo "<div class=\"alert alert-warning alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Error updating record: " . $conn->error . "</div>";
+                                            }
+
+                                            //Count added stats for each Commit to their corresponding person
+                                            $commits = $user["commits"] + 1;
+                                            $sql = "UPDATE Users SET commits=" . $commits . " WHERE id='" . $commit->author->id . "'";
+                                            if ($conn->query($sql) === FALSE) {
+                                                echo "<div class=\"alert alert-warning alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Error updating record: " . $conn->error . "</div>";
+                                            }
+
+                                            $sql = "INSERT INTO Tracked (sha) VALUES ('" . $commit_obj->sha . "')";
+                                            if ($conn->query($sql) === TRUE) {
+                                                echo "<div class=\"alert alert-info alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Added a new Commit Record to Database: </br>Sha: " . $commit_obj->sha . " | Date: " . $commit_obj->commit->committer->date . "</div>";
+                                            } else {
+                                                echo "<div class=\"alert alert-warning alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Error: " . $sql . "<br>" . $conn->error . "</div>";
+                                            }
+
                                         }
-
-                                        //Count added stats for each Commit to their corresponding person
-                                        $added = $user["added"] + $commit_obj->stats->additions;
-                                        $sql = "UPDATE Users SET added=" . $added . " WHERE id='" . $commit->author->id . "'";
-                                        if ($conn->query($sql) === FALSE) {
-                                            echo "<div class=\"alert alert-warning alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Error updating record: " . $conn->error . "</div>";
-                                        }
-
-                                        //Count removed stats for each Commit to their corresponding person
-                                        $removed = $user["removed"] + $commit_obj->stats->deletions;
-                                        $sql = "UPDATE Users SET removed=" . $removed . " WHERE id='" . $commit->author->id . "'";
-                                        if ($conn->query($sql) === FALSE) {
-                                            echo "<div class=\"alert alert-warning alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Error updating record: " . $conn->error . "</div>";
-                                        }
-
-                                        //Count added stats for each Commit to their corresponding person
-                                        $commits = $user["commits"] + 1;
-                                        $sql = "UPDATE Users SET commits=" . $commits . " WHERE id='" . $commit->author->id . "'";
-                                        if ($conn->query($sql) === FALSE) {
-                                            echo "<div class=\"alert alert-warning alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Error updating record: " . $conn->error . "</div>";
-                                        }
-
-                                        $sql = "INSERT INTO Tracked (sha) VALUES ('" . $commit_obj->sha . "')";
-                                        if ($conn->query($sql) === TRUE) {
-                                            echo "<div class=\"alert alert-info alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Added a new Commit Record to Database: </br>Sha: " . $commit_obj->sha . " | Date: " . $commit_obj->commit->committer->date . "</div>";
-                                        } else {
-                                            echo "<div class=\"alert alert-warning alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Error: " . $sql . "<br>" . $conn->error . "</div>";
-                                        }
-
                                     }
                                 }
                             }
