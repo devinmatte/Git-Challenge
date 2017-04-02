@@ -73,7 +73,8 @@ if ($conn->query($sql) === TRUE) {
 $call_count = 0;
 
 //TODO: Define Functions for Refactor
-function add_user($conn, $opts, $url){
+function add_user($conn, $opts, $url)
+{
     $user_url = $url . "?client_id=" . GIT_CLIENT . "&client_secret=" . GIT_SECRET;
     $user_json = file_get_contents($user_url, false, stream_context_create($opts));
     $user_obj = json_decode($user_json);
@@ -166,7 +167,9 @@ function add_user($conn, $opts, $url){
             <header class="major">
                 <h2>Point Breakdown</h2>
             </header>
-            <div class="alert alert-success">Currently each Refresh Loads 50 More Commits. Excuse missing data during this Refactor</div>
+            <div class="alert alert-success">Currently each Refresh Loads 100 More Commits. Excuse missing data during
+                this Refactor
+            </div>
             <table class="alt">
                 <thead>
                 <tr>
@@ -274,7 +277,7 @@ function add_user($conn, $opts, $url){
                 //Loop through all Reps Issues in Org
                 foreach ($obj as &$repo) {
                     echo "<div class=\"alert alert-success alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Current Call Count: " . $call_count . "</div>";
-                    if ($call_count < 50) {
+                    if ($call_count < 100) {
                         echo "<div class=\"alert alert-info alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Checking Repository: " . $repo->name . "</div>";
 
                         $issue_url = substr($repo->issues_url, 0, -9) . "?state=open&client_id=" . GIT_CLIENT . "&client_secret=" . GIT_SECRET;
@@ -423,94 +426,97 @@ function add_user($conn, $opts, $url){
                         $repo_empty = false;
                         $repo_page = 0;
                         while (!$repo_empty) {
-                            $repo_page++;
-                            $repo_url = substr($repo->commits_url, 0, -6) . "?page=" . $repo_page . "&client_id=" . GIT_CLIENT . "&client_secret=" . GIT_SECRET;
-                            $repo_json = file_get_contents($repo_url, false, stream_context_create($opts));
-                            $repo_obj = json_decode($repo_json);
-                            $repo_empty = empty($repo_obj);
+                            echo "<div class=\"alert alert-success alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Current Call Count: " . $call_count . "</div>";
+                            if ($call_count < 100) {
+                                $repo_page++;
+                                $repo_url = substr($repo->commits_url, 0, -6) . "?page=" . $repo_page . "&client_id=" . GIT_CLIENT . "&client_secret=" . GIT_SECRET;
+                                $repo_json = file_get_contents($repo_url, false, stream_context_create($opts));
+                                $repo_obj = json_decode($repo_json);
+                                $repo_empty = empty($repo_obj);
 
-                            //Loop through all Commits in each Repo
-                            foreach ($repo_obj as &$commit) {
-                                if (array_key_exists("author", $commit) && !empty($commit->author)) {
-                                    $query = "SELECT * FROM Users WHERE id='" . $commit->author->id . "'";
-                                    $result = $conn->query($query);
+                                //Loop through all Commits in each Repo
+                                foreach ($repo_obj as &$commit) {
+                                    if (array_key_exists("author", $commit) && !empty($commit->author)) {
+                                        $query = "SELECT * FROM Users WHERE id='" . $commit->author->id . "'";
+                                        $result = $conn->query($query);
 
-                                    if (SIGN_UP == "FALSE" && $result->num_rows <= 0) {
-                                        add_user($conn, $obj, $commit->author->url);
-                                        /*
-                                        $user_url = $commit->author->url . "?client_id=" . GIT_CLIENT . "&client_secret=" . GIT_SECRET;
-                                        $user_json = file_get_contents($user_url, false, stream_context_create($opts));
-                                        $user_obj = json_decode($user_json);
+                                        if (SIGN_UP == "FALSE" && $result->num_rows <= 0) {
+                                            add_user($conn, $obj, $commit->author->url);
+                                            /*
+                                            $user_url = $commit->author->url . "?client_id=" . GIT_CLIENT . "&client_secret=" . GIT_SECRET;
+                                            $user_json = file_get_contents($user_url, false, stream_context_create($opts));
+                                            $user_obj = json_decode($user_json);
 
-                                        if ($user_obj->name != "") {
-                                            $sql = "INSERT INTO Users (name, username, id) VALUES ('" . $user_obj->name . "', '" . $user_obj->login . "', '" . $user_obj->id . "')";
-                                            if ($conn->query($sql) === TRUE) {
-                                                $call_count++;
-                                                echo "<div class=\"alert alert-info alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Added new User to Database: " . $user_obj->name . "</div>";
-                                            } else {
-                                                echo "<div class=\"alert alert-warning alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Error: " . $sql . "<br>" . $conn->error . "</div>";
-                                            }
-                                        }
-                                        */
-                                    }
-                                }
-
-
-                                if ($result->num_rows > 0) {
-
-                                    $query = "SELECT sha FROM Tracked WHERE sha='" . $commit->sha . "'";
-
-                                    $result = $conn->query($query);
-                                    if ($result->num_rows <= 0) {
-                                        //Getting Proper Results
-                                        $commit_url = $commit->url . "?client_id=" . GIT_CLIENT . "&client_secret=" . GIT_SECRET;
-
-                                        $commit_json = file_get_contents($commit_url, false, stream_context_create($opts));
-                                        $commit_obj = json_decode($commit_json);
-                                        if (array_key_exists("author", $commit) && !empty($commit->author)) {
-                                            $query = "SELECT * FROM Users WHERE id='" . $commit->author->id . "'";
-
-                                            $result = $conn->query($query);
-
-                                            if ($result->num_rows > 0) {
-                                                $user = $result->fetch_assoc();
-
-                                                //Count total stats for each Commit to their corresponding person
-                                                $score = $user["score"] + (($commit_obj->stats->additions * (int)ADDITIONS) + ($commit_obj->stats->deletions * (int)DELETIONS) + ((int)COMMITS));
-                                                $sql = "UPDATE Users SET score=" . $score . " WHERE id='" . $commit->author->id . "'";
-                                                if ($conn->query($sql) === FALSE) {
-                                                    echo "<div class=\"alert alert-warning alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Error updating record: " . $conn->error . "</div>";
-                                                }
-
-                                                //Count added stats for each Commit to their corresponding person
-                                                $added = $user["added"] + $commit_obj->stats->additions;
-                                                $sql = "UPDATE Users SET added=" . $added . " WHERE id='" . $commit->author->id . "'";
-                                                if ($conn->query($sql) === FALSE) {
-                                                    echo "<div class=\"alert alert-warning alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Error updating record: " . $conn->error . "</div>";
-                                                }
-
-                                                //Count removed stats for each Commit to their corresponding person
-                                                $removed = $user["removed"] + $commit_obj->stats->deletions;
-                                                $sql = "UPDATE Users SET removed=" . $removed . " WHERE id='" . $commit->author->id . "'";
-                                                if ($conn->query($sql) === FALSE) {
-                                                    echo "<div class=\"alert alert-warning alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Error updating record: " . $conn->error . "</div>";
-                                                }
-
-                                                //Count added stats for each Commit to their corresponding person
-                                                $commits = $user["commits"] + 1;
-                                                $sql = "UPDATE Users SET commits=" . $commits . " WHERE id='" . $commit->author->id . "'";
-                                                if ($conn->query($sql) === FALSE) {
-                                                    echo "<div class=\"alert alert-warning alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Error updating record: " . $conn->error . "</div>";
-                                                }
-
-                                                $sql = "INSERT INTO Tracked (sha) VALUES ('" . $commit_obj->sha . "')";
+                                            if ($user_obj->name != "") {
+                                                $sql = "INSERT INTO Users (name, username, id) VALUES ('" . $user_obj->name . "', '" . $user_obj->login . "', '" . $user_obj->id . "')";
                                                 if ($conn->query($sql) === TRUE) {
                                                     $call_count++;
-                                                    echo "<div class=\"alert alert-info alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Added a new Commit Record to Database: </br>Sha: " . $commit_obj->sha . " | Date: " . $commit_obj->commit->committer->date . "</div>";
+                                                    echo "<div class=\"alert alert-info alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Added new User to Database: " . $user_obj->name . "</div>";
                                                 } else {
                                                     echo "<div class=\"alert alert-warning alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Error: " . $sql . "<br>" . $conn->error . "</div>";
                                                 }
+                                            }
+                                            */
+                                        }
+                                    }
 
+
+                                    if ($result->num_rows > 0) {
+
+                                        $query = "SELECT sha FROM Tracked WHERE sha='" . $commit->sha . "'";
+
+                                        $result = $conn->query($query);
+                                        if ($result->num_rows <= 0) {
+                                            //Getting Proper Results
+                                            $commit_url = $commit->url . "?client_id=" . GIT_CLIENT . "&client_secret=" . GIT_SECRET;
+
+                                            $commit_json = file_get_contents($commit_url, false, stream_context_create($opts));
+                                            $commit_obj = json_decode($commit_json);
+                                            if (array_key_exists("author", $commit) && !empty($commit->author)) {
+                                                $query = "SELECT * FROM Users WHERE id='" . $commit->author->id . "'";
+
+                                                $result = $conn->query($query);
+
+                                                if ($result->num_rows > 0) {
+                                                    $user = $result->fetch_assoc();
+
+                                                    //Count total stats for each Commit to their corresponding person
+                                                    $score = $user["score"] + (($commit_obj->stats->additions * (int)ADDITIONS) + ($commit_obj->stats->deletions * (int)DELETIONS) + ((int)COMMITS));
+                                                    $sql = "UPDATE Users SET score=" . $score . " WHERE id='" . $commit->author->id . "'";
+                                                    if ($conn->query($sql) === FALSE) {
+                                                        echo "<div class=\"alert alert-warning alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Error updating record: " . $conn->error . "</div>";
+                                                    }
+
+                                                    //Count added stats for each Commit to their corresponding person
+                                                    $added = $user["added"] + $commit_obj->stats->additions;
+                                                    $sql = "UPDATE Users SET added=" . $added . " WHERE id='" . $commit->author->id . "'";
+                                                    if ($conn->query($sql) === FALSE) {
+                                                        echo "<div class=\"alert alert-warning alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Error updating record: " . $conn->error . "</div>";
+                                                    }
+
+                                                    //Count removed stats for each Commit to their corresponding person
+                                                    $removed = $user["removed"] + $commit_obj->stats->deletions;
+                                                    $sql = "UPDATE Users SET removed=" . $removed . " WHERE id='" . $commit->author->id . "'";
+                                                    if ($conn->query($sql) === FALSE) {
+                                                        echo "<div class=\"alert alert-warning alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Error updating record: " . $conn->error . "</div>";
+                                                    }
+
+                                                    //Count added stats for each Commit to their corresponding person
+                                                    $commits = $user["commits"] + 1;
+                                                    $sql = "UPDATE Users SET commits=" . $commits . " WHERE id='" . $commit->author->id . "'";
+                                                    if ($conn->query($sql) === FALSE) {
+                                                        echo "<div class=\"alert alert-warning alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Error updating record: " . $conn->error . "</div>";
+                                                    }
+
+                                                    $sql = "INSERT INTO Tracked (sha) VALUES ('" . $commit_obj->sha . "')";
+                                                    if ($conn->query($sql) === TRUE) {
+                                                        $call_count++;
+                                                        echo "<div class=\"alert alert-info alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Added a new Commit Record to Database: </br>Sha: " . $commit_obj->sha . " | Date: " . $commit_obj->commit->committer->date . "</div>";
+                                                    } else {
+                                                        echo "<div class=\"alert alert-warning alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Error: " . $sql . "<br>" . $conn->error . "</div>";
+                                                    }
+
+                                                }
                                             }
                                         }
                                     }
