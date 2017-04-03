@@ -39,11 +39,11 @@
 <?php
 
 require("include/configuration.php");
-require("alert.php");
+//require("alert.php");
 
 // Create connection
 $conn = new mysqli(CONF_LOCATION, CONF_ADMINID, CONF_ADMINPASS);
-$alert = new Alert();
+//$alert = new Alert();
 
 // Check connection
 if ($conn->connect_error) {
