@@ -39,9 +39,11 @@
 <?php
 
 include("include/configuration.php");
+include 'alert.php';
 
 // Create connection
 $conn = new mysqli(CONF_LOCATION, CONF_ADMINID, CONF_ADMINPASS);
+$alert = new Alert();
 
 // Check connection
 if ($conn->connect_error) {
@@ -326,7 +328,7 @@ function add_user($opts, $url)
                             $query = "SELECT * FROM Users WHERE id='" . $issue->user->id . "'";
                             $result = $conn->query($query);
 
-                            if (SIGN_UP == "FALSE" && $result->num_rows <= 0) {
+                            if (SIGN_UP == "FALSE" && $result->num_rows <= 0 && ($repo->fork != true && $repo->fork != "true")) {
                                 $user_url = $issue->user->url . "?client_id=" . GIT_CLIENT . "&client_secret=" . GIT_SECRET;
                                 $user_json = file_get_contents($user_url, false, stream_context_create($opts));
                                 $user_obj = json_decode($user_json);
@@ -382,7 +384,7 @@ function add_user($opts, $url)
                             $query = "SELECT * FROM Users WHERE id='" . $issue->user->id . "'";
                             $result = $conn->query($query);
 
-                            if (SIGN_UP == "FALSE" && $result->num_rows <= 0) {
+                            if (SIGN_UP == "FALSE" && $result->num_rows <= 0 && ($repo->fork != true && $repo->fork != "true")) {
                                 $user_url = $issue->user->url . "?client_id=" . GIT_CLIENT . "&client_secret=" . GIT_SECRET;
                                 $user_json = file_get_contents($user_url, false, stream_context_create($opts));
                                 $user_obj = json_decode($user_json);
@@ -470,7 +472,7 @@ function add_user($opts, $url)
                                         $query = "SELECT * FROM Users WHERE id='" . $commit->author->id . "'";
                                         $result = $conn->query($query);
 
-                                        if (SIGN_UP == "FALSE" && $result->num_rows <= 0) {
+                                        if (SIGN_UP == "FALSE" && $result->num_rows <= 0 && ($repo->fork != true && $repo->fork != "true")) {
                                             $user_url = $commit->author->url . "?client_id=" . GIT_CLIENT . "&client_secret=" . GIT_SECRET;
                                             $user_json = file_get_contents($user_url, false, stream_context_create($opts));
                                             $user_obj = json_decode($user_json);
@@ -562,7 +564,8 @@ function add_user($opts, $url)
                                 }
                             }
                         }
-                        echo "<div class=\"alert alert-success alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Current Call Count after " . $repo->name . ": " . $call_count . "</div>";
+			$alert->success("Current Call Count after ".$repo->name.": ".$call_count);
+                        //echo "<div class=\"alert alert-success alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Current Call Count after " . $repo->name . ": " . $call_count . "</div>";
                     }
                 }
             }
