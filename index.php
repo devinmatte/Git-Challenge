@@ -38,8 +38,8 @@
 
 <?php
 
-include("include/configuration.php");
-include 'alert.php';
+require("include/configuration.php");
+require("alert.php");
 
 // Create connection
 $conn = new mysqli(CONF_LOCATION, CONF_ADMINID, CONF_ADMINPASS);
@@ -564,8 +564,9 @@ function add_user($opts, $url)
                                 }
                             }
                         }
-			$alert->success("Current Call Count after ".$repo->name.": ".$call_count);
-                        //echo "<div class=\"alert alert-success alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Current Call Count after " . $repo->name . ": " . $call_count . "</div>";
+			//$message = "Current Call Count after " . $repo->name . ": " . $call_count;
+			//$alert->success($message);
+                        echo "<div class=\"alert alert-success alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Current Call Count after " . $repo->name . ": " . $call_count . "</div>";
                     }
                 }
             }
