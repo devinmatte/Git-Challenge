@@ -39,11 +39,11 @@
 <?php
 
 require("include/configuration.php");
-//require("alert.php");
+require("alert.php");
 
 // Create connection
 $conn = new mysqli(CONF_LOCATION, CONF_ADMINID, CONF_ADMINPASS);
-//$alert = new Alert();
+$alert = new Alert();
 
 // Check connection
 if ($conn->connect_error) {
@@ -88,10 +88,10 @@ function add_user($opts, $url)
     $user_url = $url . "?client_id=" . GIT_CLIENT . "&client_secret=" . GIT_SECRET;
     $user_json = file_get_contents($user_url, false, stream_context_create($opts));
     $user_obj = json_decode($user_json);
+    $GLOBALS['call_count']++;
     if ($user_obj->name != "") {
         $sql = "INSERT INTO Users (name, username, id) VALUES ('" . $user_obj->name . "', '" . $user_obj->login . "', '" . $user_obj->id . "')";
         if ($GLOBALS['conn']->query($sql) === TRUE) {
-            $GLOBALS['call_count']++;
             echo "<div class=\"alert alert-info alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Added new User to Database: " . $user_obj->name . "</div>";
         } else {
             echo "<div class=\"alert alert-warning alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Error: " . $sql . "<br>" . $GLOBALS['conn']->error . "</div>";
@@ -246,7 +246,7 @@ function add_user($opts, $url)
                     $query = "SELECT * FROM Stats ORDER BY commits DESC";
                     $result = $conn->query($query);
                     $total = 0;
-                    for ($i = 0; $i< $result->num_rows; $i++){
+                    for ($i = 0; $i < $result->num_rows; $i++) {
                         $commit = $result->fetch_assoc();
                         $total += $commit["commits"];
                     }
@@ -316,7 +316,8 @@ function add_user($opts, $url)
                     }
 
                     if ($call_count < (int)MAXCALLS) {
-                        echo "<div class=\"alert alert-info alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Checking Repository: " . $repo->name . "</div>";
+                        $message = "Checking Repository: " . $repo->name;
+                        $alert->info($message);
 
                         $issue_url = substr($repo->issues_url, 0, -9) . "?state=open&client_id=" . GIT_CLIENT . "&client_secret=" . GIT_SECRET;
                         $issue_json = file_get_contents($issue_url, false, stream_context_create($opts));
@@ -336,9 +337,11 @@ function add_user($opts, $url)
                                 if ($user_obj->name != "") {
                                     $sql = "INSERT INTO Users (name, username, id) VALUES ('" . $user_obj->name . "', '" . $user_obj->login . "', '" . $user_obj->id . "')";
                                     if ($conn->query($sql) === TRUE) {
-                                        echo "<div class=\"alert alert-info alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Added new User to Database: " . $user_obj->name . "</div>";
+                                        $message = "Added a new User to Database: " . $user_obj->name;
+                                        $alert->info($message);
                                     } else {
-                                        echo "<div class=\"alert alert-warning alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Error: " . $sql . "<br>" . $conn->error . "</div>";
+                                        $message = "Error: " . $sql . "\n" . $conn->error;
+                                        $alert->warning($message);
                                     }
                                 }
                             }
@@ -391,9 +394,11 @@ function add_user($opts, $url)
                                 if ($user_obj->name != "") {
                                     $sql = "INSERT INTO Users (name, username, id) VALUES ('" . $user_obj->name . "', '" . $user_obj->login . "', '" . $user_obj->id . "')";
                                     if ($conn->query($sql) === TRUE) {
-                                        echo "<div class=\"alert alert-info alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Added new User to Database: " . $user_obj->name . "</div>";
+                                        $message = "Added a new User to Database: " . $user_obj->name;
+                                        $alert->info($message);
                                     } else {
-                                        echo "<div class=\"alert alert-warning alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Error: " . $sql . "<br>" . $conn->error . "</div>";
+                                        $message = "Error: " . $sql . "\n" . $conn->error;
+                                        $alert->warning($message);
                                     }
                                 }
                             }
@@ -467,7 +472,7 @@ function add_user($opts, $url)
 
                             //Loop through all Commits in each Repo
                             foreach ($repo_obj as &$commit) {
-                                if ($call_count < (int)MAXCALLS) {
+                                if ($call_count < (int)MAXCALLS && !$repo_empty) {
                                     if (array_key_exists("author", $commit) && !empty($commit->author)) {
                                         $query = "SELECT * FROM Users WHERE id='" . $commit->author->id . "'";
                                         $result = $conn->query($query);
@@ -481,9 +486,11 @@ function add_user($opts, $url)
                                             if ($user_obj->name != "") {
                                                 $sql = "INSERT INTO Users (name, username, id) VALUES ('" . $user_obj->name . "', '" . $user_obj->login . "', '" . $user_obj->id . "')";
                                                 if ($conn->query($sql) === TRUE) {
-                                                    echo "<div class=\"alert alert-info alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Added new User to Database: " . $user_obj->name . "</div>";
+                                                    $message = "Added a new User to Database: " . $user_obj->name;
+                                                    $alert->info($message);
                                                 } else {
-                                                    echo "<div class=\"alert alert-warning alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Error: " . $sql . "<br>" . $conn->error . "</div>";
+                                                    $message = "Error: " . $sql . "\n" . $conn->error;
+                                                    $alert->warning($message);
                                                 }
                                             }
                                         }
@@ -551,10 +558,11 @@ function add_user($opts, $url)
                                                                 echo "<div class=\"alert alert-warning alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Error updating record: " . $conn->error . "</div>";
                                                             }
                                                         }
-
-                                                        echo "<div class=\"alert alert-info alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Added a new Commit Record to Database: </br>Sha: " . $commit_obj->sha . " | Date: " . $commit_obj->commit->committer->date . "</div>";
+                                                        $message = "Added a new Commit Record to Database:\nSha: " . $commit_obj->sha . " | Date: " . $commit_obj->commit->committer->date;
+                                                        $alert->info($message);
                                                     } else {
-                                                        echo "<div class=\"alert alert-warning alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Error: " . $sql . "<br>" . $conn->error . "</div>";
+                                                        $message = "Error: " . $sql . "\n" . $conn->error;
+                                                        $alert->warning($message);
                                                     }
 
                                                 }
@@ -564,9 +572,8 @@ function add_user($opts, $url)
                                 }
                             }
                         }
-			//$message = "Current Call Count after " . $repo->name . ": " . $call_count;
-			//$alert->success($message);
-                        echo "<div class=\"alert alert-success alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Current Call Count after " . $repo->name . ": " . $call_count . "</div>";
+                        $message = "Current Call Count after " . $repo->name . ": " . $call_count;
+                        $alert->success($message);
                     }
                 }
             }
@@ -589,7 +596,8 @@ function add_user($opts, $url)
     <!-- Footer -->
     <footer id="footer">
         <ul class="icons">
-            <li><a href="https://github.com/devinmatte/Git-Challenge" class="icon alt fa-github"><span class="label">GitHub</span></a></li>
+            <li><a href="https://github.com/devinmatte/Git-Challenge" class="icon alt fa-github"><span class="label">GitHub</span></a>
+            </li>
         </ul>
         <p class="copyright">&copy; Devin Matte. Design: <a href="https://html5up.net">HTML5 UP</a>.</p>
     </footer>
