@@ -36,12 +36,13 @@
 
 <?php
 
-require("include/configuration.php");
+$configs = require("include/configuration.php");
 require("alert.php");
+echo json_encode($configs);
 
 // Create connection
 $conn = new mysqli(CONF_LOCATION, CONF_ADMINID, CONF_ADMINPASS);
-$alert = new Alert();
+$alert = new Alert;
 
 // Check connection
 if ($conn->connect_error) {
@@ -453,7 +454,8 @@ function add_user($opts, $url)
 
                                     $sql = "INSERT INTO Tracked (issueID) VALUES ('" . $issue->id . "')";
                                     if ($conn->query($sql) === TRUE) {
-                                        echo "<div class=\"alert alert-info alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Added a new <i>Closed</i> Issue/Pull Request Record to Database: </br>Id: " . $issue->id . "</div>";
+					$message = "Added a new Closed Issue/Pull Request Record to Database: \nId: " . $issue->id;
+					$alert->info($message);
                                     } else {
                                         echo "<div class=\"alert alert-warning alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Error: " . $sql . "<br>" . $conn->error . "</div>";
                                     }
@@ -557,7 +559,8 @@ function add_user($opts, $url)
                                                             $commits = $stats["commits"] + 1;
                                                             $sql = "UPDATE Stats SET commits=" . $commits . " WHERE repository='" . $repo->name . "'";
                                                             if ($conn->query($sql) === FALSE) {
-                                                                echo "<div class=\"alert alert-warning alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Error updating record: " . $conn->error . "</div>";
+								$message = "Error updating record: " . $conn->error;
+								$alert->warning($message);
                                                             }
                                                         }
                                                         $message = "Added a new Commit Record to Database:\nSha: " . $commit_obj->sha . " | Date: " . $commit_obj->commit->committer->date;
@@ -610,5 +613,6 @@ function add_user($opts, $url)
 </html>
 
 <?php
+echo json_encode($configs);
 mysqli_close($conn);
 ?>
