@@ -21,15 +21,12 @@
     <!--[if lte IE 8]>
     <script src="assets/js/ie/respond.min.js"></script><![endif]-->
     <script src="assets/js/main.js"></script>
-    <!-- Latest compiled and minified CSS
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
-          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-    -->
     <!-- Latest compiled and minified JavaScript -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
             integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
             crossorigin="anonymous"></script>
     <link rel="stylesheet" href="assets/css/main.css"/>
+    <link rel="stylesheet" href="assets/css/git-challenge.css"/>
     <!--[if lte IE 9]>
     <link rel="stylesheet" href="assets/css/ie9.css"/><![endif]-->
     <!--[if lte IE 8]>
@@ -53,7 +50,8 @@ if ($conn->connect_error) {
 // Create database
 $sql = "CREATE DATABASE Git-Challenge";
 if ($conn->query($sql) === TRUE) {
-    echo "<div class=\"alert alert-success alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Database created successfully</div>";
+$message = "Database created successfully";
+$alert->success($message);
 }
 
 $conn = new mysqli(CONF_LOCATION, CONF_ADMINID, CONF_ADMINPASS, CONF_DATABASE);
@@ -62,21 +60,24 @@ $conn = new mysqli(CONF_LOCATION, CONF_ADMINID, CONF_ADMINPASS, CONF_DATABASE);
 $sql = "CREATE TABLE Tracked (sha VARCHAR(256), issueID VARCHAR(256))";
 
 if ($conn->query($sql) === TRUE) {
-    echo "<div class=\"alert alert-success alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Table <i>Tracked</i> created successfully</div>";
+$message = "Table Tracked created successfully";
+$alert-success($message);
 }
 
 // sql to create table
 $sql = "CREATE TABLE Users (name VARCHAR(256) NOT NULL, username VARCHAR(128) NOT NULL, id INT(35) NOT NULL, score INT(25) DEFAULT 0, added INT(25) DEFAULT 0, removed INT(25) DEFAULT 0, challenge INT(25) DEFAULT 0, commits INT(25) DEFAULT 0, issues INT(25) DEFAULT 0, pullRequests INT(25) DEFAULT 0)";
 
 if ($conn->query($sql) === TRUE) {
-    echo "<div class=\"alert alert-success alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Table <i>Users</i> created successfully</div>";
+$message = "Table Users created successfully";
+$alert-success($message);
 }
 
 // sql to create table
 $sql = "CREATE TABLE Stats (repository VARCHAR(256), commits INT(25) DEFAULT 0)";
 
 if ($conn->query($sql) === TRUE) {
-    echo "<div class=\"alert alert-success alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Table <i>Stats</i> created successfully</div>";
+$message = "Table Stats created successfully";
+$alert-success($message);
 }
 
 $call_count = 0;

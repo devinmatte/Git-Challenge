@@ -14,7 +14,7 @@ define("CONF_DATABASE", "Git-Challenge");
 /** Git Configuration */
 
 /** Git Organization */
-define("GIT_ORG", "NHSTechTeam");
+define("GIT_ORG", "GitHubOrg");
 /** Git Client */
 define("GIT_CLIENT", "Git Client");
 /** Git Secret */
@@ -23,9 +23,9 @@ define("GIT_SECRET", "Git Secret");
 /** App Options */
 define("SIGN_UP", "FALSE");
 define("DEBUG", "OFF");
-define("MAXCALLS", "500");
+define("MAXCALLS", "2500");
 
-// Point Scaling
+/** Point Scaling */
 define("ADDITIONS", "1");
 define("DELETIONS", "1");
 define("CHALLENGES", "1");
