@@ -1,3 +1,4 @@
+<?php ?>
 <!DOCTYPE HTML>
 <!--
     Template:
