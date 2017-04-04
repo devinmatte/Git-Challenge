@@ -7,3 +7,14 @@ php:
   - '7.1'
   - hhvm
   - nightly
+
+services:
+  - mysql
+
+before_install:
+  - mysql -e 'CREATE DATABASE gitchallenge;'
+
+before_script:
+  - cp include/configuration-template.php include/configuration.php
+
+script: php -S localhost:8000
