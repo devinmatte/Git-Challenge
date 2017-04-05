@@ -70,10 +70,11 @@ $call_count = 0;
 
             for ($row = 0; $row < 5; $row++) {
                 $user = $result->fetch_assoc();
+		$score = $user["added"] + $user["removed"] + $user["challenge"] + ($user["commits"] * $configs->points->commits) + ($user["issues"] * $configs->points->issues) + ($user["pullRequests"] * $configs->points->pullRequests);
                 echo "<tr>";
                 echo "<td>" . ($row + 1) . "</td>";
                 echo "<td>" . $user["name"] . "</td>";
-                echo "<td>" . $user["score"] . "</td>";
+                echo "<td>" . $score . "</td>";
                 echo "</tr>";
             }
             ?>
@@ -144,24 +145,25 @@ $call_count = 0;
 
                 for ($row = 0; $row < $result->num_rows; $row++) {
                     $user = $result->fetch_assoc();
+			$score = $user["added"] + $user["removed"] + $user["challenge"] + ($user["commits"] * $configs->points->commits) + ($user["issues"] * $configs->points->issues) + ($user["pullRequests"] * $configs->points->pullRequests);
                     echo "<tr>";
                     echo "<td align=\"center\" width=\"10%\">" . ($row + 1) . "</td>";
                     echo "<td align=\"center\" width=\"10%\">" . "<a href=\"https://github.com/" . $user["username"] . "\"><img src=\"https://avatars1.githubusercontent.com/u/" . $user["id"] . "\" width=\"100%\" alt=\"\" /></a>" . "</td>";
                     echo "<td align=\"center\" width=\"45%\">" . $user["name"] . "</td>";
-                    echo "<td align=\"center\" width=\"45%\">" . $user["score"] . "</td>";
+                    echo "<td align=\"center\" width=\"45%\">" . $score . "</td>";
                     echo "</tr><tr>";
                     echo "<td colspan=\"4\" nowrap=\"nowrap\" align=\"center\"><div class=\"progress\">
-  <div class=\"progress-bar progress-bar-success active fa fa-plus-circle\" title=\"Additions: " . $user["added"] . "\" role=\"progressbar\" style=\"width:" . ((float)((float)$user["added"] / (float)$user["score"])) * 100.0 . "%\">
+  <div class=\"progress-bar progress-bar-success active fa fa-plus-circle\" title=\"Additions: " . $user["added"] . "\" role=\"progressbar\" style=\"width:" . ((float)((float)$user["added"] / (float)$score)) * 100.0 . "%\">
   </div>
-  <div class=\"progress-bar progress-bar-danger active fa fa-minus-circle\" title=\"Deletions: " . $user["removed"] . "\" role=\"progressbar\" style=\"width:" . ((float)((float)$user["removed"] / (float)$user["score"])) * 100.0 . "%\">
+  <div class=\"progress-bar progress-bar-danger active fa fa-minus-circle\" title=\"Deletions: " . $user["removed"] . "\" role=\"progressbar\" style=\"width:" . ((float)((float)$user["removed"] / (float)$score)) * 100.0 . "%\">
   </div>
-  <div class=\"progress-bar progress-bar-info active fa fa-upload\" title=\"Commits: " . $user["commits"] . "\" role=\"progressbar\" style=\"width:" . ((float)(((float)$user["commits"] / (float)$user["score"])) * (100.0 * $configs->points->commits)) . "%\">
+  <div class=\"progress-bar progress-bar-info active fa fa-upload\" title=\"Commits: " . $user["commits"] . "\" role=\"progressbar\" style=\"width:" . ((float)(((float)$user["commits"] / (float)$score)) * (100.0 * $configs->points->commits)) . "%\">
   </div>
-  <div class=\"progress-bar progress-bar-issue active fa fa-exclamation-circle\" title=\"Issues: " . $user["issues"] . "\" role=\"progressbar\" style=\"width:" . ((float)(((float)$user["issues"] / (float)$user["score"])) * (100.0 * $configs->points->issues) ). "%\">
+  <div class=\"progress-bar progress-bar-issue active fa fa-exclamation-circle\" title=\"Issues: " . $user["issues"] . "\" role=\"progressbar\" style=\"width:" . ((float)(((float)$user["issues"] / (float)$score)) * (100.0 * $configs->points->issues) ). "%\">
   </div>
-  <div class=\"progress-bar progress-bar-pr-merged active fa fa-code-fork\" title=\"Pull Requests (Merged): " . $user["pullRequests"] . "\" role=\"progressbar\" style=\"width:" . ((float)(((float)$user["pullRequests"] / (float)$user["score"])) * (100.0 * $configs->points->pullRequests)) . "%\">
+  <div class=\"progress-bar progress-bar-pr-merged active fa fa-code-fork\" title=\"Pull Requests (Merged): " . $user["pullRequests"] . "\" role=\"progressbar\" style=\"width:" . ((float)(((float)$user["pullRequests"] / (float)$score)) * (100.0 * $configs->points->pullRequests)) . "%\">
   </div>
-  <div class=\"progress-bar progress-bar-warning active fa fa-trophy\" title=\"Challenge Points: " . $user["challenge"] . "\" role=\"progressbar\" style=\"width:" . ((float)((float)$user["challenge"] / (float)$user["score"])) * 100.0 . "%\">
+  <div class=\"progress-bar progress-bar-warning active fa fa-trophy\" title=\"Challenge Points: " . $user["challenge"] . "\" role=\"progressbar\" style=\"width:" . ((float)((float)$user["challenge"] / (float)$score)) * 100.0 . "%\">
   </div>
 </div>" . "</td>";
                     echo "</tr>";
@@ -254,7 +256,8 @@ $call_count = 0;
                         if ($repo->name != "") {
                             $sql = "INSERT INTO Stats (repository) VALUES ('" . $repo->name . "')";
                             if ($conn->query($sql) === TRUE) {
-                                echo "<div class=\"alert alert-info alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Added new Repository to Stats Database: " . $repo->name . "</div>";
+                               	$message = "Added a new Repository to Stats Database: " . $repo->name;
+                                $alert->info($message);
                             } else {
                                 $message = "Error: " . $sql . "\n" . $conn->error;
                                 $alert->warning($message);
