@@ -37,50 +37,11 @@
 <?php
 
 $configs = require("include/configuration.php");
-require("alert.php");
-$config = json_encode($configs);
+require("connection.php");
+$connection = new Connection;
+$conn = $connection->initialize();
 
-// Create connection
-$conn = new mysqli(CONF_LOCATION, CONF_ADMINID, CONF_ADMINPASS);
 $alert = new Alert;
-
-// Check connection
-if ($conn->connect_error) {
-    die("<div class=\"alert alert-danger alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a><b>Connection failed:</b> " . $conn->connect_error . "</div>");
-}
-
-// Create database
-$sql = "CREATE DATABASE Git-Challenge";
-if ($conn->query($sql) === TRUE) {
-    $message = "Database created successfully";
-    $alert->success($message);
-}
-
-$conn = new mysqli(CONF_LOCATION, CONF_ADMINID, CONF_ADMINPASS, CONF_DATABASE);
-
-// sql to create table
-$sql = "CREATE TABLE Tracked (sha VARCHAR(256), issueID VARCHAR(256))";
-
-if ($conn->query($sql) === TRUE) {
-    $message = "Table Tracked created successfully";
-    $alert->success($message);
-}
-
-// sql to create table
-$sql = "CREATE TABLE Users (name VARCHAR(256) NOT NULL, username VARCHAR(128) NOT NULL, id INT(35) NOT NULL, score INT(25) DEFAULT 0, added INT(25) DEFAULT 0, removed INT(25) DEFAULT 0, challenge INT(25) DEFAULT 0, commits INT(25) DEFAULT 0, issues INT(25) DEFAULT 0, pullRequests INT(25) DEFAULT 0)";
-
-if ($conn->query($sql) === TRUE) {
-    $message = "Table Users created successfully";
-    $alert->success($message);
-}
-
-// sql to create table
-$sql = "CREATE TABLE Stats (repository VARCHAR(256), commits INT(25) DEFAULT 0)";
-
-if ($conn->query($sql) === TRUE) {
-    $message = "Table Stats created successfully";
-    $alert->success($message);
-}
 
 $call_count = 0;
 
@@ -163,7 +124,8 @@ $call_count = 0;
                 <h2>Point Breakdown</h2>
             </header>
 
-            <div class="alert alert-success"><h3>Currently each Refresh makes up to <?php echo MAXCALLS; ?> API Calls.
+            <div class="alert alert-success"><h3>Currently each Refresh makes up
+                    to <?php echo $configs->options->maxcalls; ?> API Calls.
                     Please be patient with Refreshes</h3></div>
 
             <table class="alt">
@@ -252,7 +214,7 @@ $call_count = 0;
         </section>
 
         <?php
-        if (DEBUG == "OFF") {
+        if ($configs->options->debug == false) {
             echo "<!--";
         }
         ?>
@@ -264,12 +226,11 @@ $call_count = 0;
 
             <?php
 
-
             $empty = false;
             $page = 0;
             while (!$empty) {
                 $page++;
-                $url = "https://api.github.com/users/" . GIT_ORG . "/repos" . "?page=" . $page . "&client_id=" . GIT_CLIENT . "&client_secret=" . GIT_SECRET;
+                $url = "https://api.github.com/users/" . $configs->git->org . "/repos" . "?page=" . $page . "&client_id=" . $configs->git->client . "&client_secret=" . $configs->git->secret;
                 $opts = [
                     'http' => [
                         'method' => 'GET',
@@ -301,11 +262,11 @@ $call_count = 0;
                         }
                     }
 
-                    if ($call_count < (int)MAXCALLS) {
+                    if ($call_count < $configs->options->maxcalls) {
                         $message = "Checking Repository: " . $repo->name;
                         $alert->info($message);
 
-                        $issue_url = substr($repo->issues_url, 0, -9) . "?state=open&client_id=" . GIT_CLIENT . "&client_secret=" . GIT_SECRET;
+                        $issue_url = substr($repo->issues_url, 0, -9) . "?state=open&client_id=" . $configs->git->client . "&client_secret=" . $configs->git->secret;
                         $issue_json = file_get_contents($issue_url, false, stream_context_create($opts));
                         $issue_obj = json_decode($issue_json);
                         $call_count++;
@@ -315,8 +276,8 @@ $call_count = 0;
                             $query = "SELECT * FROM Users WHERE id='" . $issue->user->id . "'";
                             $result = $conn->query($query);
 
-                            if (SIGN_UP == "FALSE" && $result->num_rows <= 0 && ($repo->fork != true && $repo->fork != "true")) {
-                                $user_url = $issue->user->url . "?client_id=" . GIT_CLIENT . "&client_secret=" . GIT_SECRET;
+                            if ($configs->options->pool == true && $result->num_rows <= 0 && ($repo->fork != true && $repo->fork != "true")) {
+                                $user_url = $issue->user->url . "?client_id=" . $configs->git->client . "&client_secret=" . $configs->git->secret;
                                 $user_json = file_get_contents($user_url, false, stream_context_create($opts));
                                 $user_obj = json_decode($user_json);
                                 $call_count++;
@@ -366,7 +327,7 @@ $call_count = 0;
 
                         }
 
-                        $issue_url = substr($repo->issues_url, 0, -9) . "?state=closed&client_id=" . GIT_CLIENT . "&client_secret=" . GIT_SECRET;
+                        $issue_url = substr($repo->issues_url, 0, -9) . "?state=closed&client_id=" . $configs->git->client . "&client_secret=" . $configs->git->secret;
                         $issue_json = file_get_contents($issue_url, false, stream_context_create($opts));
                         $issue_obj = json_decode($issue_json);
                         $call_count++;
@@ -376,8 +337,8 @@ $call_count = 0;
                             $query = "SELECT * FROM Users WHERE id='" . $issue->user->id . "'";
                             $result = $conn->query($query);
 
-                            if (SIGN_UP == "FALSE" && $result->num_rows <= 0 && ($repo->fork != true && $repo->fork != "true")) {
-                                $user_url = $issue->user->url . "?client_id=" . GIT_CLIENT . "&client_secret=" . GIT_SECRET;
+                            if ($configs->options->pool == true && $result->num_rows <= 0 && ($repo->fork != true && $repo->fork != "true")) {
+                                $user_url = $issue->user->url . "?client_id=" . $configs->git->client . "&client_secret=" . $configs->git->secret;
                                 $user_json = file_get_contents($user_url, false, stream_context_create($opts));
                                 $user_obj = json_decode($user_json);
                                 if ($user_obj->name != "") {
@@ -402,7 +363,7 @@ $call_count = 0;
                                     $merged = null;
 
                                     if (array_key_exists("pull_request", $issue)) {
-                                        $pr_url = $issue->pull_request->url . "?client_id=" . GIT_CLIENT . "&client_secret=" . GIT_SECRET;
+                                        $pr_url = $issue->pull_request->url . "?client_id=" . $configs->git->client . "&client_secret=" . $configs->git->secret;
                                         $pr_json = file_get_contents($pr_url, false, stream_context_create($opts));
                                         $pr_obj = json_decode($pr_json);
                                         $call_count++;
@@ -459,7 +420,7 @@ $call_count = 0;
                         $repo_page = 0;
                         while (!$repo_empty) {
                             $repo_page++;
-                            $repo_url = substr($repo->commits_url, 0, -6) . "?page=" . $repo_page . "&client_id=" . GIT_CLIENT . "&client_secret=" . GIT_SECRET;
+                            $repo_url = substr($repo->commits_url, 0, -6) . "?page=" . $repo_page . "&client_id=" . $configs->git->client . "&client_secret=" . $configs->git->secret;
                             $repo_json = file_get_contents($repo_url, false, stream_context_create($opts));
                             $repo_obj = json_decode($repo_json);
                             $call_count++;
@@ -467,13 +428,13 @@ $call_count = 0;
 
                             //Loop through all Commits in each Repo
                             foreach ($repo_obj as &$commit) {
-                                if ($call_count < (int)MAXCALLS && !$repo_empty) {
+                                if ($call_count < $configs->options->maxcalls && !$repo_empty) {
                                     if (array_key_exists("author", $commit) && !empty($commit->author)) {
                                         $query = "SELECT * FROM Users WHERE id='" . $commit->author->id . "'";
                                         $result = $conn->query($query);
 
-                                        if (SIGN_UP == "FALSE" && $result->num_rows <= 0 && ($repo->fork != true && $repo->fork != "true")) {
-                                            $user_url = $commit->author->url . "?client_id=" . GIT_CLIENT . "&client_secret=" . GIT_SECRET;
+                                        if ($configs->options->pool == true && $result->num_rows <= 0 && ($repo->fork != true && $repo->fork != "true")) {
+                                            $user_url = $commit->author->url . "?client_id=" . $configs->git->client . "&client_secret=" . $configs->git->secret;
                                             $user_json = file_get_contents($user_url, false, stream_context_create($opts));
                                             $user_obj = json_decode($user_json);
                                             $call_count++;
@@ -499,7 +460,7 @@ $call_count = 0;
                                         $result = $conn->query($query);
                                         if ($result->num_rows <= 0) {
                                             //Getting Proper Results
-                                            $commit_url = $commit->url . "?client_id=" . GIT_CLIENT . "&client_secret=" . GIT_SECRET;
+                                            $commit_url = $commit->url . "?client_id=" . $configs->git->client . "&client_secret=" . $configs->git->secret;
                                             $commit_json = file_get_contents($commit_url, false, stream_context_create($opts));
                                             $commit_obj = json_decode($commit_json);
                                             $call_count++;
@@ -586,7 +547,7 @@ $call_count = 0;
         </section>
 
         <?php
-        if (DEBUG == "OFF") {
+        if ($configs->options->debug == false) {
             echo "-->";
         }
         ?>
