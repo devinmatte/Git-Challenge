@@ -1,13 +1,5 @@
 <?php
 
-/** Point Scaling */
-define("ADDITIONS", "1");
-define("DELETIONS", "1");
-define("CHALLENGES", "1");
-define("COMMITS", "10");
-define("ISSUES", "25");
-define("PULLREQUESTS", "50");
-
 return (object) array(
 	'host' => '127.0.0.1',
 	'username' => 'root',

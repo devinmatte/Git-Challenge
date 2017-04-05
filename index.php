@@ -155,11 +155,11 @@ $call_count = 0;
   </div>
   <div class=\"progress-bar progress-bar-danger active fa fa-minus-circle\" title=\"Deletions: " . $user["removed"] . "\" role=\"progressbar\" style=\"width:" . ((float)((float)$user["removed"] / (float)$user["score"])) * 100.0 . "%\">
   </div>
-  <div class=\"progress-bar progress-bar-info active fa fa-upload\" title=\"Commits: " . $user["commits"] . "\" role=\"progressbar\" style=\"width:" . ((float)(((float)$user["commits"] / (float)$user["score"])) * (100.0 * (float)COMMITS)) . "%\">
+  <div class=\"progress-bar progress-bar-info active fa fa-upload\" title=\"Commits: " . $user["commits"] . "\" role=\"progressbar\" style=\"width:" . ((float)(((float)$user["commits"] / (float)$user["score"])) * (100.0 * $configs->points->commits)) . "%\">
   </div>
-  <div class=\"progress-bar progress-bar-issue active fa fa-exclamation-circle\" title=\"Issues: " . $user["issues"] . "\" role=\"progressbar\" style=\"width:" . ((float)(((float)$user["issues"] / (float)$user["score"])) * (100.0 * (float)ISSUES)) . "%\">
+  <div class=\"progress-bar progress-bar-issue active fa fa-exclamation-circle\" title=\"Issues: " . $user["issues"] . "\" role=\"progressbar\" style=\"width:" . ((float)(((float)$user["issues"] / (float)$user["score"])) * (100.0 * $configs->points->issues) ). "%\">
   </div>
-  <div class=\"progress-bar progress-bar-pr-merged active fa fa-code-fork\" title=\"Pull Requests (Merged): " . $user["pullRequests"] . "\" role=\"progressbar\" style=\"width:" . ((float)(((float)$user["pullRequests"] / (float)$user["score"])) * (100.0 * (float)PULLREQUESTS)) . "%\">
+  <div class=\"progress-bar progress-bar-pr-merged active fa fa-code-fork\" title=\"Pull Requests (Merged): " . $user["pullRequests"] . "\" role=\"progressbar\" style=\"width:" . ((float)(((float)$user["pullRequests"] / (float)$user["score"])) * (100.0 * $configs->points->pullRequests)) . "%\">
   </div>
   <div class=\"progress-bar progress-bar-warning active fa fa-trophy\" title=\"Challenge Points: " . $user["challenge"] . "\" role=\"progressbar\" style=\"width:" . ((float)((float)$user["challenge"] / (float)$user["score"])) * 100.0 . "%\">
   </div>
@@ -308,7 +308,7 @@ $call_count = 0;
                                         $alert->warning($message);
                                     }
 
-                                    $score = ($user["score"] + (int)ISSUES);
+                                    $score = ($user["score"] + $configs->points->issues);
                                     $sql = "UPDATE Users SET score=" . $score . " WHERE id='" . $issue->user->id . "'";
                                     if ($conn->query($sql) === FALSE) {
                                         $message = "Error updating record: " . $conn->error;
@@ -380,7 +380,7 @@ $call_count = 0;
                                             $alert->warning($message);
                                         }
 
-                                        $score = ($user["score"] + (int)PULLREQUESTS);
+                                        $score = ($user["score"] + $configs->points->pullRequests);
                                         $sql = "UPDATE Users SET score=" . $score . " WHERE id='" . $issue->user->id . "'";
                                         if ($conn->query($sql) === FALSE) {
                                             $message = "Error updating record: " . $conn->error;
@@ -395,7 +395,7 @@ $call_count = 0;
                                             $alert->warning($message);
                                         }
 
-                                        $score = ($user["score"] + (int)ISSUES);
+                                        $score = ($user["score"] + $configs->points->issues);
                                         $sql = "UPDATE Users SET score=" . $score . " WHERE id='" . $issue->user->id . "'";
                                         if ($conn->query($sql) === FALSE) {
                                             $message = "Error updating record: " . $conn->error;
@@ -474,7 +474,7 @@ $call_count = 0;
                                                     $user = $result->fetch_assoc();
 
                                                     //Count total stats for each Commit to their corresponding person
-                                                    $score = $user["score"] + (($commit_obj->stats->additions * (int)ADDITIONS) + ($commit_obj->stats->deletions * (int)DELETIONS) + ((int)COMMITS));
+                                                    $score = $user["score"] + (($commit_obj->stats->additions * $configs->points->additions) + ($commit_obj->stats->deletions * $configs->points->deletions) + ($configs->points->commits));
                                                     $sql = "UPDATE Users SET score=" . $score . " WHERE id='" . $commit->author->id . "'";
                                                     if ($conn->query($sql) === FALSE) {
                                                         $message = "Error updating record: " . $conn->error;
