@@ -16,9 +16,9 @@ define("CONF_DATABASE", "gitchallenge");
 /** Git Organization */
 define("GIT_ORG", "github-tools");
 /** Git Client */
-define("GIT_CLIENT", "Git Client");
+define("GIT_CLIENT", "");
 /** Git Secret */
-define("GIT_SECRET", "Git Secret");
+define("GIT_SECRET", "");
 
 /** App Options */
 define("SIGN_UP", "FALSE");

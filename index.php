@@ -38,7 +38,7 @@
 
 $configs = require("include/configuration.php");
 require("alert.php");
-echo json_encode($configs);
+$config = json_encode($configs);
 
 // Create connection
 $conn = new mysqli(CONF_LOCATION, CONF_ADMINID, CONF_ADMINPASS);
@@ -52,8 +52,8 @@ if ($conn->connect_error) {
 // Create database
 $sql = "CREATE DATABASE Git-Challenge";
 if ($conn->query($sql) === TRUE) {
-$message = "Database created successfully";
-$alert->success($message);
+    $message = "Database created successfully";
+    $alert->success($message);
 }
 
 $conn = new mysqli(CONF_LOCATION, CONF_ADMINID, CONF_ADMINPASS, CONF_DATABASE);
@@ -62,45 +62,27 @@ $conn = new mysqli(CONF_LOCATION, CONF_ADMINID, CONF_ADMINPASS, CONF_DATABASE);
 $sql = "CREATE TABLE Tracked (sha VARCHAR(256), issueID VARCHAR(256))";
 
 if ($conn->query($sql) === TRUE) {
-$message = "Table Tracked created successfully";
-$alert-success($message);
+    $message = "Table Tracked created successfully";
+    $alert->success($message);
 }
 
 // sql to create table
 $sql = "CREATE TABLE Users (name VARCHAR(256) NOT NULL, username VARCHAR(128) NOT NULL, id INT(35) NOT NULL, score INT(25) DEFAULT 0, added INT(25) DEFAULT 0, removed INT(25) DEFAULT 0, challenge INT(25) DEFAULT 0, commits INT(25) DEFAULT 0, issues INT(25) DEFAULT 0, pullRequests INT(25) DEFAULT 0)";
 
 if ($conn->query($sql) === TRUE) {
-$message = "Table Users created successfully";
-$alert-success($message);
+    $message = "Table Users created successfully";
+    $alert->success($message);
 }
 
 // sql to create table
 $sql = "CREATE TABLE Stats (repository VARCHAR(256), commits INT(25) DEFAULT 0)";
 
 if ($conn->query($sql) === TRUE) {
-$message = "Table Stats created successfully";
-$alert-success($message);
+    $message = "Table Stats created successfully";
+    $alert->success($message);
 }
 
 $call_count = 0;
-
-//TODO: Define Functions for Refactor
-function add_user($opts, $url)
-{
-    //TODO: Figure out why URL has an error
-    $user_url = $url . "?client_id=" . GIT_CLIENT . "&client_secret=" . GIT_SECRET;
-    $user_json = file_get_contents($user_url, false, stream_context_create($opts));
-    $user_obj = json_decode($user_json);
-    $GLOBALS['call_count']++;
-    if ($user_obj->name != "") {
-        $sql = "INSERT INTO Users (name, username, id) VALUES ('" . $user_obj->name . "', '" . $user_obj->login . "', '" . $user_obj->id . "')";
-        if ($GLOBALS['conn']->query($sql) === TRUE) {
-            echo "<div class=\"alert alert-info alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Added new User to Database: " . $user_obj->name . "</div>";
-        } else {
-            echo "<div class=\"alert alert-warning alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Error: " . $sql . "<br>" . $GLOBALS['conn']->error . "</div>";
-        }
-    }
-}
 
 ?>
 <body>
@@ -313,7 +295,8 @@ function add_user($opts, $url)
                             if ($conn->query($sql) === TRUE) {
                                 echo "<div class=\"alert alert-info alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Added new Repository to Stats Database: " . $repo->name . "</div>";
                             } else {
-                                echo "<div class=\"alert alert-warning alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Error: " . $sql . "<br>" . $conn->error . "</div>";
+                                $message = "Error: " . $sql . "\n" . $conn->error;
+                                $alert->warning($message);
                             }
                         }
                     }
@@ -360,20 +343,23 @@ function add_user($opts, $url)
                                     $issues = ($user["issues"] + 1);
                                     $sql = "UPDATE Users SET issues=" . $issues . " WHERE id='" . $issue->user->id . "'";
                                     if ($conn->query($sql) === FALSE) {
-                                        echo "<div class=\"alert alert-warning alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Error updating record: " . $conn->error . "</div>";
+                                        $message = "Error updating record: " . $conn->error;
+                                        $alert->warning($message);
                                     }
 
                                     $score = ($user["score"] + (int)ISSUES);
                                     $sql = "UPDATE Users SET score=" . $score . " WHERE id='" . $issue->user->id . "'";
                                     if ($conn->query($sql) === FALSE) {
-                                        echo "<div class=\"alert alert-warning alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Error updating record: " . $conn->error . "</div>";
+                                        $message = "Error updating record: " . $conn->error;
+                                        $alert->warning($message);
                                     }
 
                                     $sql = "INSERT INTO Tracked (issueID) VALUES ('" . $issue->id . "')";
                                     if ($conn->query($sql) === TRUE) {
                                         echo "<div class=\"alert alert-info alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Added a new <i>Open</i> Issue Record to Database: </br>Id: " . $issue->id . "</div>";
                                     } else {
-                                        echo "<div class=\"alert alert-warning alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Error: " . $sql . "<br>" . $conn->error . "</div>";
+                                        $message = "Error: " . $sql . "\n" . $conn->error;
+                                        $alert->warning($message);
                                     }
                                 }
                             }
@@ -429,35 +415,40 @@ function add_user($opts, $url)
                                         $issues = ($user["pullRequests"] + 1);
                                         $sql = "UPDATE Users SET pullRequests=" . $issues . " WHERE id='" . $issue->user->id . "'";
                                         if ($conn->query($sql) === FALSE) {
-                                            echo "<div class=\"alert alert-warning alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Error updating record: " . $conn->error . "</div>";
+                                            $message = "Error updating record: " . $conn->error;
+                                            $alert->warning($message);
                                         }
 
                                         $score = ($user["score"] + (int)PULLREQUESTS);
                                         $sql = "UPDATE Users SET score=" . $score . " WHERE id='" . $issue->user->id . "'";
                                         if ($conn->query($sql) === FALSE) {
-                                            echo "<div class=\"alert alert-warning alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Error updating record: " . $conn->error . "</div>";
+                                            $message = "Error updating record: " . $conn->error;
+                                            $alert->warning($message);
                                         }
                                     } else {
                                         //Count added stats for each Issue to their corresponding person
                                         $issues = ($user["issues"] + 1);
                                         $sql = "UPDATE Users SET issues=" . $issues . " WHERE id='" . $issue->user->id . "'";
                                         if ($conn->query($sql) === FALSE) {
-                                            echo "<div class=\"alert alert-warning alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Error updating record: " . $conn->error . "</div>";
+                                            $message = "Error updating record: " . $conn->error;
+                                            $alert->warning($message);
                                         }
 
                                         $score = ($user["score"] + (int)ISSUES);
                                         $sql = "UPDATE Users SET score=" . $score . " WHERE id='" . $issue->user->id . "'";
                                         if ($conn->query($sql) === FALSE) {
-                                            echo "<div class=\"alert alert-warning alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Error updating record: " . $conn->error . "</div>";
+                                            $message = "Error updating record: " . $conn->error;
+                                            $alert->warning($message);
                                         }
                                     }
 
                                     $sql = "INSERT INTO Tracked (issueID) VALUES ('" . $issue->id . "')";
                                     if ($conn->query($sql) === TRUE) {
-					$message = "Added a new Closed Issue/Pull Request Record to Database: \nId: " . $issue->id;
-					$alert->info($message);
+                                        $message = "Added a new Closed Issue/Pull Request Record to Database: \nId: " . $issue->id;
+                                        $alert->info($message);
                                     } else {
-                                        echo "<div class=\"alert alert-warning alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Error: " . $sql . "<br>" . $conn->error . "</div>";
+                                        $message = "Error: " . $sql . "\n" . $conn->error;
+                                        $alert->warning($message);
                                     }
                                 }
                             }
@@ -525,28 +516,32 @@ function add_user($opts, $url)
                                                     $score = $user["score"] + (($commit_obj->stats->additions * (int)ADDITIONS) + ($commit_obj->stats->deletions * (int)DELETIONS) + ((int)COMMITS));
                                                     $sql = "UPDATE Users SET score=" . $score . " WHERE id='" . $commit->author->id . "'";
                                                     if ($conn->query($sql) === FALSE) {
-                                                        echo "<div class=\"alert alert-warning alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Error updating record: " . $conn->error . "</div>";
+                                                        $message = "Error updating record: " . $conn->error;
+                                                        $alert->warning($message);
                                                     }
 
                                                     //Count added stats for each Commit to their corresponding person
                                                     $added = $user["added"] + $commit_obj->stats->additions;
                                                     $sql = "UPDATE Users SET added=" . $added . " WHERE id='" . $commit->author->id . "'";
                                                     if ($conn->query($sql) === FALSE) {
-                                                        echo "<div class=\"alert alert-warning alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Error updating record: " . $conn->error . "</div>";
+                                                        $message = "Error updating record: " . $conn->error;
+                                                        $alert->warning($message);
                                                     }
 
                                                     //Count removed stats for each Commit to their corresponding person
                                                     $removed = $user["removed"] + $commit_obj->stats->deletions;
                                                     $sql = "UPDATE Users SET removed=" . $removed . " WHERE id='" . $commit->author->id . "'";
                                                     if ($conn->query($sql) === FALSE) {
-                                                        echo "<div class=\"alert alert-warning alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Error updating record: " . $conn->error . "</div>";
+                                                        $message = "Error updating record: " . $conn->error;
+                                                        $alert->warning($message);
                                                     }
 
                                                     //Count added stats for each Commit to their corresponding person
                                                     $commits = $user["commits"] + 1;
                                                     $sql = "UPDATE Users SET commits=" . $commits . " WHERE id='" . $commit->author->id . "'";
                                                     if ($conn->query($sql) === FALSE) {
-                                                        echo "<div class=\"alert alert-warning alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a>Error updating record: " . $conn->error . "</div>";
+                                                        $message = "Error updating record: " . $conn->error;
+                                                        $alert->warning($message);
                                                     }
 
                                                     $sql = "INSERT INTO Tracked (sha) VALUES ('" . $commit_obj->sha . "')";
@@ -559,8 +554,8 @@ function add_user($opts, $url)
                                                             $commits = $stats["commits"] + 1;
                                                             $sql = "UPDATE Stats SET commits=" . $commits . " WHERE repository='" . $repo->name . "'";
                                                             if ($conn->query($sql) === FALSE) {
-								$message = "Error updating record: " . $conn->error;
-								$alert->warning($message);
+                                                                $message = "Error updating record: " . $conn->error;
+                                                                $alert->warning($message);
                                                             }
                                                         }
                                                         $message = "Added a new Commit Record to Database:\nSha: " . $commit_obj->sha . " | Date: " . $commit_obj->commit->committer->date;
@@ -613,6 +608,5 @@ function add_user($opts, $url)
 </html>
 
 <?php
-echo json_encode($configs);
 mysqli_close($conn);
 ?>
