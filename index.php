@@ -70,7 +70,7 @@ $call_count = 0;
 
             for ($row = 0; $row < 5; $row++) {
                 $user = $result->fetch_assoc();
-		$score = $user["added"] + $user["removed"] + $user["challenge"] + ($user["commits"] * $configs->points->commits) + ($user["issues"] * $configs->points->issues) + ($user["pullRequests"] * $configs->points->pullRequests);
+                $score = ($user["added"] * $configs->points->additions) + ($user["removed"] * $configs->points->deletions) + ($user["challenge"] * $configs->points->challenges) + ($user["commits"] * $configs->points->commits) + ($user["issues"] * $configs->points->issues) + ($user["pullRequests"] * $configs->points->pullRequests);
                 echo "<tr>";
                 echo "<td>" . ($row + 1) . "</td>";
                 echo "<td>" . $user["name"] . "</td>";
@@ -145,7 +145,7 @@ $call_count = 0;
 
                 for ($row = 0; $row < $result->num_rows; $row++) {
                     $user = $result->fetch_assoc();
-			$score = $user["added"] + $user["removed"] + $user["challenge"] + ($user["commits"] * $configs->points->commits) + ($user["issues"] * $configs->points->issues) + ($user["pullRequests"] * $configs->points->pullRequests);
+                    $score = ($user["added"] * $configs->points->additions) + ($user["removed"] * $configs->points->deletions) + ($user["challenge"] * $configs->points->challenges) + ($user["commits"] * $configs->points->commits) + ($user["issues"] * $configs->points->issues) + ($user["pullRequests"] * $configs->points->pullRequests);
                     echo "<tr>";
                     echo "<td align=\"center\" width=\"10%\">" . ($row + 1) . "</td>";
                     echo "<td align=\"center\" width=\"10%\">" . "<a href=\"https://github.com/" . $user["username"] . "\"><img src=\"https://avatars1.githubusercontent.com/u/" . $user["id"] . "\" width=\"100%\" alt=\"\" /></a>" . "</td>";
@@ -159,7 +159,7 @@ $call_count = 0;
   </div>
   <div class=\"progress-bar progress-bar-info active fa fa-upload\" title=\"Commits: " . $user["commits"] . "\" role=\"progressbar\" style=\"width:" . ((float)(((float)$user["commits"] / (float)$score)) * (100.0 * $configs->points->commits)) . "%\">
   </div>
-  <div class=\"progress-bar progress-bar-issue active fa fa-exclamation-circle\" title=\"Issues: " . $user["issues"] . "\" role=\"progressbar\" style=\"width:" . ((float)(((float)$user["issues"] / (float)$score)) * (100.0 * $configs->points->issues) ). "%\">
+  <div class=\"progress-bar progress-bar-issue active fa fa-exclamation-circle\" title=\"Issues: " . $user["issues"] . "\" role=\"progressbar\" style=\"width:" . ((float)(((float)$user["issues"] / (float)$score)) * (100.0 * $configs->points->issues)) . "%\">
   </div>
   <div class=\"progress-bar progress-bar-pr-merged active fa fa-code-fork\" title=\"Pull Requests (Merged): " . $user["pullRequests"] . "\" role=\"progressbar\" style=\"width:" . ((float)(((float)$user["pullRequests"] / (float)$score)) * (100.0 * $configs->points->pullRequests)) . "%\">
   </div>
@@ -256,7 +256,7 @@ $call_count = 0;
                         if ($repo->name != "") {
                             $sql = "INSERT INTO Stats (repository) VALUES ('" . $repo->name . "')";
                             if ($conn->query($sql) === TRUE) {
-                               	$message = "Added a new Repository to Stats Database: " . $repo->name;
+                                $message = "Added a new Repository to Stats Database: " . $repo->name;
                                 $alert->info($message);
                             } else {
                                 $message = "Error: " . $sql . "\n" . $conn->error;
