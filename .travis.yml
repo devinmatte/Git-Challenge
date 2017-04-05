@@ -18,4 +18,4 @@ before_script:
   - cp include/configuration-template.php include/configuration.php
 
 script:
-  - phpunit index.php
+  - phpunit test.php
