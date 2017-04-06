@@ -249,3 +249,10 @@ button.close {
     background: transparent;
     border: 0;
 }
+body {
+    background-color: #935d8c;
+    background-image: url("images/overlay.png"), -moz-linear-gradient(45deg, #2f00e3 15%, #006093 85%);
+    background-image: url("images/overlay.png"), -webkit-linear-gradient(45deg, #2f00e3 15%, #006093 85%);
+    background-image: url("images/overlay.png"), -ms-linear-gradient(45deg, #2f00e3 15%, #006093 85%);
+    background-image: url("images/overlay.png"), linear-gradient(45deg, #2f00e3 15%, #006093 85%);
+}

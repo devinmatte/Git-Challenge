@@ -130,9 +130,7 @@ $call_count = 0;
                 <h2>Point Breakdown</h2>
             </header>
 
-            <div class="alert alert-success"><h3>Currently each Refresh makes up
-                    to <?php echo $configs->options->maxcalls; ?> API Calls.
-                    Please be patient with Refreshes</h3></div>
+            <div class="alert alert-success"><h3>Point Scaling</h3><h4>Additions: <?php echo $configs->points->additions;?> | Deletions: <?php echo $configs->points->deletions;?> | Commits: <?php echo $configs->points->commits;?> | Issues: <?php echo $configs->points->issues;?> | Merged Pull Requests: <?php echo $configs->points->pullRequests;?></h4></div>
 
             <table class="alt">
                 <thead>
