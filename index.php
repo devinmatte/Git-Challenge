@@ -20,7 +20,8 @@
     <script src="assets/js/skel.min.js"></script>
     <script src="assets/js/util.js"></script>
     <!--[if lte IE 8]>
-    <script src="assets/js/ie/respond.min.js"></script><![endif]-->
+    <script src="assets/js/ie/respond.min.js"></script>
+    <![endif]-->
     <script src="assets/js/main.js"></script>
     <!-- Latest compiled and minified JavaScript -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
@@ -69,13 +70,17 @@ $call_count = 0;
             $result = $conn->query($query);
 
             for ($row = 0; $row < 5; $row++) {
-                $user = $result->fetch_assoc();
-                $score = ($user["added"] * $configs->points->additions) + ($user["removed"] * $configs->points->deletions) + ($user["challenge"] * $configs->points->challenges) + ($user["commits"] * $configs->points->commits) + ($user["issues"] * $configs->points->issues) + ($user["pullRequests"] * $configs->points->pullRequests);
-                echo "<tr>";
-                echo "<td>" . ($row + 1) . "</td>";
-                echo "<td>" . $user["name"] . "</td>";
-                echo "<td>" . $score . "</td>";
-                echo "</tr>";
+                if ($result->num_rows > 0) {
+                    $user = $result->fetch_assoc();
+                    $score = ($user["added"] * $configs->points->additions) + ($user["removed"] * $configs->points->deletions) + ($user["challenge"] * $configs->points->challenges) + ($user["commits"] * $configs->points->commits) + ($user["issues"] * $configs->points->issues) + ($user["pullRequests"] * $configs->points->pullRequests);
+                    $sql = "UPDATE Users SET score=" . $score . " WHERE id='" . $user["id"] . "'";
+                    $conn->query($sql);
+                    echo "<tr>";
+                    echo "<td>" . ($row + 1) . "</td>";
+                    echo "<td>" . $user["name"] . "</td>";
+                    echo "<td>" . $score . "</td>";
+                    echo "</tr>";
+                }
             }
             ?>
             </tbody>
@@ -146,6 +151,9 @@ $call_count = 0;
                 for ($row = 0; $row < $result->num_rows; $row++) {
                     $user = $result->fetch_assoc();
                     $score = ($user["added"] * $configs->points->additions) + ($user["removed"] * $configs->points->deletions) + ($user["challenge"] * $configs->points->challenges) + ($user["commits"] * $configs->points->commits) + ($user["issues"] * $configs->points->issues) + ($user["pullRequests"] * $configs->points->pullRequests);
+                    $sql = "UPDATE Users SET score=" . $score . " WHERE id='" . $user["id"] . "'";
+                    $conn->query($sql);
+
                     echo "<tr>";
                     echo "<td align=\"center\" width=\"10%\">" . ($row + 1) . "</td>";
                     echo "<td align=\"center\" width=\"10%\">" . "<a href=\"https://github.com/" . $user["username"] . "\"><img src=\"https://avatars1.githubusercontent.com/u/" . $user["id"] . "\" width=\"100%\" alt=\"\" /></a>" . "</td>";
@@ -153,9 +161,9 @@ $call_count = 0;
                     echo "<td align=\"center\" width=\"45%\">" . $score . "</td>";
                     echo "</tr><tr>";
                     echo "<td colspan=\"4\" nowrap=\"nowrap\" align=\"center\"><div class=\"progress\">
-  <div class=\"progress-bar progress-bar-success active fa fa-plus-circle\" title=\"Additions: " . $user["added"] . "\" role=\"progressbar\" style=\"width:" . ((float)((float)$user["added"] / (float)$score)) * 100.0 . "%\">
+  <div class=\"progress-bar progress-bar-success active fa fa-plus-circle\" title=\"Additions: " . $user["added"] . "\" role=\"progressbar\" style=\"width:" . ((float)((float)$user["added"] / (float)$score)) * (100.0 * $configs->points->additions) . "%\">
   </div>
-  <div class=\"progress-bar progress-bar-danger active fa fa-minus-circle\" title=\"Deletions: " . $user["removed"] . "\" role=\"progressbar\" style=\"width:" . ((float)((float)$user["removed"] / (float)$score)) * 100.0 . "%\">
+  <div class=\"progress-bar progress-bar-danger active fa fa-minus-circle\" title=\"Deletions: " . $user["removed"] . "\" role=\"progressbar\" style=\"width:" . ((float)((float)$user["removed"] / (float)$score)) * (100.0 * $configs->points->deletions) . "%\">
   </div>
   <div class=\"progress-bar progress-bar-info active fa fa-upload\" title=\"Commits: " . $user["commits"] . "\" role=\"progressbar\" style=\"width:" . ((float)(((float)$user["commits"] / (float)$score)) * (100.0 * $configs->points->commits)) . "%\">
   </div>
@@ -163,7 +171,7 @@ $call_count = 0;
   </div>
   <div class=\"progress-bar progress-bar-pr-merged active fa fa-code-fork\" title=\"Pull Requests (Merged): " . $user["pullRequests"] . "\" role=\"progressbar\" style=\"width:" . ((float)(((float)$user["pullRequests"] / (float)$score)) * (100.0 * $configs->points->pullRequests)) . "%\">
   </div>
-  <div class=\"progress-bar progress-bar-warning active fa fa-trophy\" title=\"Challenge Points: " . $user["challenge"] . "\" role=\"progressbar\" style=\"width:" . ((float)((float)$user["challenge"] / (float)$score)) * 100.0 . "%\">
+  <div class=\"progress-bar progress-bar-warning active fa fa-trophy\" title=\"Challenge Points: " . $user["challenge"] . "\" role=\"progressbar\" style=\"width:" . ((float)((float)$user["challenge"] / (float)$score)) * (100.0 * $configs->points->challenges) . "%\">
   </div>
 </div>" . "</td>";
                     echo "</tr>";
@@ -296,7 +304,7 @@ $call_count = 0;
                                 }
                             }
 
-                            if ($result->num_rows > 0) {
+                            if ($result->num_rows > 0 && !array_key_exists("pull_request", $issue)) {
                                 $user = $result->fetch_assoc();
                                 $query = "SELECT issueID FROM Tracked WHERE issueID='" . $issue->id . "'";
 
@@ -306,13 +314,6 @@ $call_count = 0;
                                     //Count added stats for each Issue to their corresponding person
                                     $issues = ($user["issues"] + 1);
                                     $sql = "UPDATE Users SET issues=" . $issues . " WHERE id='" . $issue->user->id . "'";
-                                    if ($conn->query($sql) === FALSE) {
-                                        $message = "Error updating record: " . $conn->error;
-                                        $alert->warning($message);
-                                    }
-
-                                    $score = ($user["score"] + $configs->points->issues);
-                                    $sql = "UPDATE Users SET score=" . $score . " WHERE id='" . $issue->user->id . "'";
                                     if ($conn->query($sql) === FALSE) {
                                         $message = "Error updating record: " . $conn->error;
                                         $alert->warning($message);
@@ -382,13 +383,6 @@ $call_count = 0;
                                             $message = "Error updating record: " . $conn->error;
                                             $alert->warning($message);
                                         }
-
-                                        $score = ($user["score"] + $configs->points->pullRequests);
-                                        $sql = "UPDATE Users SET score=" . $score . " WHERE id='" . $issue->user->id . "'";
-                                        if ($conn->query($sql) === FALSE) {
-                                            $message = "Error updating record: " . $conn->error;
-                                            $alert->warning($message);
-                                        }
                                     } else {
                                         //Count added stats for each Issue to their corresponding person
                                         $issues = ($user["issues"] + 1);
@@ -398,12 +392,6 @@ $call_count = 0;
                                             $alert->warning($message);
                                         }
 
-                                        $score = ($user["score"] + $configs->points->issues);
-                                        $sql = "UPDATE Users SET score=" . $score . " WHERE id='" . $issue->user->id . "'";
-                                        if ($conn->query($sql) === FALSE) {
-                                            $message = "Error updating record: " . $conn->error;
-                                            $alert->warning($message);
-                                        }
                                     }
 
                                     $sql = "INSERT INTO Tracked (issueID) VALUES ('" . $issue->id . "')";
@@ -475,14 +463,6 @@ $call_count = 0;
 
                                                 if ($result->num_rows > 0) {
                                                     $user = $result->fetch_assoc();
-
-                                                    //Count total stats for each Commit to their corresponding person
-                                                    $score = $user["score"] + (($commit_obj->stats->additions * $configs->points->additions) + ($commit_obj->stats->deletions * $configs->points->deletions) + ($configs->points->commits));
-                                                    $sql = "UPDATE Users SET score=" . $score . " WHERE id='" . $commit->author->id . "'";
-                                                    if ($conn->query($sql) === FALSE) {
-                                                        $message = "Error updating record: " . $conn->error;
-                                                        $alert->warning($message);
-                                                    }
 
                                                     //Count added stats for each Commit to their corresponding person
                                                     $added = $user["added"] + $commit_obj->stats->additions;
