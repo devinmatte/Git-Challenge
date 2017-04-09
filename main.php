@@ -34,7 +34,8 @@ class main
         }
     }
 
-    public function addUser(mysqli $conn, $configs, Alert $alert, $opts, $url){
+    public function addUser(mysqli $conn, $configs, Alert $alert, $opts, $url)
+    {
         $user_url = $url . "?client_id=" . $configs->git->client . "&client_secret=" . $configs->git->secret;
         $user_json = file_get_contents($user_url, false, stream_context_create($opts));
         $user_obj = json_decode($user_json);
@@ -86,6 +87,148 @@ class main
         }
     }
 
+    public function closedIssue(mysqli $conn, $configs, Alert $alert, $opts, $repo, $issue)
+    {
+        $query = "SELECT * FROM Users WHERE id='" . $issue->user->id . "'";
+        $result = $conn->query($query);
+
+        if ($configs->options->pool == true && $result->num_rows <= 0 && ($repo->fork != true && $repo->fork != "true")) {
+            $this->addUser($conn, $configs, $alert, $opts, $issue->user->url);
+        }
+
+        if ($result->num_rows > 0 && !array_key_exists("message", $issue)) {
+            $user = $result->fetch_assoc();
+            $query = "SELECT issueID FROM Tracked WHERE issueID='" . $issue->id . "'";
+
+            $result = $conn->query($query);
+            if ($result->num_rows <= 0) {
+
+                $merged = null;
+
+                if (array_key_exists("pull_request", $issue)) {
+                    $pr_url = $issue->pull_request->url . "?client_id=" . $configs->git->client . "&client_secret=" . $configs->git->secret;
+                    $pr_json = file_get_contents($pr_url, false, stream_context_create($opts));
+                    $pr_obj = json_decode($pr_json);
+                    $GLOBALS['call_count']++;
+                    $merged = $pr_obj->merged_at;
+                }
+
+                if ($merged != "null" && $merged != null && $merged != "") {
+
+                    //Count added stats for each Issue to their corresponding person
+                    $issues = ($user["pullRequests"] + 1);
+                    $sql = "UPDATE Users SET pullRequests=" . $issues . " WHERE id='" . $issue->user->id . "'";
+                    if ($conn->query($sql) === FALSE) {
+                        $message = "Error updating record: " . $conn->error;
+                        $alert->warning($message);
+                    }
+                } else {
+                    //Count added stats for each Issue to their corresponding person
+                    $issues = ($user["issues"] + 1);
+                    $sql = "UPDATE Users SET issues=" . $issues . " WHERE id='" . $issue->user->id . "'";
+                    if ($conn->query($sql) === FALSE) {
+                        $message = "Error updating record: " . $conn->error;
+                        $alert->warning($message);
+                    }
+
+                }
+
+                $sql = "INSERT INTO Tracked (issueID) VALUES ('" . $issue->id . "')";
+                if ($conn->query($sql) === TRUE) {
+                    $message = "Added a new Closed Issue/Pull Request Record to Database: \nId: " . $issue->id;
+                    $alert->info($message);
+                } else {
+                    $message = "Error: " . $sql . "\n" . $conn->error;
+                    $alert->warning($message);
+                }
+            }
+        }
+    }
+
+    public function commit(mysqli $conn, $configs, Alert $alert, $opts, $repo, $commit, $repo_empty)
+    {
+        if ($GLOBALS['call_count'] < $configs->options->maxcalls && !$repo_empty && !array_key_exists("message", $commit)) {
+            if (array_key_exists("author", $commit) && !empty($commit->author)) {
+                $query = "SELECT * FROM Users WHERE id='" . $commit->author->id . "'";
+                $result = $conn->query($query);
+
+                if ($configs->options->pool == true && $result->num_rows <= 0 && ($repo->fork != true && $repo->fork != "true")) {
+                    $this->addUser($conn, $configs, $alert, $opts, $commit->author->url);
+                }
+
+                if ($result->num_rows > 0) {
+
+                    $query = "SELECT sha FROM Tracked WHERE sha='" . $commit->sha . "'";
+
+                    $result = $conn->query($query);
+                    if ($result->num_rows <= 0) {
+                        //Getting Proper Results
+                        $commit_url = $commit->url . "?client_id=" . $configs->git->client . "&client_secret=" . $configs->git->secret;
+                        $commit_json = file_get_contents($commit_url, false, stream_context_create($opts));
+                        $commit_obj = json_decode($commit_json);
+                        $GLOBALS['call_count']++;
+
+                        if (array_key_exists("author", $commit) && !empty($commit->author)) {
+                            $query = "SELECT * FROM Users WHERE id='" . $commit->author->id . "'";
+
+                            $result = $conn->query($query);
+
+                            if ($result->num_rows > 0) {
+                                $user = $result->fetch_assoc();
+
+                                //Count added stats for each Commit to their corresponding person
+                                $added = $user["added"] + $commit_obj->stats->additions;
+                                $sql = "UPDATE Users SET added=" . $added . " WHERE id='" . $commit->author->id . "'";
+                                if ($conn->query($sql) === FALSE) {
+                                    $message = "Error updating record: " . $conn->error;
+                                    $alert->warning($message);
+                                }
+
+                                //Count removed stats for each Commit to their corresponding person
+                                $removed = $user["removed"] + $commit_obj->stats->deletions;
+                                $sql = "UPDATE Users SET removed=" . $removed . " WHERE id='" . $commit->author->id . "'";
+                                if ($conn->query($sql) === FALSE) {
+                                    $message = "Error updating record: " . $conn->error;
+                                    $alert->warning($message);
+                                }
+
+                                //Count added stats for each Commit to their corresponding person
+                                $commits = $user["commits"] + 1;
+                                $sql = "UPDATE Users SET commits=" . $commits . " WHERE id='" . $commit->author->id . "'";
+                                if ($conn->query($sql) === FALSE) {
+                                    $message = "Error updating record: " . $conn->error;
+                                    $alert->warning($message);
+                                }
+
+                                $sql = "INSERT INTO Tracked (sha) VALUES ('" . $commit_obj->sha . "')";
+                                if ($conn->query($sql) === TRUE) {
+                                    $query = "SELECT * FROM Stats WHERE repository='" . $repo->name . "'";
+                                    $result = $conn->query($query);
+                                    if ($result->num_rows > 0) {
+                                        $stats = $result->fetch_assoc();
+
+                                        $commits = $stats["commits"] + 1;
+                                        $sql = "UPDATE Stats SET commits=" . $commits . " WHERE repository='" . $repo->name . "'";
+                                        if ($conn->query($sql) === FALSE) {
+                                            $message = "Error updating record: " . $conn->error;
+                                            $alert->warning($message);
+                                        }
+                                    }
+                                    $message = "Added a new Commit Record to Database:\nSha: " . $commit_obj->sha . " | Date: " . $commit_obj->commit->committer->date;
+                                    $alert->info($message);
+                                } else {
+                                    $message = "Error: " . $sql . "\n" . $conn->error;
+                                    $alert->warning($message);
+                                }
+
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     public function repo(mysqli $conn, $configs, Alert $alert, $opts, $obj, $repo)
     {
         if (!array_key_exists("message", $obj)) {
@@ -126,61 +269,7 @@ class main
 
                 //Loop through all closed issues
                 foreach ($issue_obj as &$issue) {
-                    $query = "SELECT * FROM Users WHERE id='" . $issue->user->id . "'";
-                    $result = $conn->query($query);
-
-                    if ($configs->options->pool == true && $result->num_rows <= 0 && ($repo->fork != true && $repo->fork != "true")) {
-                        $this->addUser($conn, $configs, $alert, $opts, $issue->user->url);
-                    }
-
-                    if ($result->num_rows > 0 && !array_key_exists("message", $issue)) {
-                        $user = $result->fetch_assoc();
-                        $query = "SELECT issueID FROM Tracked WHERE issueID='" . $issue->id . "'";
-
-                        $result = $conn->query($query);
-                        if ($result->num_rows <= 0) {
-
-                            $merged = null;
-
-                            if (array_key_exists("pull_request", $issue)) {
-                                $pr_url = $issue->pull_request->url . "?client_id=" . $configs->git->client . "&client_secret=" . $configs->git->secret;
-                                $pr_json = file_get_contents($pr_url, false, stream_context_create($opts));
-                                $pr_obj = json_decode($pr_json);
-                                $GLOBALS['call_count']++;
-                                $merged = $pr_obj->merged_at;
-                            }
-
-                            if ($merged != "null" && $merged != null && $merged != "") {
-
-                                //Count added stats for each Issue to their corresponding person
-                                $issues = ($user["pullRequests"] + 1);
-                                $sql = "UPDATE Users SET pullRequests=" . $issues . " WHERE id='" . $issue->user->id . "'";
-                                if ($conn->query($sql) === FALSE) {
-                                    $message = "Error updating record: " . $conn->error;
-                                    $alert->warning($message);
-                                }
-                            } else {
-                                //Count added stats for each Issue to their corresponding person
-                                $issues = ($user["issues"] + 1);
-                                $sql = "UPDATE Users SET issues=" . $issues . " WHERE id='" . $issue->user->id . "'";
-                                if ($conn->query($sql) === FALSE) {
-                                    $message = "Error updating record: " . $conn->error;
-                                    $alert->warning($message);
-                                }
-
-                            }
-
-                            $sql = "INSERT INTO Tracked (issueID) VALUES ('" . $issue->id . "')";
-                            if ($conn->query($sql) === TRUE) {
-                                $message = "Added a new Closed Issue/Pull Request Record to Database: \nId: " . $issue->id;
-                                $alert->info($message);
-                            } else {
-                                $message = "Error: " . $sql . "\n" . $conn->error;
-                                $alert->warning($message);
-                            }
-                        }
-                    }
-
+                    $this->closedIssue($conn, $configs, $alert, $opts, $repo, $issue);
                 }
 
                 $repo_empty = false;
@@ -195,87 +284,7 @@ class main
 
                     //Loop through all Commits in each Repo
                     foreach ($repo_obj as &$commit) {
-                        if ($GLOBALS['call_count'] < $configs->options->maxcalls && !$repo_empty && !array_key_exists("message", $commit)) {
-                            if (array_key_exists("author", $commit) && !empty($commit->author)) {
-                                $query = "SELECT * FROM Users WHERE id='" . $commit->author->id . "'";
-                                $result = $conn->query($query);
-
-                                if ($configs->options->pool == true && $result->num_rows <= 0 && ($repo->fork != true && $repo->fork != "true")) {
-                                    $this->addUser($conn, $configs, $alert, $opts, $commit->author->url);
-                                }
-                            }
-
-
-                            if ($result->num_rows > 0) {
-
-                                $query = "SELECT sha FROM Tracked WHERE sha='" . $commit->sha . "'";
-
-                                $result = $conn->query($query);
-                                if ($result->num_rows <= 0) {
-                                    //Getting Proper Results
-                                    $commit_url = $commit->url . "?client_id=" . $configs->git->client . "&client_secret=" . $configs->git->secret;
-                                    $commit_json = file_get_contents($commit_url, false, stream_context_create($opts));
-                                    $commit_obj = json_decode($commit_json);
-                                    $GLOBALS['call_count']++;
-
-                                    if (array_key_exists("author", $commit) && !empty($commit->author)) {
-                                        $query = "SELECT * FROM Users WHERE id='" . $commit->author->id . "'";
-
-                                        $result = $conn->query($query);
-
-                                        if ($result->num_rows > 0) {
-                                            $user = $result->fetch_assoc();
-
-                                            //Count added stats for each Commit to their corresponding person
-                                            $added = $user["added"] + $commit_obj->stats->additions;
-                                            $sql = "UPDATE Users SET added=" . $added . " WHERE id='" . $commit->author->id . "'";
-                                            if ($conn->query($sql) === FALSE) {
-                                                $message = "Error updating record: " . $conn->error;
-                                                $alert->warning($message);
-                                            }
-
-                                            //Count removed stats for each Commit to their corresponding person
-                                            $removed = $user["removed"] + $commit_obj->stats->deletions;
-                                            $sql = "UPDATE Users SET removed=" . $removed . " WHERE id='" . $commit->author->id . "'";
-                                            if ($conn->query($sql) === FALSE) {
-                                                $message = "Error updating record: " . $conn->error;
-                                                $alert->warning($message);
-                                            }
-
-                                            //Count added stats for each Commit to their corresponding person
-                                            $commits = $user["commits"] + 1;
-                                            $sql = "UPDATE Users SET commits=" . $commits . " WHERE id='" . $commit->author->id . "'";
-                                            if ($conn->query($sql) === FALSE) {
-                                                $message = "Error updating record: " . $conn->error;
-                                                $alert->warning($message);
-                                            }
-
-                                            $sql = "INSERT INTO Tracked (sha) VALUES ('" . $commit_obj->sha . "')";
-                                            if ($conn->query($sql) === TRUE) {
-                                                $query = "SELECT * FROM Stats WHERE repository='" . $repo->name . "'";
-                                                $result = $conn->query($query);
-                                                if ($result->num_rows > 0) {
-                                                    $stats = $result->fetch_assoc();
-
-                                                    $commits = $stats["commits"] + 1;
-                                                    $sql = "UPDATE Stats SET commits=" . $commits . " WHERE repository='" . $repo->name . "'";
-                                                    if ($conn->query($sql) === FALSE) {
-                                                        $message = "Error updating record: " . $conn->error;
-                                                        $alert->warning($message);
-                                                    }
-                                                }
-                                                $message = "Added a new Commit Record to Database:\nSha: " . $commit_obj->sha . " | Date: " . $commit_obj->commit->committer->date;
-                                                $alert->info($message);
-                                            } else {
-                                                $message = "Error: " . $sql . "\n" . $conn->error;
-                                                $alert->warning($message);
-                                            }
-
-                                        }
-                                    }
-                                }
-                            }
-                        }
+                        $this->commit($conn, $configs, $alert, $opts, $repo, $commit, $repo_empty);
                     }
                 }
                 $message = "Current Call Count after " . $repo->name . ": " . $GLOBALS['call_count'];
