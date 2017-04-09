@@ -261,11 +261,10 @@ $call_count = 0;
 
     <!-- Footer -->
     <footer id="footer">
-        <ul class="icons">
-            <li><a href="https://github.com/devinmatte/Git-Challenge" class="icon alt fa-github"><span class="label">GitHub</span></a>
-            </li>
-        </ul>
-        <p class="copyright">&copy; Devin Matte. Design: <a href="https://html5up.net">HTML5 UP</a>.</p>
+        <p class="copyright">
+            <a href="https://github.com/devinmatte/Git-Challenge" class="icon fa-github"><span class="label">GitHub</span></a>
+        </br>
+            &copy; <?php echo date("Y") ?> Devin Matte | Design: <a href="https://html5up.net">HTML5 UP</a>.</p>
     </footer>
 
 </div>
