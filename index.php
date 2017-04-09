@@ -93,6 +93,11 @@ $call_count = 0;
             <li><a href="#intro" class="active">Introduction</a></li>
             <li><a href="#breakdown">Point Breakdown</a></li>
             <li><a href="#second">Statistics</a></li>
+            <?php
+            if ($configs->options->debug == true) {
+                echo "<li><a href=\"#debug\">Debug</a></li>";
+            }
+            ?>
         </ul>
     </nav>
 
@@ -178,6 +183,7 @@ $call_count = 0;
                 </tbody>
             </table>
             <footer class="major">
+                <a class="button special fit" title="<?php echo $configs->options->maxcalls;?> API Calls | Will take time, please be patient" href='index.php?load=true'>Load New Data</a>
             </footer>
         </section>
 
@@ -220,6 +226,36 @@ $call_count = 0;
             <footer class="major">
             </footer>
         </section>
+
+        <?php
+        if ($configs->options->debug == false) {
+            echo "<!--";
+        }
+        ?>
+
+        <section id="debug" class="main special">
+            <header class="major">
+                <h2>Debugging</h2>
+            </header>
+
+            <?php
+
+            if (isset($_GET['load'])) {
+                require("main.php");
+                $main = new main($conn, $configs, $alert);
+            }
+
+            ?>
+
+            <footer class="major">
+            </footer>
+        </section>
+
+        <?php
+        if ($configs->options->debug == false) {
+            echo "-->";
+        }
+        ?>
 
     </div>
 
