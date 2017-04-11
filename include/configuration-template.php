@@ -13,6 +13,7 @@ return (object) array(
 	'options' => (object) array(
 		'pool' => true,
 		'debug' => false,
+		'event' => false,
 		'maxcalls' => 1000
 	),
 	'points' => (object) array(

@@ -92,6 +92,11 @@ $call_count = 0;
         <ul>
             <li><a href="#intro" class="active">Introduction</a></li>
             <li><a href="#breakdown">Point Breakdown</a></li>
+            <?php
+            if ($configs->options->event == true) {
+            echo "<li><a href=\"#event\">Event</a></li>";
+            }
+            ?>
             <li><a href="#second">Statistics</a></li>
             <?php
             if ($configs->options->debug == true) {
@@ -187,6 +192,31 @@ $call_count = 0;
             </footer>
         </section>
 
+        <?php
+        if ($configs->options->event == false) {
+            echo "<!--";
+        }
+        ?>
+
+        <section id="event" class="main special">
+            <header class="major">
+                <h2>Event</h2>
+            </header>
+
+            <?php
+
+            ?>
+
+            <footer class="major">
+            </footer>
+        </section>
+
+        <?php
+        if ($configs->options->event == false) {
+            echo "-->";
+        }
+        ?>
+
         <!-- Second Section -->
         <section id="second" class="main special">
             <header class="major">
@@ -264,7 +294,7 @@ $call_count = 0;
         <p class="copyright">
             <a href="https://github.com/devinmatte/Git-Challenge" class="icon fa-github"><span class="label">GitHub</span></a>
         </br>
-            &copy; <?php echo date("Y") ?> Devin Matte | Design: <a href="https://html5up.net">HTML5 UP</a>.</p>
+            &copy; <?php echo date("Y") ?> <a href="https://github.com/devinmatte">Devin Matte</a> | Design: <a href="https://html5up.net">HTML5 UP</a>.</p>
     </footer>
 
 </div>
