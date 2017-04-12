@@ -37,7 +37,7 @@
 
 <?php
 
-$configs = require("include/configuration.php");
+$configs = include("include/configuration.php");
 require("connection.php");
 $connection = new Connection;
 $conn = $connection->initialize();

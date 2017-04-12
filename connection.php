@@ -8,7 +8,7 @@ class Connection
         require("alert.php");
 
         /** Create connection */
-        $conn = new mysqli($_ENV['host'], $_ENV['username'], $_ENV['password']);
+        $conn = new mysqli($configs->host, $configs->username, $configs->password);
         $alert = new Alert;
 
         /** Check connection */
@@ -23,7 +23,7 @@ class Connection
             $alert->success($message);
         }
 
-        $conn = new mysqli($_ENV['host'], $_ENV['username'], $_ENV['password'], $_ENV['database']);
+        $conn = new mysqli($configs->host, $configs->username, $configs->password, $configs->database);
 
         /** sql to create table */
         $sql = "CREATE TABLE Tracked (sha VARCHAR(256), issueID VARCHAR(256))";

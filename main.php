@@ -20,7 +20,7 @@ class main
         ];
         while (!$empty) {
             $page++;
-            $url = "https://api.github.com/users/" . $_ENV['org'] . "/repos" . "?page=" . $page . "&client_id=" . $_ENV['client'] . "&client_secret=" . $_ENV['secret'];
+            $url = "https://api.github.com/users/" . $configs->git->org . "/repos" . "?page=" . $page . "&client_id=" . $configs->git->client . "&client_secret=" . $configs->git->secret;
 
             $json = file_get_contents($url, false, stream_context_create($opts));
             $obj = json_decode($json);
@@ -36,7 +36,7 @@ class main
 
     public function addUser(mysqli $conn, $configs, Alert $alert, $opts, $url)
     {
-        $user_url = $url . "?client_id=" . $_ENV['client'] . "&client_secret=" . $_ENV['secret'];
+        $user_url = $url . "?client_id=" . $configs->git->client . "&client_secret=" . $configs->git->secret;
         $user_json = file_get_contents($user_url, false, stream_context_create($opts));
         $user_obj = json_decode($user_json);
         $GLOBALS['call_count']++;
@@ -106,7 +106,7 @@ class main
                 $merged = null;
 
                 if (array_key_exists("pull_request", $issue)) {
-                    $pr_url = $issue->pull_request->url . "?client_id=" . $_ENV['client'] . "&client_secret=" . $_ENV['secret'];
+                    $pr_url = $issue->pull_request->url . "?client_id=" . $configs->git->client . "&client_secret=" . $configs->git->secret;
                     $pr_json = file_get_contents($pr_url, false, stream_context_create($opts));
                     $pr_obj = json_decode($pr_json);
                     $GLOBALS['call_count']++;
@@ -163,7 +163,7 @@ class main
                     $result = $conn->query($query);
                     if ($result->num_rows <= 0) {
                         //Getting Proper Results
-                        $commit_url = $commit->url . "?client_id=" . $_ENV['client'] . "&client_secret=" . $_ENV['secret'];
+                        $commit_url = $commit->url . "?client_id=" . $configs->git->client . "&client_secret=" . $configs->git->secret;
                         $commit_json = file_get_contents($commit_url, false, stream_context_create($opts));
                         $commit_obj = json_decode($commit_json);
                         $GLOBALS['call_count']++;
@@ -252,7 +252,7 @@ class main
                 $message = "Checking Repository: " . $repo->name;
                 $alert->info($message);
 
-                $issue_url = substr($repo->issues_url, 0, -9) . "?state=open&client_id=" . $_ENV['client'] . "&client_secret=" . $_ENV['secret'];
+                $issue_url = substr($repo->issues_url, 0, -9) . "?state=open&client_id=" . $configs->git->client . "&client_secret=" . $configs->git->secret;
                 $issue_json = file_get_contents($issue_url, false, stream_context_create($opts));
                 $issue_obj = json_decode($issue_json);
                 $GLOBALS['call_count']++;
@@ -262,7 +262,7 @@ class main
                     $this->openIssue($conn, $configs, $alert, $opts, $repo, $issue);
                 }
 
-                $issue_url = substr($repo->issues_url, 0, -9) . "?state=closed&client_id=" . $_ENV['client'] . "&client_secret=" . $_ENV['secret'];
+                $issue_url = substr($repo->issues_url, 0, -9) . "?state=closed&client_id=" . $configs->git->client . "&client_secret=" . $configs->git->secret;
                 $issue_json = file_get_contents($issue_url, false, stream_context_create($opts));
                 $issue_obj = json_decode($issue_json);
                 $GLOBALS['call_count']++;
@@ -276,7 +276,7 @@ class main
                 $repo_page = 0;
                 while (!$repo_empty) {
                     $repo_page++;
-                    $repo_url = substr($repo->commits_url, 0, -6) . "?page=" . $repo_page . "&client_id=" . $_ENV['client'] . "&client_secret=" . $_ENV['secret'];
+                    $repo_url = substr($repo->commits_url, 0, -6) . "?page=" . $repo_page . "&client_id=" . $configs->git->client . "&client_secret=" . $configs->git->secret;
                     $repo_json = file_get_contents($repo_url, false, stream_context_create($opts));
                     $repo_obj = json_decode($repo_json);
                     $GLOBALS['call_count']++;

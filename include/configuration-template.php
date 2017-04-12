@@ -1,23 +1,26 @@
 <?php
 
-$_ENV['host'] = '127.0.0.1';
-$_ENV['username'] = 'root';
-$_ENV['password'] = '';
-$_ENV['database'] = 'gitchallenge';
+///////////////////////////////////////////////////////
+///                                                 ///
+/// Git Challenge Configuration                     ///
+///                                                 ///
+/// @author Devin Matte <devinmatte@gmail.com>      ///
+///                                                 ///
+///////////////////////////////////////////////////////
 
-$_ENV['org'] = 'github-tools';
-$_ENV['client'] = '';
-$_ENV['secret'] = '';
+$get_data = function(&$var, $default=null) {
+    return isset($var) ? $var : $default;
+};
 
 return (object)array(
-    'host' => '127.0.0.1',
-    'username' => 'root',
-    'password' => '',
-    'database' => 'gitchallenge',
+    'host' => $get_data($_ENV['CHALLENGE_DB_HOST'], '127.0.0.1'),
+    'username' => $get_data($_ENV['CHALLENGE_DB_USER'], 'root'),
+    'password' => $get_data($_ENV['CHALLENGE_DB_PASS'], ''),
+    'database' => $get_data($_ENV['CHALLENGE_DB'], 'gitchallenge'),
     'git' => (object)array(
-        'org' => 'github-tools',
-        'client' => '',
-        'secret' => ''
+        'org' => $get_data($_ENV['CHALLENGE_GITHUB_ORG'], 'github-tools'),
+        'client' => $get_data($_ENV['CHALLENGE_GITHUB_CLIENT'], ''),
+        'secret' => $get_data($_ENV['CHALLENGE_GITHUB_SECRET'], '')
     ),
     'options' => (object)array(
         'pool' => true,
