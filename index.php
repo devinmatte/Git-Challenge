@@ -36,8 +36,11 @@
 </head>
 
 <?php
-
-$configs = include("include/configuration.php");
+if (file_exists("include/configuration.php")) {
+    $configs = include("include/configuration.php");
+} else {
+    $configs = include("include/configuration-template.php");
+}
 require("connection.php");
 $connection = new Connection;
 $conn = $connection->initialize();
@@ -94,7 +97,7 @@ $call_count = 0;
             <li><a href="#breakdown">Point Breakdown</a></li>
             <?php
             if ($configs->options->event == true) {
-            echo "<li><a href=\"#event\">Event</a></li>";
+                echo "<li><a href=\"#event\">Event</a></li>";
             }
             ?>
             <li><a href="#second">Statistics</a></li>
@@ -140,7 +143,11 @@ $call_count = 0;
                 <h2>Point Breakdown</h2>
             </header>
 
-            <div class="alert alert-success"><h3>Point Scaling</h3><h4>Additions: <?php echo $configs->points->additions;?> | Deletions: <?php echo $configs->points->deletions;?> | Commits: <?php echo $configs->points->commits;?> | Issues: <?php echo $configs->points->issues;?> | Merged Pull Requests: <?php echo $configs->points->pullRequests;?></h4></div>
+            <div class="alert alert-success"><h3>Point Scaling</h3><h4>
+                    Additions: <?php echo $configs->points->additions; ?> |
+                    Deletions: <?php echo $configs->points->deletions; ?> |
+                    Commits: <?php echo $configs->points->commits; ?> | Issues: <?php echo $configs->points->issues; ?>
+                    | Merged Pull Requests: <?php echo $configs->points->pullRequests; ?></h4></div>
 
             <table class="alt">
                 <thead>
@@ -188,7 +195,9 @@ $call_count = 0;
                 </tbody>
             </table>
             <footer class="major">
-                <a class="button special fit" title="<?php echo $configs->options->maxcalls;?> API Calls | Will take time, please be patient" href='index.php?load=true'>Load New Data</a>
+                <a class="button special fit"
+                   title="<?php echo $configs->options->maxcalls; ?> API Calls | Will take time, please be patient"
+                   href='index.php?load=true'>Load New Data</a>
             </footer>
         </section>
 
@@ -292,9 +301,11 @@ $call_count = 0;
     <!-- Footer -->
     <footer id="footer">
         <p class="copyright">
-            <a href="https://github.com/devinmatte/Git-Challenge" class="icon fa-github"><span class="label">GitHub</span></a>
-        </br>
-            &copy; <?php echo date("Y") ?> <a href="https://github.com/devinmatte">Devin Matte</a> | Design: <a href="https://html5up.net">HTML5 UP</a>.</p>
+            <a href="https://github.com/devinmatte/Git-Challenge" class="icon fa-github"><span
+                        class="label">GitHub</span></a>
+            </br>
+            &copy; <?php echo date("Y") ?> <a href="https://github.com/devinmatte">Devin Matte</a> | Design: <a
+                    href="https://html5up.net">HTML5 UP</a>.</p>
     </footer>
 
 </div>

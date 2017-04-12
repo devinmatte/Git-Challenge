@@ -4,7 +4,11 @@ class Connection
 {
     public function initialize()
     {
-        $configs = require("include/configuration.php");
+        if (file_exists("include/configuration.php")) {
+            $configs = include("include/configuration.php");
+        } else {
+            $configs = include("include/configuration-template.php");
+        }
         require("alert.php");
 
         /** Create connection */
