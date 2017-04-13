@@ -23,10 +23,10 @@ return (object)array(
         'secret' => $get_data($_ENV['CHALLENGE_GITHUB_SECRET'], '')
     ),
     'options' => (object)array(
-        'pool' => true,
-        'debug' => false,
-        'event' => false,
-        'maxcalls' => 1000
+        'pool' => $get_data($_ENV['CHALLENGE_POOL'], true),
+        'debug' => $get_data($_ENV['CHALLENGE_DEBUG'], false),
+        'event' => $get_data($_ENV['CHALLENGE_EVENT'], false),
+        'maxcalls' => $get_data($_ENV['CHALLENGE_MAXCALLS'], 1000)
     ),
     'points' => (object)array(
         'additions' => 1,
