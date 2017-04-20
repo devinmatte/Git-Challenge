@@ -95,7 +95,11 @@ $call_count = 0;
     <!-- Nav -->
     <nav id="nav">
         <ul>
-            <li><a href="#intro" class="active">Introduction</a></li>
+            <?php
+            if ($configs->options->info == true) {
+                echo "<li><a href=\"#intro\" class=\"active\">Introduction</a></li>";
+            }
+            ?>
             <li><a href="#breakdown">Point Breakdown</a></li>
             <?php
             if ($configs->options->event == true) {
@@ -114,6 +118,12 @@ $call_count = 0;
     <!-- Main -->
     <div id="main">
 
+        <?php
+        if ($configs->options->info == false) {
+            echo "<!--";
+        }
+        ?>
+
         <!-- Introduction -->
         <section id="intro" class="main">
             <div class="spotlight">
@@ -131,13 +141,17 @@ $call_count = 0;
                         contributors.</p>
                     <ul class="actions">
                         <li><a href="https://github.com/devinmatte/Git-Challenge" class="button">Learn More</a></li>
+                        <li><a href="howTogit.php" class="button">Learn Git</a></li>
                     </ul>
                 </div>
-                <span class="image"><img
-                            src="https://static1.squarespace.com/static/5783a7e19de4bb11478ae2d8/5821d2b909e1c46748736b4a/583d6f01e58c627c3a6b7e47/1486468532983/Github_Blog.gif?w=1000w"
-                            alt=""/></span>
             </div>
         </section>
+
+        <?php
+        if ($configs->options->info == false) {
+            echo "-->";
+        }
+        ?>
 
         <!-- Breakdown Section -->
         <section id="breakdown" class="main special">
@@ -213,11 +227,11 @@ $call_count = 0;
             <header class="major">
                 <h2>Event</h2>
             </header>
-
-            <?php
-
-            ?>
-
+            <p>
+                <?php
+                echo "Work in Progress. Cool prizes coming soon!";
+                ?>
+            </p>
             <footer class="major">
             </footer>
         </section>
