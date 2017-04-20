@@ -3,9 +3,6 @@ php:
   - '5.4'
   - '5.5'
   - '5.6'
-  - '7.0'
-  - '7.1'
-  - hhvm
 
 services:
   - mysql
@@ -17,4 +14,4 @@ before_script:
   - cp include/configuration-template.php include/configuration.php
 
 script:
-  - phpunit test.php
+  - phpunit test5.php

@@ -1,7 +1,7 @@
 Git-Challenge
 =============
-[![Build Status](https://travis-ci.org/devinmatte/Git-Challenge.svg?branch=master)](https://travis-ci.org/devinmatte/Git-Challenge)
-
+Version 5.4-5.6: [![Build Status](https://travis-ci.org/devinmatte/Git-Challenge.svg?branch=master)](https://travis-ci.org/devinmatte/Git-Challenge)
+Version 7.0+: [![CircleCI](https://circleci.com/gh/devinmatte/Git-Challenge.svg?style=svg)](https://circleci.com/gh/devinmatte/Git-Challenge)
 
 Gamification of Git Contributions for the use of either education or competition.
 
@@ -15,10 +15,10 @@ Create a `configuration.php` based on the `configuration-template.php` and fill 
 
 After the first run you'll have the proper tables you need in the SQL database. The first Run(s) will be the slowest as it has to track and add every new user it comes across and every commit. GitHub has a 5000 API calls an Hour Limit. By default there is a limit on how many API calls will be made each load. That limit can be modified in the Configuration file. It is reccommended that you start with a low amount (under 2500) so that you don't overwhelm the program. Also it is reccommended to do the initial data pulls before deployment to a public url so that you don't hit the API limit. Small orgs (1000 or less Commits) need not worry about this.
 
-The system checks for new commits every load. However it only checks commits it hasn't already checked so slowdown shouldn't be an issue after the initial data pull.
+The first few loads will be slow. However once the majority of the Organisation has been scanned, it becomes quicker.
 
 Examples
 --------
 
-- [ComputerScienceHouse](https://csh.rit.edu/~matted/Git-Challenge/)
-- [NHSTechTeam](http://nhstech.us/Git-Challenge/)
+- [ComputerScienceHouse](http://git-challenge-git-challenge.app.csh.rit.edu/)
+- [NHSTechTeam](http://git-challenge.nhstech.us/)

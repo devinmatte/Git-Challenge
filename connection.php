@@ -20,13 +20,6 @@ class Connection
             die("<div class=\"alert alert-danger alert-dismissable\"><a class=\"close fa fa-close\" data-dismiss=\"alert\" aria-label=\"close\"></a><b>Connection failed:</b> " . $conn->connect_error . "</div>");
         }
 
-        /** Create database */
-        $sql = "CREATE DATABASE Git-Challenge";
-        if ($conn->query($sql) === TRUE) {
-            $message = "Database created successfully";
-            $alert->success($message);
-        }
-
         $conn = new mysqli($configs->host, $configs->username, $configs->password, $configs->database);
 
         /** sql to create table */

@@ -1,0 +1,12 @@
+machine:
+  php:
+    version: 7.0.4
+
+dependencies:
+  pre:
+    - mysql -e 'CREATE DATABASE gitchallenge;'
+    - cp include/configuration-template.php include/configuration.php
+
+test:
+  override:
+    - phpunit test7.php
