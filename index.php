@@ -258,77 +258,79 @@ $call_count = 0;
             <header class="major">
                 <h2>Challenges</h2>
             </header>
-                <?php
-                $query = "SELECT * FROM Challenges ORDER BY name";
-                $result = $conn->query($query);
+            <?php
+            if ($configs->options->challenges == true) {
+            $query = "SELECT * FROM Challenges ORDER BY name";
+            $result = $conn->query($query);
 
-                $styles = ["style5", "style1", "style2", "style3", "style4"];
-                $stylePointer = 0;
+            $styles = ["style5", "style1", "style2", "style3", "style4"];
+            $stylePointer = 0;
 
-                for ($row = 0; $row < $result->num_rows; $row++) {
-                    $challenge = $result->fetch_assoc();
-                    ?>
-
-                    <div id="testmodal<?php echo $challenge['id'] ?>" class="modal fade" role="dialog">
-                        <div class="modal-dialog">
-
-                            <!-- Modal content-->
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h4 class="modal-title"><?php echo $challenge['name'] ?></h4>
-                                </div>
-                                <div class="modal-body">
-                                    <p><?php echo $challenge['description'] ?></p>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-
-                    <?php
-                }
-
-                $query = "SELECT * FROM Challenges ORDER BY name";
-                $result = $conn->query($query);
-
-                echo "<ul class=\"statistics\">";
-                $styles = ["style5", "style1", "style2", "style3", "style4"];
-                $stylePointer = 0;
-                for ($row = 0; $row < $result->num_rows; $row++) {
-                    $challenge = $result->fetch_assoc();
-                    ?>
-
-                    <?php if ($stylePointer >= 5) {
-                        echo "</ul><ul class=\"statistics\">";
-                    } ?>
-                    <li data-toggle="modal" data-target="#testmodal<?php echo $challenge['id'] ?>"
-                        class="<?php if ($stylePointer < 5) {
-                            echo $styles[$stylePointer++];
-                        } else {
-                            $stylePointer = 0;
-                            echo $styles[$stylePointer++];
-                        } ?> ">
-                        <span class="icon fa-trophy"></span>
-                        <p><?php echo $challenge['name'] ?></p>
-                    </li>
-
-
-                    <?php
-                }
+            for ($row = 0; $row < $result->num_rows; $row++) {
+                $challenge = $result->fetch_assoc();
                 ?>
+
+                <div id="testmodal<?php echo $challenge['id'] ?>" class="modal fade" role="dialog">
+                    <div class="modal-dialog">
+
+                        <!-- Modal content-->
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title"><?php echo $challenge['name'] ?></h4>
+                            </div>
+                            <div class="modal-body">
+                                <p><?php echo $challenge['description'] ?></p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <?php
+            }
+
+            $query = "SELECT * FROM Challenges ORDER BY name";
+            $result = $conn->query($query);
+
+            echo "<ul class=\"statistics\">";
+            $styles = ["style5", "style1", "style2", "style3", "style4"];
+            $stylePointer = 0;
+            for ($row = 0; $row < $result->num_rows; $row++) {
+                $challenge = $result->fetch_assoc();
+                ?>
+
+                <?php if ($stylePointer >= 5) {
+                    echo "</ul><ul class=\"statistics\">";
+                } ?>
+                <li data-toggle="modal" data-target="#testmodal<?php echo $challenge['id'] ?>"
+                    class="<?php if ($stylePointer < 5) {
+                        echo $styles[$stylePointer++];
+                    } else {
+                        $stylePointer = 0;
+                        echo $styles[$stylePointer++];
+                    } ?> ">
+                    <span class="icon fa-trophy"></span>
+                    <p><?php echo $challenge['name'] ?></p>
+                </li>
+
+
+                <?php
+            }
+            ?>
             </ul>
             <footer class="major">
             </footer>
         </section>
 
-        <?php
-        if ($configs->options->challenges == false) {
-            echo "-->";
-        }
-        ?>
+    <?php
+    }
+    if ($configs->options->challenges == false) {
+        echo "-->";
+    }
+    ?>
 
         <!-- Second Section -->
         <section id="second" class="main special">
