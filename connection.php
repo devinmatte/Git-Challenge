@@ -56,6 +56,16 @@ class Connection
             }
         }
 
+        if ($configs->options->challenges == true) {
+            /** sql to create table */
+            $sql = "CREATE TABLE Challenges (id INT(25) NOT NULL, name VARCHAR(256), description VARCHAR(5000), points INT(25), hint VARCHAR(256))";
+
+            if ($conn->query($sql) === TRUE) {
+                $message = "Table Challenges created successfully";
+                $alert->success($message);
+            }
+        }
+
         return $conn;
     }
 }

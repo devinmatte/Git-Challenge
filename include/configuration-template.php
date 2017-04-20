@@ -26,6 +26,7 @@ return (object)array(
         'pool' => $get_data($_ENV['CHALLENGE_POOL'], true),
         'debug' => $get_data($_ENV['CHALLENGE_DEBUG'], false),
         'event' => $get_data($_ENV['CHALLENGE_EVENT'], false),
+        'challenges' => $get_data($_ENV['CHALLENGE_CHALLENGES'], false),
         'info' => $get_data($_ENV['CHALLENGE_INFO'], true),
         'maxcalls' => $get_data($_ENV['CHALLENGE_MAXCALLS'], 1000)
     ),
