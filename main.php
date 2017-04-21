@@ -40,7 +40,7 @@ class main
         $user_json = file_get_contents($user_url, false, stream_context_create($opts));
         $user_obj = json_decode($user_json);
         $GLOBALS['call_count']++;
-        if ($user_obj->name != "") {
+        if ($user_obj->name != "" && $user_obj->login != "invalid-email-address") {
             $sql = "INSERT INTO Users (name, username, id) VALUES ('" . $user_obj->name . "', '" . $user_obj->login . "', '" . $user_obj->id . "')";
             if ($conn->query($sql) === TRUE) {
                 $message = "Added a new User to Database: " . $user_obj->name;

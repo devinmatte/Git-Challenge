@@ -271,12 +271,16 @@ $call_count = 0;
                             <div class="modal-content">
                                 <div class="modal-header">
                                     <h4 class="modal-title"><?php echo $challenge['name'] ?></h4>
+                                    <h5 class="modal-title"><?php echo $challenge['points'] ?> Points</h5>
                                 </div>
                                 <div class="modal-body">
-                                    <p><?php echo $challenge['description'] ?></p>
+                                    <?php echo $challenge['description'] ?>
+                                    <form action="<?php echo $challenge['hint'] ?>">
+                                        <input type="submit" class="button special small fit" value="Hint"/>
+                                    </form>
                                 </div>
                                 <div class="modal-footer">
-                                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                    <button type="button" class="button fit" data-dismiss="modal">Close</button>
                                 </div>
                             </div>
 
@@ -309,8 +313,6 @@ $call_count = 0;
                         <span class="icon fa-trophy"></span>
                         <p><?php echo $challenge['name'] ?></p>
                     </li>
-
-
                     <?php
                 }
                 ?>
@@ -318,7 +320,6 @@ $call_count = 0;
                 <footer class="major">
                 </footer>
             </section>
-
             <?php
         }
         ?>
