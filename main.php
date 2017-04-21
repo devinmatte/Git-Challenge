@@ -34,20 +34,22 @@ class main
         }
     }
 
-    public function addUser(mysqli $conn, $configs, Alert $alert, $opts, $url)
+    public function addUser(mysqli $conn, $configs, Alert $alert, $opts, $url, $login)
     {
-        $user_url = $url . "?client_id=" . $configs->git->client . "&client_secret=" . $configs->git->secret;
-        $user_json = file_get_contents($user_url, false, stream_context_create($opts));
-        $user_obj = json_decode($user_json);
-        $GLOBALS['call_count']++;
-        if ($user_obj->name != "" && $user_obj->login != "invalid-email-address") {
-            $sql = "INSERT INTO Users (name, username, id) VALUES ('" . $user_obj->name . "', '" . $user_obj->login . "', '" . $user_obj->id . "')";
-            if ($conn->query($sql) === TRUE) {
-                $message = "Added a new User to Database: " . $user_obj->name;
-                $alert->info($message);
-            } else {
-                $message = "Error: " . $sql . "\n" . $conn->error;
-                $alert->warning($message);
+        if(!array_key_exists($login, $configs->blacklist)) {
+            $user_url = $url . "?client_id=" . $configs->git->client . "&client_secret=" . $configs->git->secret;
+            $user_json = file_get_contents($user_url, false, stream_context_create($opts));
+            $user_obj = json_decode($user_json);
+            $GLOBALS['call_count']++;
+            if ($user_obj->name != "" && !array_key_exists($user_obj->login, $configs->blacklist)) {
+                $sql = "INSERT INTO Users (name, username, id) VALUES ('" . $user_obj->name . "', '" . $user_obj->login . "', '" . $user_obj->id . "')";
+                if ($conn->query($sql) === TRUE) {
+                    $message = "Added a new User to Database: " . $user_obj->name;
+                    $alert->info($message);
+                } else {
+                    $message = "Error: " . $sql . "\n" . $conn->error;
+                    $alert->warning($message);
+                }
             }
         }
     }
@@ -58,7 +60,7 @@ class main
         $result = $conn->query($query);
 
         if ($configs->options->pool == true && $result->num_rows <= 0 && ($repo->fork != true && $repo->fork != "true")) {
-            $this->addUser($conn, $configs, $alert, $opts, $issue->user->url);
+            $this->addUser($conn, $configs, $alert, $opts, $issue->user->url, $issue->user->login);
         }
 
         if ($result->num_rows > 0 && !array_key_exists("pull_request", $issue)) {
@@ -93,7 +95,7 @@ class main
         $result = $conn->query($query);
 
         if ($configs->options->pool == true && $result->num_rows <= 0 && ($repo->fork != true && $repo->fork != "true")) {
-            $this->addUser($conn, $configs, $alert, $opts, $issue->user->url);
+            $this->addUser($conn, $configs, $alert, $opts, $issue->user->url, $issue->user->login);
         }
 
         if ($result->num_rows > 0 && !array_key_exists("message", $issue)) {
@@ -153,7 +155,7 @@ class main
                 $result = $conn->query($query);
 
                 if ($configs->options->pool == true && $result->num_rows <= 0 && ($repo->fork != true && $repo->fork != "true")) {
-                    $this->addUser($conn, $configs, $alert, $opts, $commit->author->url);
+                    $this->addUser($conn, $configs, $alert, $opts, $commit->author->url, $commit->author->login);
                 }
 
                 if ($result->num_rows > 0) {

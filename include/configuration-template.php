@@ -37,5 +37,8 @@ return (object)array(
         'commits' => 10,
         'issues' => 25,
         'pullRequests' => 50
+    ),
+    'blacklist' => (object)array(
+        'invalid-email-address' => 148100
     )
 );
