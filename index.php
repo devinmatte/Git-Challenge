@@ -74,9 +74,32 @@ $call_count = 0;
             $query = "SELECT * FROM Users ORDER BY score DESC";
             $result = $conn->query($query);
 
+            for ($row = 0; $row < $result->num_rows; $row++) {
+                if ($result->num_rows > 0) {
+                    $user = $result->fetch_assoc();
+                    $challengeScore = 0;
+
+                    $ChallengeQuery = "SELECT * FROM Challenges ORDER BY points DESC";
+                    $challengeResult = $conn->query($ChallengeQuery);
+
+                    for ($challengeRow = 0; $challengeRow < $challengeResult->num_rows; $challengeRow++) {
+                        $challenge = $challengeResult->fetch_assoc();
+                        if (strpos($challenge["users"], $user["username"]) !== false) {
+                            $challengeScore += $challenge["points"];
+                        }
+                    }
+                    $sql = "UPDATE Users SET challenge=" . $challengeScore . " WHERE id='" . $user["id"] . "'";
+                    $conn->query($sql);
+                }
+            }
+
+            $query = "SELECT * FROM Users ORDER BY score DESC";
+            $result = $conn->query($query);
+
             for ($row = 0; $row < 5; $row++) {
                 if ($result->num_rows > 0) {
                     $user = $result->fetch_assoc();
+
                     $score = ($user["added"] * $configs->points->additions) + ($user["removed"] * $configs->points->deletions) + ($user["challenge"] * $configs->points->challenges) + ($user["commits"] * $configs->points->commits) + ($user["issues"] * $configs->points->issues) + ($user["pullRequests"] * $configs->points->pullRequests);
                     $sql = "UPDATE Users SET score=" . $score . " WHERE id='" . $user["id"] . "'";
                     $conn->query($sql);
@@ -138,7 +161,8 @@ $call_count = 0;
                     </header>
                     <p>Git Challenge was a project I had an idea for when I looked over a GitHub Organisation I was a
                         part of. It is for my old High School Technology Team, the organisation that taught me most of
-                        what I knew about programming before I came to RIT. The projects in the GitHub hadn't been touched
+                        what I knew about programming before I came to RIT. The projects in the GitHub hadn't been
+                        touched
                         by anyone except myself and a few other Team Alumni. So I thought I should come up with a way to
                         encourage contributing to these projects, and to teach people git. So I came up with
                         Git-Challenge. A app made to gamify contributing to projects, for any Organisation. Not just
@@ -185,18 +209,20 @@ $call_count = 0;
                 $result = $conn->query($query);
 
                 for ($row = 0; $row < $result->num_rows; $row++) {
-                    $user = $result->fetch_assoc();
-                    $score = ($user["added"] * $configs->points->additions) + ($user["removed"] * $configs->points->deletions) + ($user["challenge"] * $configs->points->challenges) + ($user["commits"] * $configs->points->commits) + ($user["issues"] * $configs->points->issues) + ($user["pullRequests"] * $configs->points->pullRequests);
-                    $sql = "UPDATE Users SET score=" . $score . " WHERE id='" . $user["id"] . "'";
-                    $conn->query($sql);
+                    if ($result->num_rows > 0) {
+                        $user = $result->fetch_assoc();
 
-                    echo "<tr>";
-                    echo "<td align=\"center\" width=\"10%\">" . ($row + 1) . "</td>";
-                    echo "<td align=\"center\" width=\"10%\">" . "<a href=\"https://github.com/" . $user["username"] . "\"><img src=\"https://avatars1.githubusercontent.com/u/" . $user["id"] . "\" width=\"100%\" alt=\"\" /></a>" . "</td>";
-                    echo "<td align=\"center\" width=\"45%\">" . $user["name"] . "</td>";
-                    echo "<td align=\"center\" width=\"45%\">" . $score . "</td>";
-                    echo "</tr><tr>";
-                    echo "<td colspan=\"4\" nowrap=\"nowrap\" align=\"center\"><div class=\"progress\">
+                        $score = ($user["added"] * $configs->points->additions) + ($user["removed"] * $configs->points->deletions) + ($user["challenge"] * $configs->points->challenges) + ($user["commits"] * $configs->points->commits) + ($user["issues"] * $configs->points->issues) + ($user["pullRequests"] * $configs->points->pullRequests);
+                        $sql = "UPDATE Users SET score=" . $score . " WHERE id='" . $user["id"] . "'";
+                        $conn->query($sql);
+
+                        echo "<tr>";
+                        echo "<td align=\"center\" width=\"10%\">" . ($row + 1) . "</td>";
+                        echo "<td align=\"center\" width=\"10%\">" . "<a href=\"https://github.com/" . $user["username"] . "\"><img src=\"https://avatars1.githubusercontent.com/u/" . $user["id"] . "\" width=\"100%\" alt=\"\" /></a>" . "</td>";
+                        echo "<td align=\"center\" width=\"45%\">" . $user["name"] . "</td>";
+                        echo "<td align=\"center\" width=\"45%\">" . $score . "</td>";
+                        echo "</tr><tr>";
+                        echo "<td colspan=\"4\" nowrap=\"nowrap\" align=\"center\"><div class=\"progress\">
   <div class=\"progress-bar progress-bar-success active fa fa-plus-circle\" title=\"Additions: " . $user["added"] . "\" role=\"progressbar\" style=\"width:" . ((float)((float)$user["added"] / (float)$score)) * (100.0 * $configs->points->additions) . "%\">
   </div>
   <div class=\"progress-bar progress-bar-danger active fa fa-minus-circle\" title=\"Deletions: " . $user["removed"] . "\" role=\"progressbar\" style=\"width:" . ((float)((float)$user["removed"] / (float)$score)) * (100.0 * $configs->points->deletions) . "%\">
@@ -210,7 +236,8 @@ $call_count = 0;
   <div class=\"progress-bar progress-bar-warning active fa fa-trophy\" title=\"Challenge Points: " . $user["challenge"] . "\" role=\"progressbar\" style=\"width:" . ((float)((float)$user["challenge"] / (float)$score)) * (100.0 * $configs->points->challenges) . "%\">
   </div>
 </div>" . "</td>";
-                    echo "</tr>";
+                        echo "</tr>";
+                    }
                 }
                 ?>
                 </tbody>
