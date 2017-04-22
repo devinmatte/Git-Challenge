@@ -36,7 +36,7 @@ class main
 
     public function addUser(mysqli $conn, $configs, Alert $alert, $opts, $url, $login)
     {
-        if(!array_key_exists($login, $configs->blacklist)) {
+        if (!array_key_exists($login, $configs->blacklist)) {
             $user_url = $url . "?client_id=" . $configs->git->client . "&client_secret=" . $configs->git->secret;
             $user_json = file_get_contents($user_url, false, stream_context_create($opts));
             $user_obj = json_decode($user_json);
@@ -59,16 +59,16 @@ class main
         $query = "SELECT * FROM Users WHERE id='" . $issue->user->id . "'";
         $result = $conn->query($query);
 
-        if ($configs->options->pool == true && $result->num_rows <= 0 && ($repo->fork != true && $repo->fork != "true")) {
+        if ($configs->options->pool == true && $result->num_rows <= 0 && ($repo->fork != true && $repo->fork != "true") && !array_key_exists($issue->user->login, $configs->blacklist)) {
             $this->addUser($conn, $configs, $alert, $opts, $issue->user->url, $issue->user->login);
         }
 
-        if ($result->num_rows > 0 && !array_key_exists("pull_request", $issue)) {
+        if ($result->num_rows > 0 && !array_key_exists("pull_request", $issue) && !array_key_exists($issue->user->login, $configs->blacklist)) {
             $user = $result->fetch_assoc();
             $query = "SELECT issueID FROM Tracked WHERE issueID='" . $issue->id . "'";
 
             $result = $conn->query($query);
-            if ($result->num_rows <= 0) {
+            if ($result->num_rows <= 0 && !array_key_exists($issue->user->login, $configs->blacklist)) {
 
                 //Count added stats for each Issue to their corresponding person
                 $issues = ($user["issues"] + 1);
@@ -94,11 +94,11 @@ class main
         $query = "SELECT * FROM Users WHERE id='" . $issue->user->id . "'";
         $result = $conn->query($query);
 
-        if ($configs->options->pool == true && $result->num_rows <= 0 && ($repo->fork != true && $repo->fork != "true")) {
+        if ($configs->options->pool == true && $result->num_rows <= 0 && ($repo->fork != true && $repo->fork != "true") && !array_key_exists($issue->user->login, $configs->blacklist)) {
             $this->addUser($conn, $configs, $alert, $opts, $issue->user->url, $issue->user->login);
         }
 
-        if ($result->num_rows > 0 && !array_key_exists("message", $issue)) {
+        if ($result->num_rows > 0 && !array_key_exists("message", $issue) && !array_key_exists($issue->user->login, $configs->blacklist)) {
             $user = $result->fetch_assoc();
             $query = "SELECT issueID FROM Tracked WHERE issueID='" . $issue->id . "'";
 
@@ -149,7 +149,7 @@ class main
 
     public function commit(mysqli $conn, $configs, Alert $alert, $opts, $repo, $commit, $repo_empty)
     {
-        if ($GLOBALS['call_count'] < $configs->options->maxcalls && !$repo_empty && !array_key_exists("message", $commit)) {
+        if ($GLOBALS['call_count'] < $configs->options->maxcalls && !$repo_empty && !array_key_exists("message", $commit) && !array_key_exists($commit->author->login, $configs->blacklist)) {
             if (array_key_exists("author", $commit) && !empty($commit->author)) {
                 $query = "SELECT * FROM Users WHERE id='" . $commit->author->id . "'";
                 $result = $conn->query($query);
@@ -158,7 +158,7 @@ class main
                     $this->addUser($conn, $configs, $alert, $opts, $commit->author->url, $commit->author->login);
                 }
 
-                if ($result->num_rows > 0) {
+                if ($result->num_rows > 0 && !array_key_exists($commit->author->login, $configs->blacklist)) {
 
                     $query = "SELECT sha FROM Tracked WHERE sha='" . $commit->sha . "'";
 
@@ -172,7 +172,6 @@ class main
 
                         if (array_key_exists("author", $commit) && !empty($commit->author)) {
                             $query = "SELECT * FROM Users WHERE id='" . $commit->author->id . "'";
-
                             $result = $conn->query($query);
 
                             if ($result->num_rows > 0) {
@@ -218,11 +217,7 @@ class main
                                     }
                                     $message = "Added a new Commit Record to Database:\nSha: " . $commit_obj->sha . " | Date: " . $commit_obj->commit->committer->date;
                                     $alert->info($message);
-                                } else {
-                                    $message = "Error: " . $sql . "\n" . $conn->error;
-                                    $alert->warning($message);
                                 }
-
                             }
                         }
                     }
@@ -243,9 +238,6 @@ class main
                     if ($conn->query($sql) === TRUE) {
                         $message = "Added a new Repository to Stats Database: " . $repo->name;
                         $alert->info($message);
-                    } else {
-                        $message = "Error: " . $sql . "\n" . $conn->error;
-                        $alert->warning($message);
                     }
                 }
             }

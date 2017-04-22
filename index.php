@@ -138,7 +138,7 @@ $call_count = 0;
                     </header>
                     <p>Git Challenge was a project I had an idea for when I looked over a GitHub Organisation I was a
                         part of. It is for my old High School Technology Team, the organisation that taught me most of
-                        what I knew about programming before I came here. The projects in the GitHub hadn't been touched
+                        what I knew about programming before I came to RIT. The projects in the GitHub hadn't been touched
                         by anyone except myself and a few other Team Alumni. So I thought I should come up with a way to
                         encourage contributing to these projects, and to teach people git. So I came up with
                         Git-Challenge. A app made to gamify contributing to projects, for any Organisation. Not just
