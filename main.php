@@ -154,7 +154,7 @@ class main
                 $query = "SELECT * FROM Users WHERE id='" . $commit->author->id . "'";
                 $result = $conn->query($query);
 
-                if ($configs->options->pool == true && $result->num_rows <= 0 && ($repo->fork != true && $repo->fork != "true") && !array_key_exists($commit->author->login, $configs->blacklist)) {
+                if ($configs->options->pool == true && $result->num_rows <= 0 && ($repo->fork != true && $repo->fork != "true")) {
                     $this->addUser($conn, $configs, $alert, $opts, $commit->author->url, $commit->author->login);
                 }
 

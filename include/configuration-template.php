@@ -9,7 +9,7 @@
 ///////////////////////////////////////////////////////
 
 $get_data = function(&$var, $default=null) {
-    return isset($var) ? $var : $default;
+    return !empty($var) ? $var : $default;
 };
 
 $CHALLENGE_DB_HOST = getenv('CHALLENGE_DB_HOST');
@@ -19,11 +19,11 @@ $CHALLENGE_DB = getenv('CHALLENGE_DB');
 $CHALLENGE_GITHUB_ORG = getenv('CHALLENGE_GITHUB_ORG');
 $CHALLENGE_GITHUB_CLIENT = getenv('CHALLENGE_GITHUB_CLIENT');
 $CHALLENGE_GITHUB_SECRET = getenv('CHALLENGE_GITHUB_SECRET');
-$CHALLENGE_POOL = getenv('CHALLENGE_POOL');
-$CHALLENGE_DEBUG = getenv('CHALLENGE_DEBUG');
-$CHALLENGE_EVENT = getenv('CHALLENGE_EVENT');
-$CHALLENGE_CHALLENGES = getenv('CHALLENGE_CHALLENGES');
-$CHALLENGE_INFO = getenv('CHALLENGE_INFO');
+$CHALLENGE_POOL = (getenv('CHALLENGE_POOL') === 'true');
+$CHALLENGE_DEBUG = (getenv('CHALLENGE_DEBUG') === 'true');
+$CHALLENGE_EVENT = (getenv('CHALLENGE_EVENT') === 'true');
+$CHALLENGE_CHALLENGES = (getenv('CHALLENGE_CHALLENGES') === 'true');
+$CHALLENGE_INFO = (getenv('CHALLENGE_INFO') === 'true');
 $CHALLENGE_MAXCALLS = getenv('CHALLENGE_MAXCALLS');
 
 return (object)array(
