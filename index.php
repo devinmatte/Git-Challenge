@@ -147,9 +147,7 @@ $call_count = 0;
     <div id="main">
 
         <?php
-        if ($configs->options->info == false) {
-            echo "<!--";
-        }
+        if ($configs->options->info == true) {
         ?>
 
         <!-- Introduction -->
@@ -177,8 +175,6 @@ $call_count = 0;
         </section>
 
         <?php
-        if ($configs->options->info == false) {
-            echo "-->";
         }
         ?>
 
@@ -392,9 +388,7 @@ $call_count = 0;
         </section>
 
         <?php
-        if ($configs->options->debug == false) {
-            echo "<!--";
-        }
+        if ($configs->options->debug == true) {
         ?>
 
         <section id="debug" class="main special">
@@ -416,8 +410,6 @@ $call_count = 0;
         </section>
 
         <?php
-        if ($configs->options->debug == false) {
-            echo "-->";
         }
         ?>
 
