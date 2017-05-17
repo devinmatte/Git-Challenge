@@ -1,6 +1,6 @@
 <?php
 
-class test5
+class test
 {
 
 }

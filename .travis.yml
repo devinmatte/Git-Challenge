@@ -14,4 +14,4 @@ before_script:
   - cp include/configuration-template.php include/configuration.php
 
 script:
-  - phpunit test5.php
+  - phpunit test.php

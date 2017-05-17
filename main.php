@@ -4,7 +4,7 @@ global $call_count;
 
 class main
 {
-    public function main(mysqli $conn, $configs, Alert $alert)
+    public function __construct(mysqli $conn, $configs, Alert $alert)
     {
         $GLOBALS['call_count'] = 0;
 
@@ -149,12 +149,12 @@ class main
 
     public function commit(mysqli $conn, $configs, Alert $alert, $opts, $repo, $commit, $repo_empty)
     {
-        if ($GLOBALS['call_count'] < $configs->options->maxcalls && !$repo_empty && !array_key_exists("message", $commit) && !array_key_exists($commit->author->login, $configs->blacklist)) {
+        if ($GLOBALS['call_count'] < $configs->options->maxcalls && !$repo_empty && !array_key_exists("message", $commit)) {
             if (array_key_exists("author", $commit) && !empty($commit->author)) {
                 $query = "SELECT * FROM Users WHERE id='" . $commit->author->id . "'";
                 $result = $conn->query($query);
 
-                if ($configs->options->pool == true && $result->num_rows <= 0 && ($repo->fork != true && $repo->fork != "true")) {
+                if ($configs->options->pool == true && $result->num_rows <= 0 && ($repo->fork != true && $repo->fork != "true") && !array_key_exists($commit->author->login, $configs->blacklist)) {
                     $this->addUser($conn, $configs, $alert, $opts, $commit->author->url, $commit->author->login);
                 }
 
