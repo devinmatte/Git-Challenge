@@ -20,6 +20,8 @@
     "jquery": "^3.2.1",
     "bootstrap": "^3.3.7",
     "skel": "^3.0.1",
-    "components-font-awesome": "^4.7.0"
+    "components-font-awesome": "^4.7.0",
+    "jquery.scrollex": "^0.2.1",
+    "html5shiv": "^3.7.3"
   }
 }

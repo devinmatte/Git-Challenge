@@ -10,7 +10,8 @@
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <!--[if lte IE 8]>
-    <script src="assets/js/ie/html5shiv.js"></script><![endif]-->
+    <script src="assets/components/html5shiv/dist/html5shiv.min.js"></script>
+    <![endif]-->
     <link rel="stylesheet" href="assets/css/main.css"/>
     <!--[if lte IE 9]>
     <link rel="stylesheet" href="assets/css/ie9.css"/><![endif]-->
@@ -67,7 +68,7 @@
 
 <!-- Scripts -->
 <script src="assets/components/jquery/dist/jquery.min.js"></script>
-<script src="assets/js/jquery.scrollex.min.js"></script>
+<script src="assets/components/jquery.scrollex/jquery.scrollex.min.js"></script>
 <script src="assets/js/jquery.scrolly.min.js"></script>
 <script src="assets/components/skel/dist/skel.min.js"></script>
 <script src="assets/js/util.js"></script>
