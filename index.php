@@ -14,10 +14,10 @@
     <!--[if lte IE 8]>
     <script src="assets/js/ie/html5shiv.js"></script><![endif]-->
     <!-- Scripts -->
-    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/components/jquery/dist/jquery.min.js"></script>
     <script src="assets/js/jquery.scrollex.min.js"></script>
     <script src="assets/js/jquery.scrolly.min.js"></script>
-    <script src="assets/js/skel.min.js"></script>
+    <script src="assets/components/skel/dist/skel.min.js"></script>
     <script src="assets/js/util.js"></script>
     <!--[if lte IE 8]>
     <script src="assets/js/ie/respond.min.js"></script>
@@ -148,33 +148,36 @@ $call_count = 0;
 
         <?php
         if ($configs->options->info == true) {
-        ?>
+            ?>
 
-        <!-- Introduction -->
-        <section id="intro" class="main">
-            <div class="spotlight">
-                <div class="content">
-                    <header class="major">
-                        <h2>Idea</h2>
-                    </header>
-                    <p>Git Challenge was a project I had an idea for when I looked over a GitHub Organisation I was a
-                        part of. It is for my old High School Technology Team, the organisation that taught me most of
-                        what I knew about programming before I came to RIT. The projects in the GitHub hadn't been
-                        touched
-                        by anyone except myself and a few other Team Alumni. So I thought I should come up with a way to
-                        encourage contributing to these projects, and to teach people git. So I came up with
-                        Git-Challenge. A app made to gamify contributing to projects, for any Organisation. Not just
-                        this Tech Team. It could be used for CSH, or really any other git organisation with multiple
-                        contributors.</p>
-                    <ul class="actions">
-                        <li><a href="https://github.com/devinmatte/Git-Challenge" class="button">Learn More</a></li>
-                        <li><a href="howTogit.php" class="button">Learn Git</a></li>
-                    </ul>
+            <!-- Introduction -->
+            <section id="intro" class="main">
+                <div class="spotlight">
+                    <div class="content">
+                        <header class="major">
+                            <h2>Idea</h2>
+                        </header>
+                        <p>Git Challenge was a project I had an idea for when I looked over a GitHub Organisation I was
+                            a
+                            part of. It is for my old High School Technology Team, the organisation that taught me most
+                            of
+                            what I knew about programming before I came to RIT. The projects in the GitHub hadn't been
+                            touched
+                            by anyone except myself and a few other Team Alumni. So I thought I should come up with a
+                            way to
+                            encourage contributing to these projects, and to teach people git. So I came up with
+                            Git-Challenge. A app made to gamify contributing to projects, for any Organisation. Not just
+                            this Tech Team. It could be used for CSH, or really any other git organisation with multiple
+                            contributors.</p>
+                        <ul class="actions">
+                            <li><a href="https://github.com/devinmatte/Git-Challenge" class="button">Learn More</a></li>
+                            <li><a href="howTogit.php" class="button">Learn Git</a></li>
+                        </ul>
+                    </div>
                 </div>
-            </div>
-        </section>
+            </section>
 
-        <?php
+            <?php
         }
         ?>
 
@@ -389,27 +392,27 @@ $call_count = 0;
 
         <?php
         if ($configs->options->debug == true) {
-        ?>
-
-        <section id="debug" class="main special">
-            <header class="major">
-                <h2>Debugging</h2>
-            </header>
-
-            <?php
-
-            if (isset($_GET['load'])) {
-                require("main.php");
-                $main = new main($conn, $configs, $alert);
-            }
-
             ?>
 
-            <footer class="major">
-            </footer>
-        </section>
+            <section id="debug" class="main special">
+                <header class="major">
+                    <h2>Debugging</h2>
+                </header>
 
-        <?php
+                <?php
+
+                if (isset($_GET['load'])) {
+                    require("main.php");
+                    $main = new main($conn, $configs, $alert);
+                }
+
+                ?>
+
+                <footer class="major">
+                </footer>
+            </section>
+
+            <?php
         }
         ?>
 

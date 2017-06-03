@@ -1,0 +1,25 @@
+{
+  "name": "git-challenge",
+  "description": "Gamification of Git Contributions for the use of either education or competition",
+  "main": "index.php",
+  "authors": [
+    "Devin Matte"
+  ],
+  "license": "ISC",
+  "homepage": "https://github.com/devinmatte/Git-Challenge",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "assets/components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "^3.2.1",
+    "bootstrap": "^3.3.7",
+    "skel": "^3.0.1",
+    "components-font-awesome": "^4.7.0"
+  }
+}

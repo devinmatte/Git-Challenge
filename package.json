@@ -1,0 +1,19 @@
+{
+  "name": "git-challenge",
+  "version": "1.1.0",
+  "description": "Gamification of Git Contributions for the use of either education or competition",
+  "main": "index.php",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/devinmatte/Git-Challenge.git"
+  },
+  "author": "Devin Matte",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/devinmatte/Git-Challenge/issues"
+  },
+  "homepage": "https://github.com/devinmatte/Git-Challenge#readme"
+}

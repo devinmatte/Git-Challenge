@@ -6,12 +6,16 @@ php:
 
 services:
   - mysql
+  - npm
 
 before_install:
   - mysql -e 'CREATE DATABASE gitchallenge;'
 
 before_script:
   - cp include/configuration-template.php include/configuration.php
+  - npm install
+  - npm install -g bower
+  - bower install
 
 script:
   - phpunit test.php
