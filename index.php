@@ -11,31 +11,30 @@
     <title>Git Challenge</title>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
-    <!--[if lte IE 8]>
-    <script src="assets/components/html5shiv/dist/html5shiv.min.js"></script>
-    <![endif]-->
+    <meta name="theme-color" content="#337ab7">
+
+    <link rel="stylesheet" href="assets/css/main.css"/>
+    <link rel="stylesheet" href="assets/css/git-challenge.css"/>
+    <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="images/favicon.ico" type="image/x-icon">
+
+    <link rel="manifest" href="manifest.json">
+
+    <!--[if lte IE 9]><link rel="stylesheet" href="assets/css/ie9.css"/><![endif]-->
+    <!--[if lte IE 8]><link rel="stylesheet" href="assets/css/ie8.css"/><![endif]-->
+    <!--[if lte IE 8]><script src="assets/components/html5shiv/dist/html5shiv.min.js"></script><![endif]-->
+    <!--[if lte IE 8]><script src="assets/js/ie/respond.min.js"></script><![endif]-->
+
     <!-- Scripts -->
     <script src="assets/components/jquery/dist/jquery.min.js"></script>
     <script src="assets/components/jquery.scrollex/jquery.scrollex.min.js"></script>
     <script src="assets/js/jquery.scrolly.min.js"></script>
     <script src="assets/components/skel/dist/skel.min.js"></script>
     <script src="assets/js/util.js"></script>
-    <!--[if lte IE 8]>
-    <script src="assets/js/ie/respond.min.js"></script>
-    <![endif]-->
     <script src="assets/js/main.js"></script>
-    <!-- Latest compiled and minified JavaScript -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
             integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
             crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="assets/css/main.css"/>
-    <link rel="stylesheet" href="assets/css/git-challenge.css"/>
-    <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon">
-    <link rel="icon" href="images/favicon.ico" type="image/x-icon">
-    <!--[if lte IE 9]>
-    <link rel="stylesheet" href="assets/css/ie9.css"/><![endif]-->
-    <!--[if lte IE 8]>
-    <link rel="stylesheet" href="assets/css/ie8.css"/><![endif]-->
 </head>
 
 <?php
@@ -284,7 +283,13 @@ $call_count = 0;
                 $query = "SELECT * FROM Challenges ORDER BY name";
                 $result = $conn->query($query);
 
-                $styles = ["style5", "style1", "style2", "style3", "style4"];
+                $styles = [
+                    "style5",
+                    "style1",
+                    "style2",
+                    "style3",
+                    "style4"
+                ];
                 $stylePointer = 0;
 
                 for ($row = 0; $row < $result->num_rows; $row++) {
@@ -321,7 +326,13 @@ $call_count = 0;
                 $result = $conn->query($query);
 
                 echo "<ul class=\"statistics\">";
-                $styles = ["style5", "style1", "style2", "style3", "style4"];
+                $styles = [
+                    "style5",
+                    "style1",
+                    "style2",
+                    "style3",
+                    "style4"
+                ];
                 $stylePointer = 0;
                 for ($row = 0; $row < $result->num_rows; $row++) {
                     $challenge = $result->fetch_assoc();

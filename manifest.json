@@ -1,0 +1,21 @@
+{
+  "name": "Git-Challenge",
+  "short_name": "Git-Challenge",
+  "theme_color": "#337ab7",
+  "background_color": "#fff",
+  "start_url": "/",
+  "display": "standalone",
+  "lang": "en-US",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "images/favicon.ico",
+      "sizes": "16x16"
+    },
+    {
+      "src": "images/200x200.png",
+      "sizes": "200x200",
+      "type": "image\/png"
+    }
+  ]
+}
